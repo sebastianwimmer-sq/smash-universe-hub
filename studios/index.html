@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SMASH für Studios — Habit-Ritual als Member-Benefit</title>
+<meta name="description" content="SMASH-Codes für Fitness-Studios. Member-Benefit ohne eigenen App-Build. Bulk-Pakete ab 99 €.">
+<meta name="theme-color" content="#050505">
+<link rel="icon" type="image/svg+xml" href="https://smashtheapp.de/assets/logo-square.svg">
+<meta property="og:title" content="SMASH für Studios">
+<meta property="og:description" content="Habit-Ritual-App als Member-Benefit. Bulk-Pakete ab 99 €.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://smashuniverse.info/studios/">
+<!-- Plausible Analytics -->
+<script async src="https://plausible.io/js/pa-X579HtpTcr33_Mb01IvnR.js"></script>
+<script>
+  window.plausible=window.plausible||function(){(plausible.q=plausible.q||[]).push(arguments)},plausible.init=plausible.init||function(i){plausible.o=i||{}};
+  plausible.init()
+</script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+  :root{
+    --bg:#050505;--bg2:#0a0a0a;--surface:#111;--surface2:#1a1a1a;
+    --border:#222;--border2:#333;
+    --text:#f0f0f0;--text2:#888;--text3:#555;
+    --green1:#00ff6a;--green2:#00cc55;
+    --radius:14px;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100dvh;-webkit-font-smoothing:antialiased;line-height:1.6}
+  a{color:var(--green1);text-decoration:none}
+  a:hover{color:var(--green2)}
+  .page{max-width:980px;margin:0 auto;padding:32px 24px 80px}
+  .topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:48px;font-size:12px;color:var(--text2);font-weight:600;letter-spacing:1px;text-transform:uppercase}
+  .topbar a{color:var(--text2)}
+  .topbar a:hover{color:var(--green1)}
+  .lang-toggle{display:inline-flex;background:#0c0c0c;border:1px solid var(--border);border-radius:8px;overflow:hidden}
+  .lang-toggle button{background:transparent;border:0;color:var(--text2);font-size:11px;font-weight:700;letter-spacing:2px;padding:6px 11px;cursor:pointer;font-family:'Inter'}
+  .lang-toggle button.active{background:var(--green1);color:var(--bg)}
+
+  .hero{text-align:center;margin-bottom:64px}
+  .hero-eyebrow{font-size:11px;font-weight:800;letter-spacing:4px;color:var(--green1);text-transform:uppercase;margin-bottom:16px}
+  h1{font-size:54px;font-weight:900;letter-spacing:-1.5px;margin-bottom:18px;line-height:1.05}
+  .hero-sub{font-size:17px;color:var(--text2);max-width:620px;margin:0 auto;line-height:1.6}
+  @media(max-width:600px){h1{font-size:36px}.hero-sub{font-size:15px}}
+
+  section{margin-bottom:64px}
+  h2{font-size:28px;font-weight:900;letter-spacing:-.5px;margin-bottom:8px}
+  .section-eyebrow{font-size:11px;font-weight:800;letter-spacing:4px;color:var(--green1);text-transform:uppercase;margin-bottom:14px}
+  .section-lead{font-size:15px;color:var(--text2);max-width:680px;line-height:1.65;margin-bottom:32px}
+
+  /* Problem-Solution */
+  .ps-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:24px}
+  @media(max-width:780px){.ps-grid{grid-template-columns:1fr}}
+  .ps-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:28px}
+  .ps-box.problem{border-left:3px solid var(--text3)}
+  .ps-box.solution{border-left:3px solid var(--green1)}
+  .ps-label{font-size:10px;font-weight:800;letter-spacing:2.5px;text-transform:uppercase;margin-bottom:10px}
+  .ps-box.problem .ps-label{color:var(--text3)}
+  .ps-box.solution .ps-label{color:var(--green1)}
+  .ps-text{font-size:15px;color:var(--text);line-height:1.6}
+  .ps-text strong{color:var(--green1);font-weight:800}
+
+  /* How-it-works */
+  .how-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
+  .how-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:22px;position:relative}
+  .how-num{position:absolute;top:14px;right:18px;font-size:36px;font-weight:900;color:rgba(0,255,106,.12);letter-spacing:-2px}
+  .how-title{font-size:15px;font-weight:900;color:var(--text);margin-bottom:8px}
+  .how-desc{font-size:13px;color:var(--text2);line-height:1.55}
+
+  /* Pricing */
+  .pricing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:24px}
+  @media(max-width:780px){.pricing-grid{grid-template-columns:1fr}}
+  .pricing-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:28px 24px;position:relative;display:flex;flex-direction:column;transition:.2s}
+  .pricing-card:hover{transform:translateY(-3px);border-color:var(--green1);box-shadow:0 8px 32px rgba(0,255,106,.1)}
+  .pricing-card.featured{border:1px solid var(--green1);background:linear-gradient(180deg,var(--surface),rgba(0,255,106,.04))}
+  .pricing-card.featured::before{content:'BESTE WAHL';position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:var(--green1);color:var(--bg);padding:4px 14px;font-size:10px;font-weight:900;letter-spacing:2px;border-radius:100px}
+  .pricing-name{font-size:13px;font-weight:800;color:var(--green1);letter-spacing:2px;text-transform:uppercase;margin-bottom:8px}
+  .pricing-price{font-size:42px;font-weight:900;color:var(--text);letter-spacing:-1.5px;margin-bottom:4px}
+  .pricing-period{font-size:12px;color:var(--text2);margin-bottom:18px}
+  .pricing-features{list-style:none;padding:0;margin:0 0 24px;flex:1}
+  .pricing-features li{font-size:13px;color:var(--text);padding:6px 0;display:flex;align-items:flex-start;gap:8px;line-height:1.45}
+  .pricing-features li::before{content:'✓';color:var(--green1);font-weight:900;flex-shrink:0}
+  .pricing-cta{display:block;text-align:center;background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:12px 18px;border-radius:8px;font-weight:800;font-size:13px;letter-spacing:.5px;text-decoration:none;transition:.2s}
+  .pricing-card.featured .pricing-cta{background:linear-gradient(135deg,var(--green1),var(--green2));color:var(--bg)}
+  .pricing-cta:hover{transform:translateY(-1px)}
+
+  /* Why-us */
+  .why-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px}
+  .why-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:22px}
+  .why-icon{font-size:24px;margin-bottom:10px}
+  .why-title{font-size:14px;font-weight:900;color:var(--text);margin-bottom:6px}
+  .why-desc{font-size:12px;color:var(--text2);line-height:1.55}
+
+  /* Founder-Box */
+  .founder-box{background:linear-gradient(135deg,var(--surface),var(--bg2));border:1px solid var(--border);border-radius:var(--radius);padding:32px;display:flex;gap:20px;align-items:flex-start;margin-top:24px}
+  @media(max-width:600px){.founder-box{flex-direction:column}}
+  .founder-avatar{flex-shrink:0;width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,var(--green1),var(--green2));color:var(--bg);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:26px}
+  .founder-text{font-size:14px;color:var(--text);line-height:1.7}
+  .founder-text strong{color:var(--green1)}
+  .founder-name{font-size:11px;color:var(--text2);font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin-top:14px}
+
+  /* Final CTA */
+  .final-cta{background:linear-gradient(180deg,rgba(0,255,106,.08),rgba(0,255,106,.02));border:1px solid rgba(0,255,106,.3);border-radius:var(--radius);padding:48px 32px;text-align:center}
+  .final-cta-title{font-size:32px;font-weight:900;letter-spacing:-.8px;margin-bottom:14px}
+  .final-cta-sub{font-size:15px;color:var(--text2);max-width:480px;margin:0 auto 28px;line-height:1.6}
+  .final-cta-btn{display:inline-block;background:linear-gradient(135deg,var(--green1),var(--green2));color:var(--bg);padding:16px 36px;border-radius:100px;font-weight:900;font-size:15px;letter-spacing:.5px;text-decoration:none;transition:.2s}
+  .final-cta-btn:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(0,255,106,.3);color:var(--bg)}
+  .final-cta-note{font-size:12px;color:var(--text3);margin-top:18px}
+
+  [data-lang]{display:none}
+  [data-lang].active{display:block}
+  span[data-lang].active{display:inline}
+  li[data-lang].active{display:flex}
+  html:not(.lang-ready) [data-lang="de"]{display:block}
+  html:not(.lang-ready) li[data-lang="de"]{display:flex}
+  html:not(.lang-ready) span[data-lang="de"]{display:inline}
+  html:not(.lang-ready) [data-lang="en"]{display:none}
+
+  .footer{margin-top:64px;padding-top:24px;border-top:1px solid var(--border);text-align:center;font-size:11px;color:var(--text3);letter-spacing:1.5px;text-transform:uppercase}
+  .footer a{color:var(--text3)}
+  .footer a:hover{color:var(--green1)}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="topbar">
+    <a href="../">← <span data-lang="de">Zurück zum Hub</span><span data-lang="en">Back to Hub</span></a>
+    <div class="lang-toggle">
+      <button data-set-lang="de" class="active">DE</button>
+      <button data-set-lang="en">EN</button>
+    </div>
+  </div>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-eyebrow" data-lang="de">Für Studios &middot; Coaches &middot; Trainer</div>
+    <div class="hero-eyebrow" data-lang="en">For studios &middot; coaches &middot; trainers</div>
+    <h1 data-lang="de">Premium-Service für deine Members<br><span style="color:var(--green1)">ohne eigenen App-Build.</span></h1>
+    <h1 data-lang="en">Premium service for your members<br><span style="color:var(--green1)">without building your own app.</span></h1>
+    <p class="hero-sub" data-lang="de">SMASH ist die Habit-Ritual-App für 16-30. Bulk-Codes ab 99&nbsp;€. Du gibst Codes raus, deine Members bekommen 30&nbsp;Tage Pro gratis.</p>
+    <p class="hero-sub" data-lang="en">SMASH is the habit ritual app for 16-30. Bulk codes from €99. You hand out codes, your members get 30 days Pro for free.</p>
+  </div>
+
+  <!-- PROBLEM / SOLUTION -->
+  <section>
+    <div class="section-eyebrow" data-lang="de">01 &middot; Das Problem</div>
+    <div class="section-eyebrow" data-lang="en">01 &middot; The problem</div>
+    <h2 data-lang="de">Deine Members trainieren 1-2&times; pro Woche.</h2>
+    <h2 data-lang="en">Your members train 1-2&times; per week.</h2>
+    <p class="section-lead" data-lang="de">Was passiert die anderen 5 Tage? Fast nichts. Das ist der Spalt zwischen Investment und Identität.</p>
+    <p class="section-lead" data-lang="en">What happens the other 5 days? Almost nothing. That's the gap between investment and identity.</p>
+
+    <div class="ps-grid">
+      <div class="ps-box problem">
+        <div class="ps-label" data-lang="de">Status Quo</div>
+        <div class="ps-label" data-lang="en">Status quo</div>
+        <div class="ps-text" data-lang="de">Member trainiert Mo + Mi. <strong style="color:var(--text3)">Donnerstag bis Sonntag = leer.</strong> Identität als „Discipline-Person" muss sich allein gegen Algorithm + Bequemlichkeit halten.</div>
+        <div class="ps-text" data-lang="en">Member trains Mon + Wed. <strong style="color:var(--text3)">Thursday through Sunday = empty.</strong> Identity as „discipline person" has to fight algorithm + comfort alone.</div>
+      </div>
+      <div class="ps-box solution">
+        <div class="ps-label" data-lang="de">Mit SMASH</div>
+        <div class="ps-label" data-lang="en">With SMASH</div>
+        <div class="ps-text" data-lang="de">Daily Habit-Ritual: Morning-Reflexion, 5 Habits, Streak, Evening-Wins. <strong>SMASH macht aus 2&times;/Woche-Studio ein 7&times;/Woche-Identitäts-Tool.</strong></div>
+        <div class="ps-text" data-lang="en">Daily habit ritual: morning reflection, 5 habits, streaks, evening wins. <strong>SMASH turns a 2&times;/week studio into a 7&times;/week identity tool.</strong></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section>
+    <div class="section-eyebrow" data-lang="de">02 &middot; So läuft's</div>
+    <div class="section-eyebrow" data-lang="en">02 &middot; How it works</div>
+    <h2 data-lang="de">In 4 Schritten zum Member-Benefit.</h2>
+    <h2 data-lang="en">Member benefit in 4 steps.</h2>
+
+    <div class="how-grid" style="margin-top:24px">
+      <div class="how-card">
+        <div class="how-num">01</div>
+        <div class="how-title" data-lang="de">Du kaufst Codes</div>
+        <div class="how-title" data-lang="en">You buy codes</div>
+        <div class="how-desc" data-lang="de">Wähle ein Paket. Codes kommen per Mail.</div>
+        <div class="how-desc" data-lang="en">Pick a pack. Codes arrive via email.</div>
+      </div>
+      <div class="how-card">
+        <div class="how-num">02</div>
+        <div class="how-title" data-lang="de">Members bekommen sie</div>
+        <div class="how-title" data-lang="en">Members get them</div>
+        <div class="how-desc" data-lang="de">Per Mail, im Studio, in Welcome-Pack — wie du willst.</div>
+        <div class="how-desc" data-lang="en">Via email, in-studio, in welcome packs — your call.</div>
+      </div>
+      <div class="how-card">
+        <div class="how-num">03</div>
+        <div class="how-title" data-lang="de">Sie installieren SMASH</div>
+        <div class="how-title" data-lang="en">They install SMASH</div>
+        <div class="how-desc" data-lang="de">Web-App, kein App-Store nötig. smashtheapp.de</div>
+        <div class="how-desc" data-lang="en">Web app, no app store needed. smashtheapp.de</div>
+      </div>
+      <div class="how-card">
+        <div class="how-num">04</div>
+        <div class="how-title" data-lang="de">Code in Settings einlösen</div>
+        <div class="how-title" data-lang="en">Redeem in settings</div>
+        <div class="how-desc" data-lang="de">30 Tage Pro automatisch aktiv. Kein weiterer Aufwand.</div>
+        <div class="how-desc" data-lang="en">30 days Pro automatically active. No further effort.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRICING -->
+  <section id="pricing">
+    <div class="section-eyebrow" data-lang="de">03 &middot; Pakete</div>
+    <div class="section-eyebrow" data-lang="en">03 &middot; Packs</div>
+    <h2 data-lang="de">Fairer Bulk-Preis. Keine Versteckten Kosten.</h2>
+    <h2 data-lang="en">Fair bulk pricing. No hidden costs.</h2>
+    <p class="section-lead" data-lang="de">Standalone-Pro: 4,99&nbsp;€/Monat. Im Bulk schon ab 2,99&nbsp;€/Code &mdash; deine Members bekommen Premium-Eindruck zum Bruchteil.</p>
+    <p class="section-lead" data-lang="en">Standalone Pro: €4.99/month. In bulk from €2.99/code &mdash; your members get premium impression at a fraction.</p>
+
+    <div class="pricing-grid">
+      <div class="pricing-card">
+        <div class="pricing-name">Starter</div>
+        <div class="pricing-price">99 €</div>
+        <div class="pricing-period" data-lang="de">25 Codes &middot; je 30 Tage Pro</div>
+        <div class="pricing-period" data-lang="en">25 codes &middot; 30 days Pro each</div>
+        <ul class="pricing-features">
+          <li data-lang="de" class="active">3,96 € pro Code</li>
+          <li data-lang="en">€3.96 per code</li>
+          <li data-lang="de" class="active">Test-Pack zum Loslegen</li>
+          <li data-lang="en">Test pack to get started</li>
+          <li data-lang="de" class="active">Codes per Mail in 24h</li>
+          <li data-lang="en">Codes via email within 24h</li>
+          <li data-lang="de" class="active">Persönlicher Founder-Support</li>
+          <li data-lang="en">Personal founder support</li>
+        </ul>
+        <a href="mailto:partner@smashuniverse.info?subject=SMASH%20Starter%20Pack%20-%2099€" class="pricing-cta">
+          <span data-lang="de">Starter buchen</span>
+          <span data-lang="en">Book Starter</span>
+        </a>
+      </div>
+
+      <div class="pricing-card featured">
+        <div class="pricing-name">Wachstum</div>
+        <div class="pricing-price">299 €</div>
+        <div class="pricing-period" data-lang="de">100 Codes &middot; je 30 Tage Pro</div>
+        <div class="pricing-period" data-lang="en">100 codes &middot; 30 days Pro each</div>
+        <ul class="pricing-features">
+          <li data-lang="de" class="active">2,99 € pro Code (40% Rabatt)</li>
+          <li data-lang="en">€2.99 per code (40% off)</li>
+          <li data-lang="de" class="active">Reicht für 100 Members</li>
+          <li data-lang="en">Enough for 100 members</li>
+          <li data-lang="de" class="active">Codes per Mail in 24h</li>
+          <li data-lang="en">Codes via email within 24h</li>
+          <li data-lang="de" class="active">Studio-Logo auf smashtheapp.de</li>
+          <li data-lang="en">Studio logo on smashtheapp.de</li>
+          <li data-lang="de" class="active">Founder-Story-Mention</li>
+          <li data-lang="en">Founder story mention</li>
+        </ul>
+        <a href="mailto:partner@smashuniverse.info?subject=SMASH%20Wachstum%20Pack%20-%20299€" class="pricing-cta">
+          <span data-lang="de">Wachstum buchen</span>
+          <span data-lang="en">Book Growth</span>
+        </a>
+      </div>
+
+      <div class="pricing-card">
+        <div class="pricing-name">Custom</div>
+        <div class="pricing-price">1.999 €</div>
+        <div class="pricing-period" data-lang="de">100 Codes &middot; je 1 Jahr Pro</div>
+        <div class="pricing-period" data-lang="en">100 codes &middot; 1 year Pro each</div>
+        <ul class="pricing-features">
+          <li data-lang="de" class="active">19,99 € pro Code (1 Jahr)</li>
+          <li data-lang="en">€19.99 per code (1 year)</li>
+          <li data-lang="de" class="active">Year-Round Member-Benefit</li>
+          <li data-lang="en">Year-round member benefit</li>
+          <li data-lang="de" class="active">Studio-Logo auf smashtheapp.de</li>
+          <li data-lang="en">Studio logo on smashtheapp.de</li>
+          <li data-lang="de" class="active">Custom Welcome-Mail-Branding</li>
+          <li data-lang="en">Custom welcome mail branding</li>
+          <li data-lang="de" class="active">Direct-Channel zu Sebi</li>
+          <li data-lang="en">Direct channel to Sebi</li>
+        </ul>
+        <a href="mailto:partner@smashuniverse.info?subject=SMASH%20Custom%20Pack%20-%201999€" class="pricing-cta">
+          <span data-lang="de">Custom anfragen</span>
+          <span data-lang="en">Inquire Custom</span>
+        </a>
+      </div>
+    </div>
+
+    <p style="text-align:center;margin-top:18px;font-size:12px;color:var(--text3)" data-lang="de">Kleinunternehmer §19 UStG &middot; Rechnung mit IBAN &middot; Codes in 24h</p>
+    <p style="text-align:center;margin-top:18px;font-size:12px;color:var(--text3)" data-lang="en">Small business §19 UStG &middot; invoice with IBAN &middot; codes within 24h</p>
+  </section>
+
+  <!-- WHY US -->
+  <section>
+    <div class="section-eyebrow" data-lang="de">04 &middot; Warum SMASH</div>
+    <div class="section-eyebrow" data-lang="en">04 &middot; Why SMASH</div>
+    <h2 data-lang="de">Was deine Members daraus machen.</h2>
+    <h2 data-lang="en">What members get out of it.</h2>
+
+    <div class="why-grid" style="margin-top:24px">
+      <div class="why-card">
+        <div class="why-icon">⚡</div>
+        <div class="why-title" data-lang="de">Daily Habit-Ritual</div>
+        <div class="why-title" data-lang="en">Daily habit ritual</div>
+        <div class="why-desc" data-lang="de">Morning Check-In, 5-20 Habits, Streak-System. Identität durch Wiederholung.</div>
+        <div class="why-desc" data-lang="en">Morning check-in, 5-20 habits, streak system. Identity through repetition.</div>
+      </div>
+      <div class="why-card">
+        <div class="why-icon">🥗</div>
+        <div class="why-title" data-lang="de">Nutrition + Body</div>
+        <div class="why-title" data-lang="en">Nutrition + body</div>
+        <div class="why-desc" data-lang="de">TDEE-Calculator, Calorie-Ring, Workout-Logger, Body-Trends. Gymky-Level integriert.</div>
+        <div class="why-desc" data-lang="en">TDEE calculator, calorie ring, workout logger, body trends. Gym-level integrated.</div>
+      </div>
+      <div class="why-card">
+        <div class="why-icon">🤝</div>
+        <div class="why-title" data-lang="de">Smashbros + Challenges</div>
+        <div class="why-title" data-lang="en">Smashbros + challenges</div>
+        <div class="why-desc" data-lang="de">Buddies adden, gemeinsame Challenges, Accountability ohne Social-Media-Druck.</div>
+        <div class="why-desc" data-lang="en">Add buddies, shared challenges, accountability without social media pressure.</div>
+      </div>
+      <div class="why-card">
+        <div class="why-icon">📊</div>
+        <div class="why-title" data-lang="de">Smart Insights</div>
+        <div class="why-title" data-lang="en">Smart insights</div>
+        <div class="why-desc" data-lang="de">Mood-Habit-Korrelationen, Wochen-Reviews, monatlicher SMASH-Wrapped-Recap.</div>
+        <div class="why-desc" data-lang="en">Mood-habit correlations, weekly reviews, monthly SMASH wrapped recap.</div>
+      </div>
+      <div class="why-card">
+        <div class="why-icon">💪</div>
+        <div class="why-title" data-lang="de">Hulk-Voice</div>
+        <div class="why-title" data-lang="en">Hulk voice</div>
+        <div class="why-desc" data-lang="de">Direkte Sprache, kraftvolle Statements. „Mach hin." statt Corporate-Floskeln.</div>
+        <div class="why-desc" data-lang="en">Direct language, powerful statements. „Get going." instead of corporate fluff.</div>
+      </div>
+      <div class="why-card">
+        <div class="why-icon">🇩🇪</div>
+        <div class="why-title" data-lang="de">DACH-First</div>
+        <div class="why-title" data-lang="en">DACH first</div>
+        <div class="why-desc" data-lang="de">Deutsch native, EU-Server, DSGVO-clean, kein US-Megachurch-Schmalz.</div>
+        <div class="why-desc" data-lang="en">German native, EU servers, GDPR-clean, no US megachurch fluff.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOUNDER -->
+  <section>
+    <div class="section-eyebrow" data-lang="de">05 &middot; Hinter SMASH</div>
+    <div class="section-eyebrow" data-lang="en">05 &middot; Behind SMASH</div>
+
+    <div class="founder-box">
+      <div class="founder-avatar">S</div>
+      <div>
+        <div class="founder-text" data-lang="de">
+          <strong>Hey, ich bin Sebi.</strong> Solo-Founder von SMASH, baue die App seit Anfang 2026. Ich nutze sie selbst jeden Tag &mdash; das ist kein Marketing-Tool von einer Agentur.
+          <br><br>
+          Wenn du als Studio mitmachst, redest du <strong>direkt mit mir</strong>. Keine Sales-Person, kein Account-Manager. Du schreibst <a href="mailto:partner@smashuniverse.info">partner@smashuniverse.info</a>, ich antworte. Schwere Probleme: Voice-Memo. Standard: 24h.
+          <br><br>
+          Ich bin auf 5 Pilot-Studios in DACH bis Mai aus. Wer früh dabei ist, prägt mit, wie SMASH für Studios aussieht.
+        </div>
+        <div class="founder-text" data-lang="en">
+          <strong>Hey, I'm Sebi.</strong> Solo founder of SMASH, building it since early 2026. I use it myself every day &mdash; this isn't an agency-built marketing tool.
+          <br><br>
+          If you join as a studio, you talk <strong>directly to me</strong>. No sales person, no account manager. You write <a href="mailto:partner@smashuniverse.info">partner@smashuniverse.info</a>, I reply. Hard problems: voice memo. Standard: 24h.
+          <br><br>
+          I'm aiming for 5 pilot studios in DACH by May. Early partners shape what SMASH for studios looks like.
+        </div>
+        <div class="founder-name">Sebastian Wimmer &middot; @vegetarianhulk</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FINAL CTA -->
+  <section>
+    <div class="final-cta">
+      <div class="final-cta-title" data-lang="de">Bereit für SMASH im Studio?</div>
+      <div class="final-cta-title" data-lang="en">Ready for SMASH in the studio?</div>
+      <div class="final-cta-sub" data-lang="de">Schreib mir kurz. 5 Demo-Codes als Eigentest gehen sofort raus &mdash; null Verpflichtung.</div>
+      <div class="final-cta-sub" data-lang="en">Drop me a line. 5 demo codes for self-test go out instantly &mdash; zero commitment.</div>
+      <a href="mailto:partner@smashuniverse.info?subject=SMASH%20für%20Studios%20-%205%20Demo-Codes" class="final-cta-btn">
+        <span data-lang="de">5 Demo-Codes anfordern</span>
+        <span data-lang="en">Request 5 demo codes</span>
+      </a>
+      <div class="final-cta-note">partner@smashuniverse.info &middot; Sebi antwortet meistens unter 24h</div>
+    </div>
+  </section>
+
+  <div class="footer">
+    SMASH UNIVERSE &copy; 2026 &middot; <a href="../">smashuniverse.info</a> &middot; <a href="../press/">Press</a> &middot; <a href="../privacy/">Privacy</a> &middot; <a href="../manifest/">Manifest</a>
+  </div>
+</div>
+
+<script>
+  const langButtons=document.querySelectorAll('[data-set-lang]');
+  function setLang(lang){
+    langButtons.forEach(b=>b.classList.toggle('active',b.getAttribute('data-set-lang')===lang));
+    document.querySelectorAll('[data-lang]').forEach(el=>el.classList.toggle('active',el.getAttribute('data-lang')===lang));
+    document.documentElement.setAttribute('lang',lang);
+    try{localStorage.setItem('smash_universe_lang',lang)}catch(e){}
+  }
+  langButtons.forEach(b=>b.addEventListener('click',()=>setLang(b.getAttribute('data-set-lang'))));
+  const urlLang=new URLSearchParams(location.search).get('lang');
+  const savedLang=(()=>{try{return localStorage.getItem('smash_universe_lang')}catch(e){return null}})();
+  const browserLang=(navigator.language||'de').toLowerCase().startsWith('en')?'en':'de';
+  setLang(urlLang||savedLang||browserLang);
+  document.documentElement.classList.add('lang-ready');
+</script>
+</body>
+</html>
