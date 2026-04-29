@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SMASH Family — Habit Rituals for the Whole Family</title>
+<meta name="description" content="SMASH Family — die nächste App im SMASH Universe. Habit-Rituale für Eltern + Kids. Coming 2027.">
+<meta name="theme-color" content="#050505">
+<meta property="og:title" content="SMASH Family — Coming 2027">
+<meta property="og:description" content="Habit Rituals for the Whole Family. Built solo. Honest. Hulk mode on.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://smashuniverse.info/family/">
+<meta property="og:image" content="https://smashtheapp.de/assets/social-card.svg">
+<link rel="icon" type="image/svg+xml" href="https://smashtheapp.de/assets/logo-square.svg">
+<script async src="https://plausible.io/js/pa-X579HtpTcr33_Mb01IvnR.js"></script>
+<script>
+  window.plausible=window.plausible||function(){(plausible.q=plausible.q||[]).push(arguments)},plausible.init=plausible.init||function(i){plausible.o=i||{}};
+  plausible.init()
+</script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+  :root{--bg:#050505;--bg2:#0a0a0a;--surface:#111;--border:#222;--border2:#333;--text:#f0f0f0;--text2:#888;--text3:#555;--green1:#00ff6a;--green2:#00cc55;--family-warm:#ffb800}
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100dvh;-webkit-font-smoothing:antialiased;line-height:1.55;overflow-x:hidden}
+  a{color:var(--green1);text-decoration:none;transition:color .15s}
+  a:hover{color:var(--green2)}
+  .container{max-width:920px;margin:0 auto;padding:0 24px}
+
+  /* Top */
+  .topbar{display:flex;justify-content:space-between;align-items:center;padding:18px 0;font-size:11px;color:var(--text2);font-weight:600;letter-spacing:1px;text-transform:uppercase;border-bottom:1px solid var(--border)}
+  .topbar a{color:var(--text2)}
+  .topbar a:hover{color:var(--green1)}
+  .lang-toggle{display:inline-flex;background:#0c0c0c;border:1px solid var(--border);border-radius:8px;overflow:hidden}
+  .lang-toggle button{background:transparent;border:0;color:var(--text2);font-size:11px;font-weight:700;letter-spacing:2px;padding:6px 11px;cursor:pointer;font-family:'Inter'}
+  .lang-toggle button.active{background:var(--green1);color:var(--bg)}
+
+  /* Hero */
+  .hero{padding:72px 0 64px;text-align:center;position:relative;overflow:hidden}
+  .hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at center,rgba(0,255,106,.08) 0%,transparent 60%);pointer-events:none}
+  .hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(255,184,0,.1);border:1px solid rgba(255,184,0,.3);color:var(--family-warm);padding:8px 18px;border-radius:100px;font-size:11px;font-weight:800;letter-spacing:3px;text-transform:uppercase;margin-bottom:32px;position:relative}
+  .hero-badge .pulse{width:8px;height:8px;border-radius:50%;background:var(--family-warm);animation:pulseDot 2s ease-in-out infinite}
+  @keyframes pulseDot{0%,100%{opacity:.5;transform:scale(1)}50%{opacity:1;transform:scale(1.3)}}
+  .hero-mark{width:96px;height:96px;margin:0 auto 28px;background:var(--bg);border:1px solid var(--border);border-radius:22px;display:flex;align-items:center;justify-content:center;position:relative;box-shadow:0 0 80px rgba(0,255,106,.12)}
+  .hero-mark .s{font-size:64px;font-weight:900;color:var(--green1);line-height:1;letter-spacing:-3px}
+  .hero-wordmark{font-size:64px;font-weight:900;letter-spacing:6px;background:linear-gradient(135deg,var(--green1),var(--green2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1;position:relative}
+  .hero-family{font-size:14px;font-weight:800;letter-spacing:10px;color:var(--text2);text-transform:uppercase;margin-top:8px;position:relative}
+  .hero-tagline{font-size:24px;font-weight:700;color:var(--text);margin:36px auto 0;max-width:640px;line-height:1.3;position:relative;letter-spacing:-.3px}
+  .hero-tagline strong{background:linear-gradient(135deg,var(--green1),var(--green2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+  .hero-sub{font-size:15px;color:var(--text2);margin:20px auto 0;max-width:540px;line-height:1.65;position:relative}
+  @media (max-width:560px){.hero-wordmark{font-size:44px;letter-spacing:4px}.hero-tagline{font-size:18px}.hero{padding:48px 0 48px}}
+
+  /* Section */
+  section{padding:64px 0}
+  section.alt{background:linear-gradient(180deg,var(--bg) 0%,var(--bg2) 50%,var(--bg) 100%)}
+  .eyebrow{font-size:11px;font-weight:800;letter-spacing:4px;color:var(--green1);text-transform:uppercase;margin-bottom:10px}
+  .stitle{font-size:28px;font-weight:900;margin-bottom:14px;letter-spacing:-.6px}
+  .slead{font-size:16px;color:var(--text);font-weight:500;line-height:1.65;max-width:640px;margin-bottom:32px}
+  .slead strong{color:var(--green1)}
+
+  /* Feature-Cards */
+  .features{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px}
+  .feat{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:22px;transition:.2s}
+  .feat:hover{border-color:var(--green1);transform:translateY(-2px)}
+  .feat-icon{font-size:30px;margin-bottom:12px;display:block}
+  .feat-title{font-size:16px;font-weight:900;color:var(--text);margin-bottom:6px;letter-spacing:-.2px}
+  .feat-desc{font-size:13px;color:var(--text2);line-height:1.6}
+
+  /* Waitlist */
+  .waitlist{background:linear-gradient(180deg,var(--surface),var(--bg2));border:1px solid rgba(255,184,0,.3);border-radius:18px;padding:40px 32px;text-align:center;position:relative;overflow:hidden}
+  .waitlist::before{content:'';position:absolute;top:0;right:0;width:200px;height:200px;background:radial-gradient(circle,rgba(255,184,0,.1) 0%,transparent 70%);pointer-events:none}
+  .waitlist-eyebrow{font-size:11px;font-weight:800;color:var(--family-warm);letter-spacing:4px;text-transform:uppercase;margin-bottom:14px;position:relative}
+  .waitlist-title{font-size:24px;font-weight:900;color:var(--text);margin-bottom:12px;letter-spacing:-.4px;position:relative}
+  .waitlist-text{font-size:14px;color:var(--text2);max-width:480px;margin:0 auto 28px;line-height:1.65;position:relative}
+  .waitlist-cta{display:inline-flex;align-items:center;gap:10px;background:linear-gradient(135deg,var(--green1),var(--green2));color:var(--bg);padding:16px 32px;border-radius:100px;font-weight:900;font-size:14px;letter-spacing:1.5px;text-transform:uppercase;border:none;cursor:pointer;position:relative;transition:transform .15s,box-shadow .25s;box-shadow:0 4px 28px rgba(0,255,106,.3)}
+  .waitlist-cta:hover{transform:translateY(-1px);box-shadow:0 6px 36px rgba(0,255,106,.45)}
+
+  /* Roadmap */
+  .roadmap{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
+  .rm-step{background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--text3);border-radius:10px;padding:18px}
+  .rm-step.active{border-left-color:var(--green1);background:linear-gradient(135deg,var(--surface),#0d1f12)}
+  .rm-when{font-size:10px;font-weight:800;color:var(--text3);text-transform:uppercase;letter-spacing:2px;margin-bottom:6px}
+  .rm-step.active .rm-when{color:var(--green1)}
+  .rm-title{font-size:15px;font-weight:900;color:var(--text);margin-bottom:4px}
+  .rm-desc{font-size:12px;color:var(--text2);line-height:1.55}
+
+  /* Footer */
+  .footer{padding:36px 0 28px;border-top:1px solid var(--border);text-align:center;font-size:11px;color:var(--text3);letter-spacing:1.5px}
+  .footer a{color:var(--text2);margin:0 10px}
+  .footer a:hover{color:var(--green1)}
+
+  /* Bilingual */
+  [data-lang]{display:none}
+  [data-lang].active{display:block}
+  span[data-lang].active{display:inline}
+  html:not(.lang-ready) [data-lang="de"]{display:block}
+  html:not(.lang-ready) span[data-lang="de"]{display:inline}
+  html:not(.lang-ready) [data-lang="en"]{display:none}
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="topbar">
+    <a href="../">← <span data-lang="de">Universe</span><span data-lang="en">Universe</span></a>
+    <div class="lang-toggle">
+      <button data-set-lang="de" class="active">DE</button>
+      <button data-set-lang="en">EN</button>
+    </div>
+  </div>
+</div>
+
+<!-- Hero -->
+<header class="hero">
+  <div class="container">
+    <div class="hero-badge">
+      <span class="pulse"></span>
+      <span data-lang="de">Coming 2027 · Phase 3</span>
+      <span data-lang="en">Coming 2027 · Phase 3</span>
+    </div>
+    <div class="hero-mark"><div class="s">S</div></div>
+    <div class="hero-wordmark">SMASH</div>
+    <div class="hero-family">FAMILY</div>
+    <h1 class="hero-tagline" data-lang="de">
+      Habit-Rituale für <strong>die ganze Familie.</strong>
+    </h1>
+    <h1 class="hero-tagline" data-lang="en">
+      Habit rituals for <strong>the whole family.</strong>
+    </h1>
+    <p class="hero-sub" data-lang="de">
+      Eltern modellieren, Kids ahmen nach. Identität entsteht durch Wiederholung — und durch das, was am Esstisch normal ist. SMASH Family bringt das in eine App.
+    </p>
+    <p class="hero-sub" data-lang="en">
+      Parents model, kids mirror. Identity is built through repetition — and through what's normal at the dinner table. SMASH Family puts that in one app.
+    </p>
+  </div>
+</header>
+
+<!-- Features Preview -->
+<section id="features" class="alt">
+  <div class="container">
+    <div class="eyebrow">01 · <span data-lang="de">Was kommt</span><span data-lang="en">What's coming</span></div>
+    <h2 class="stitle" data-lang="de">3 Säulen</h2>
+    <h2 class="stitle" data-lang="en">3 pillars</h2>
+    <p class="slead" data-lang="de">
+      Eltern-Self-Care, Kid-Habit-Building und Family-Rituale — in einer App, ohne Logistik-Overhead.
+    </p>
+    <p class="slead" data-lang="en">
+      Parent self-care, kid habit-building, and family rituals — in one app, without logistics overhead.
+    </p>
+
+    <div class="features">
+      <div class="feat">
+        <span class="feat-icon">💪</span>
+        <div class="feat-title" data-lang="de">Eltern-Self-Care</div>
+        <div class="feat-title" data-lang="en">Parent self-care</div>
+        <div class="feat-desc" data-lang="de">SMASH-Hauptprodukt-Habits + Co-Parent-Sync. Mental-Load wird sichtbar, beide Eltern haben dieselbe Sicht.</div>
+        <div class="feat-desc" data-lang="en">SMASH core habits + co-parent sync. Mental load becomes visible, both parents share one view.</div>
+      </div>
+      <div class="feat">
+        <span class="feat-icon">🌱</span>
+        <div class="feat-title" data-lang="de">Kid-Habit-Building</div>
+        <div class="feat-title" data-lang="en">Kid habit-building</div>
+        <div class="feat-desc" data-lang="de">3-5 vereinfachte Habits pro Kind, Sticker statt Punkte, Identity-Phrasen kindgerecht („Du bist mutig"). Kein Vergleich zu anderen Kids.</div>
+        <div class="feat-desc" data-lang="en">3-5 simplified habits per kid, stickers instead of points, kid-friendly identity phrases ("You are brave"). No comparison to other kids.</div>
+      </div>
+      <div class="feat">
+        <span class="feat-icon">🍽</span>
+        <div class="feat-title" data-lang="de">Family-Rituale</div>
+        <div class="feat-title" data-lang="en">Family rituals</div>
+        <div class="feat-desc" data-lang="de">Morning Family Check-In, Sunday Family Reflection, geteilte Family-Streaks, optional Family-Vers oder Wert des Tages am Esstisch.</div>
+        <div class="feat-desc" data-lang="en">Morning Family Check-In, Sunday Family Reflection, shared family streaks, optional Family Verse or Value-of-the-Day at the table.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Roadmap -->
+<section>
+  <div class="container">
+    <div class="eyebrow">02 · <span data-lang="de">Wo wir stehen</span><span data-lang="en">Where we are</span></div>
+    <h2 class="stitle" data-lang="de">Family-Roadmap</h2>
+    <h2 class="stitle" data-lang="en">Family roadmap</h2>
+    <p class="slead" data-lang="de">
+      Family-App kommt nach SMASH-Hauptprodukt-Stabilisierung. Konzept steht, Build kommt 2026/2027.
+    </p>
+    <p class="slead" data-lang="en">
+      Family app comes after SMASH core product stabilization. Concept is set, build starts 2026/2027.
+    </p>
+
+    <div class="roadmap">
+      <div class="rm-step active">
+        <div class="rm-when" data-lang="de">2026 · jetzt</div>
+        <div class="rm-when" data-lang="en">2026 · now</div>
+        <div class="rm-title" data-lang="de">Konzept &amp; Strategie</div>
+        <div class="rm-title" data-lang="en">Concept &amp; strategy</div>
+        <div class="rm-desc" data-lang="de">Feature-Set definiert, Markt-Analyse durch, Tech-Architektur entschieden. SMASH-Hauptprodukt im Beta.</div>
+        <div class="rm-desc" data-lang="en">Feature set defined, market analysis done, tech architecture decided. SMASH core in beta.</div>
+      </div>
+      <div class="rm-step">
+        <div class="rm-when">2026 · Q4</div>
+        <div class="rm-title" data-lang="de">Family-Mode in SMASH</div>
+        <div class="rm-title" data-lang="en">Family mode in SMASH</div>
+        <div class="rm-desc" data-lang="de">Premium-Feature im Hauptprodukt: erste Familien testen Family-Rituale ohne Standalone-App.</div>
+        <div class="rm-desc" data-lang="en">Premium feature in main product: first families test family rituals without standalone app.</div>
+      </div>
+      <div class="rm-step">
+        <div class="rm-when">2027 · Q1-Q2</div>
+        <div class="rm-title" data-lang="de">Beta &amp; Hires</div>
+        <div class="rm-title" data-lang="en">Beta &amp; hires</div>
+        <div class="rm-desc" data-lang="de">20-50 Familien-Beta in DACH. Erste Hires (Designer, Backend) wenn SMASH Hauptprodukt MRR &gt; 5k €.</div>
+        <div class="rm-desc" data-lang="en">20-50 family beta in DACH. First hires (designer, backend) when SMASH main product MRR &gt; €5k.</div>
+      </div>
+      <div class="rm-step">
+        <div class="rm-when">2027 · Q3-Q4</div>
+        <div class="rm-title" data-lang="de">Public Launch</div>
+        <div class="rm-title" data-lang="en">Public launch</div>
+        <div class="rm-desc" data-lang="de">SMASH Family als Standalone-App auf eigener Domain. Cross-Promo aus Hauptprodukt.</div>
+        <div class="rm-desc" data-lang="en">SMASH Family as standalone app on own domain. Cross-promo from main product.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Waitlist -->
+<section class="alt">
+  <div class="container">
+    <div class="waitlist">
+      <div class="waitlist-eyebrow">⏰ Waitlist</div>
+      <h2 class="waitlist-title" data-lang="de">Werd Teil der ersten 50 Familien</h2>
+      <h2 class="waitlist-title" data-lang="en">Be one of the first 50 families</h2>
+      <p class="waitlist-text" data-lang="de">
+        Wenn du Eltern bist und Bock hast SMASH Family zu testen — schick uns eine kurze Mail. Wir melden uns sobald Beta startet (~Q1 2027). Keine Marketing-Mails, kein Spam, nur 1 Mail wenn's losgeht.
+      </p>
+      <p class="waitlist-text" data-lang="en">
+        If you're a parent and want to test SMASH Family — send us a short mail. We'll reach out when beta starts (~Q1 2027). No marketing mails, no spam, just one mail when it begins.
+      </p>
+      <a href="mailto:hello@smashuniverse.info?subject=SMASH%20Family%20Waitlist&amp;body=Hi%20Sebi%2C%0A%0Aich%20w%C3%BCrde%20gerne%20auf%20die%20SMASH%20Family%20Waitlist.%0A%0AAlter%20der%20Kinder%3A%20%0AFamilien-Konstellation%3A%20%0ABesonderer%20Use-Case%3A%0A%0ADanke!%0A" class="waitlist-cta">
+        <span data-lang="de">✉ Auf die Waitlist →</span>
+        <span data-lang="en">✉ Join the waitlist →</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer class="footer">
+  <div class="container">
+    <a href="../">SMASH Universe Hub</a> ·
+    <a href="https://smashtheapp.de" target="_blank">SMASH App</a> ·
+    <a href="../press/">Press Kit</a> ·
+    <a href="mailto:hello@smashuniverse.info">Contact</a>
+    <div style="margin-top:14px">SMASH UNIVERSE © 2026 · <span data-lang="de">Phase 3 in Vorbereitung</span><span data-lang="en">Phase 3 in preparation</span></div>
+  </div>
+</footer>
+
+<script>
+  const langButtons=document.querySelectorAll('[data-set-lang]');
+  function setLang(lang){
+    langButtons.forEach(b=>b.classList.toggle('active',b.getAttribute('data-set-lang')===lang));
+    document.querySelectorAll('[data-lang]').forEach(el=>el.classList.toggle('active',el.getAttribute('data-lang')===lang));
+    document.documentElement.setAttribute('lang',lang);
+    try{localStorage.setItem('smash_universe_lang',lang)}catch(e){}
+  }
+  langButtons.forEach(b=>b.addEventListener('click',()=>setLang(b.getAttribute('data-set-lang'))));
+  const urlLang=new URLSearchParams(location.search).get('lang');
+  const savedLang=(()=>{try{return localStorage.getItem('smash_universe_lang')}catch(e){return null}})();
+  const browserLang=(navigator.language||'de').toLowerCase().startsWith('en')?'en':'de';
+  setLang(urlLang||savedLang||browserLang);
+  document.documentElement.classList.add('lang-ready');
+</script>
+</body>
+</html>
