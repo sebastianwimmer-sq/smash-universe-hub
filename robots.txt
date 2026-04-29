@@ -1,0 +1,14 @@
+# SMASH Universe — Habit Rituals for Every Stage of Life
+# https://smashuniverse.info
+
+User-agent: *
+Allow: /
+Allow: /index.html
+Allow: /press/
+
+# Privacy-Page raus (interne Compliance, kein Search-Result)
+Disallow: /privacy/
+
+Crawl-delay: 2
+
+Sitemap: https://smashuniverse.info/sitemap.xml
