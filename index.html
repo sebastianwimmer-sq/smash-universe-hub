@@ -224,6 +224,17 @@
   .stat-val{font-size:28px;font-weight:900;color:var(--green1);line-height:1;letter-spacing:-1px}
   .stat-lbl{font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:1.5px;margin-top:8px}
   .stat-sub{font-size:10px;color:var(--text3);margin-top:3px}
+  .tam-box{background:rgba(0,255,106,.04);border:1px solid rgba(0,255,106,.2);border-radius:var(--radius);padding:28px 24px;margin-bottom:28px;position:relative;overflow:auto}
+  .tam-eyebrow{font-size:10px;font-weight:800;letter-spacing:3px;color:var(--green1);text-transform:uppercase;margin-bottom:8px}
+  .tam-title{font-size:18px;font-weight:800;color:var(--text);margin-bottom:18px;letter-spacing:-.3px}
+  .tam-table{width:100%;border-collapse:collapse;font-size:13px;min-width:560px}
+  .tam-table th{text-align:left;font-size:10px;font-weight:800;color:var(--text2);text-transform:uppercase;letter-spacing:1.5px;padding:8px 10px;border-bottom:1px solid var(--border)}
+  .tam-table td{padding:10px;border-bottom:1px solid rgba(255,255,255,.04);color:var(--text);vertical-align:top}
+  .tam-table td:first-child{color:var(--green1);font-weight:800;white-space:nowrap}
+  .tam-table td:last-child{font-weight:700;color:var(--green1);white-space:nowrap}
+  .tam-table tr:last-child td{border-bottom:none}
+  .tam-foot{font-size:12px;color:var(--text2);font-style:italic;margin-top:14px;line-height:1.5}
+  @media(max-width:600px){.tam-table{font-size:12px}.tam-table th,.tam-table td{padding:6px 8px}}
   .investor-cta{display:flex;gap:12px;flex-wrap:wrap;position:relative}
 
   /* ===== FOUNDER ===== */
@@ -624,6 +635,85 @@
           <div class="stat-lbl" data-lang="en">Launch market</div>
           <div class="stat-sub" data-lang="de">DE jetzt &middot; EN ab Year 2</div>
           <div class="stat-sub" data-lang="en">DE now &middot; EN Year 2</div>
+        </div>
+      </div>
+
+      <div class="tam-box">
+        <div class="tam-eyebrow" data-lang="de">TAM &middot; Universe-Roadmap</div>
+        <div class="tam-eyebrow" data-lang="en">TAM &middot; Universe roadmap</div>
+        <div class="tam-title" data-lang="de">Vom Solo-Habit-Tracker zum Habit-OS für jede Lebensphase</div>
+        <div class="tam-title" data-lang="en">From solo habit tracker to habit OS for every life stage</div>
+
+        <table class="tam-table">
+          <thead>
+            <tr>
+              <th data-lang="de">Phase</th>
+              <th data-lang="en">Phase</th>
+              <th data-lang="de">Produkt</th>
+              <th data-lang="en">Product</th>
+              <th data-lang="de">Markt</th>
+              <th data-lang="en">Market</th>
+              <th data-lang="de">MRR-Potenzial</th>
+              <th data-lang="en">MRR potential</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>1 &middot; 2026</td>
+              <td data-lang="de">SMASH Hauptprodukt (DE)</td>
+              <td data-lang="en">SMASH core (DE)</td>
+              <td data-lang="de">16-30, DACH ~12M</td>
+              <td data-lang="en">16-30, DACH ~12M</td>
+              <td>1-3k €/mo</td>
+            </tr>
+            <tr>
+              <td>2 &middot; 2026-27</td>
+              <td data-lang="de">Sub-Modes + EN-Version</td>
+              <td data-lang="en">Sub-modes + EN version</td>
+              <td data-lang="de">+ EN-Markt 16-30</td>
+              <td data-lang="en">+ EN market 16-30</td>
+              <td>5-10k €/mo</td>
+            </tr>
+            <tr>
+              <td>3 &middot; 2027-28</td>
+              <td data-lang="de">SMASH Family Sub-App</td>
+              <td data-lang="en">SMASH Family sub-app</td>
+              <td data-lang="de">Eltern 25-40, DACH ~6M</td>
+              <td data-lang="en">Parents 25-40, DACH ~6M</td>
+              <td>~27k €/mo</td>
+            </tr>
+            <tr>
+              <td>4 &middot; 2028-29</td>
+              <td data-lang="de">SMASH Senior Sub-App</td>
+              <td data-lang="en">SMASH Senior sub-app</td>
+              <td data-lang="de">60+, DACH ~22M (50% smartphone-affin)</td>
+              <td data-lang="en">60+, DACH ~22M (50% smartphone-active)</td>
+              <td>~30-60k €/mo</td>
+            </tr>
+            <tr>
+              <td>5 &middot; 2029-30</td>
+              <td data-lang="de">Internationale Skalierung (ES/FR/PT)</td>
+              <td data-lang="en">International scaling (ES/FR/PT)</td>
+              <td data-lang="de">EU + LATAM</td>
+              <td data-lang="en">EU + LATAM</td>
+              <td>100k+ €/mo</td>
+            </tr>
+            <tr>
+              <td>6 &middot; 2030+</td>
+              <td data-lang="de">Habit-OS-Plattform global</td>
+              <td data-lang="en">Habit-OS platform global</td>
+              <td data-lang="de">Weltweit</td>
+              <td data-lang="en">Worldwide</td>
+              <td data-lang="de">Vision-Stage</td>
+              <td data-lang="en">Vision stage</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="tam-foot" data-lang="de">
+          Realistisch &middot; bootstrapped &middot; gestaffelt nach Validierung. Keine Hockeystick-Promise — solide Schritte mit klaren Trigger-Punkten.
+        </div>
+        <div class="tam-foot" data-lang="en">
+          Realistic &middot; bootstrapped &middot; staged by validation. No hockey-stick promises — solid steps with clear trigger points.
         </div>
       </div>
 
