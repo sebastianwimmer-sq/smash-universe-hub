@@ -187,30 +187,15 @@
   .tl-app-link:hover{color:var(--green2)}
 
   /* ===== MANIFEST ===== */
-  .manifest-box{background:var(--bg);border:1px solid var(--green1);border-radius:var(--radius);padding:48px 40px;max-width:780px;margin:0 auto;position:relative;overflow:hidden}
-  .manifest-box::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at top right,rgba(0,255,106,.1) 0%,transparent 65%);pointer-events:none}
-  .manifest-head{font-size:14px;font-weight:800;color:var(--green1);letter-spacing:5px;text-transform:uppercase;margin-bottom:24px;position:relative}
-  .manifest-line{font-size:18px;font-weight:600;color:var(--text);line-height:1.55;margin-bottom:10px;position:relative}
-  .manifest-line strong{color:var(--green1);font-weight:800}
-  .manifest-close{margin-top:28px;padding-top:20px;border-top:1px solid var(--border2);font-size:16px;font-weight:700;color:var(--text);font-style:italic;position:relative}
-  .manifest-cta{font-size:24px;font-weight:900;color:var(--green1);margin-top:18px;letter-spacing:-.5px;position:relative}
-
-  /* ===== WHY WE BUILD ===== */
-  .why-grid{display:grid;grid-template-columns:1fr 1fr;gap:32px;align-items:start}
-  @media (max-width:780px){.why-grid{grid-template-columns:1fr}}
-  .why-text{font-size:15px;color:var(--text2);line-height:1.7}
-  .why-text strong{color:var(--text);font-weight:700}
-  .why-text p+p{margin-top:14px}
-  .why-quote{background:linear-gradient(135deg,var(--surface),var(--bg2));border:1px solid var(--border);border-left:3px solid var(--green1);border-radius:var(--radius);padding:28px 26px;font-style:italic;color:var(--text);font-size:15px;line-height:1.65}
-  .why-quote-source{display:block;margin-top:14px;font-style:normal;font-size:12px;color:var(--text3);letter-spacing:1.5px;text-transform:uppercase;font-weight:700}
-
-  /* ===== VALUES GRID ===== */
-  .values-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;margin-top:32px}
-  .value-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:22px;transition:.2s}
-  .value-card:hover{border-color:var(--green1);transform:translateY(-2px)}
-  .value-num{font-size:11px;font-weight:800;letter-spacing:2px;color:var(--green1);text-transform:uppercase;margin-bottom:6px}
-  .value-title{font-size:17px;font-weight:900;color:var(--text);margin-bottom:6px}
-  .value-desc{font-size:13px;color:var(--text2);line-height:1.6}
+  /* Manifest-Teaser (kompakter Link-Block) */
+  .manifest-teaser{display:block;background:linear-gradient(135deg,rgba(0,255,106,.05),rgba(0,255,106,.01));border:1px solid rgba(0,255,106,.25);border-radius:var(--radius);padding:32px 36px;text-align:center;text-decoration:none;color:inherit;transition:.2s;max-width:780px;margin:0 auto}
+  .manifest-teaser:hover{border-color:var(--green1);background:linear-gradient(135deg,rgba(0,255,106,.08),rgba(0,255,106,.02));transform:translateY(-2px)}
+  .manifest-teaser-eyebrow{font-size:11px;font-weight:800;letter-spacing:4px;color:var(--green1);text-transform:uppercase;margin-bottom:14px}
+  .manifest-teaser-quote{font-size:22px;font-weight:700;color:var(--text);line-height:1.4;margin-bottom:18px;letter-spacing:-.3px;font-style:italic}
+  .manifest-teaser-quote strong{color:var(--green1);font-weight:900;font-style:normal}
+  .manifest-teaser-cta{font-size:13px;font-weight:800;color:var(--green1);letter-spacing:1.5px;text-transform:uppercase}
+  .manifest-teaser-arrow{display:inline-block;margin-left:8px;transition:transform .2s}
+  .manifest-teaser:hover .manifest-teaser-arrow{transform:translateX(4px)}
 
   /* ===== INVESTOR ===== */
   .investor-box{background:linear-gradient(180deg,var(--surface),var(--bg2));border:1px solid var(--border);border-radius:var(--radius);padding:44px 40px;position:relative;overflow:hidden}
@@ -295,8 +280,7 @@
     <div class="nav-links">
       <a href="#vision"><span data-lang="de">Vision</span><span data-lang="en">Vision</span></a>
       <a href="#apps"><span data-lang="de">Apps</span><span data-lang="en">Apps</span></a>
-      <a href="#manifest"><span data-lang="de">Manifest</span><span data-lang="en">Manifesto</span></a>
-      <a href="#why"><span data-lang="de">Warum</span><span data-lang="en">Why</span></a>
+      <a href="/manifest/"><span data-lang="de">Manifest</span><span data-lang="en">Manifesto</span></a>
       <a href="#invest"><span data-lang="de">Investor</span><span data-lang="en">Invest</span></a>
       <a href="#press">Press</a>
       <a href="#contact">Contact</a>
@@ -516,77 +500,20 @@
   </div>
 </section>
 
-<!-- ============ MANIFEST ============ -->
-<section id="manifest" class="alt">
+<!-- ============ MANIFEST TEASER (kompakter Link auf /manifest/) ============ -->
+<section id="manifest-teaser">
   <div class="container">
-    <div class="section-eyebrow">03 &middot; Manifest</div>
-    <h2 class="section-title" data-lang="de">Wofür wir stehen</h2>
-    <h2 class="section-title" data-lang="en">What we stand for</h2>
-
-    <div class="manifest-box" data-lang="de">
-      <div class="manifest-head">Wir glauben.</div>
-      <div class="manifest-line">Wir glauben, dass Disziplin kein Talent ist.</div>
-      <div class="manifest-line">Wir glauben, dass jeder Tag ein Date mit dem besten Selbst ist.</div>
-      <div class="manifest-line">Wir glauben, dass Tracking nicht reicht — <strong>Ritual macht</strong>.</div>
-      <div class="manifest-line">Wir glauben, dass Identität durch Wiederholung entsteht.</div>
-      <div class="manifest-line">Wir glauben, dass kraftvolle Tools direkt sprechen — ohne Corporate-Lärm.</div>
-      <div class="manifest-line">Wir glauben, dass jeder — vom Teen bis zum Rentner — sein SMASH verdient.</div>
-      <div class="manifest-close">Wir bauen es. Solo. Ehrlich. Hulk-Modus an.</div>
-      <div class="manifest-cta">Date your best self.</div>
-    </div>
-    <div class="manifest-box" data-lang="en">
-      <div class="manifest-head">We believe.</div>
-      <div class="manifest-line">We believe discipline is not a talent.</div>
-      <div class="manifest-line">We believe every day is a date with your best self.</div>
-      <div class="manifest-line">We believe tracking isn't enough — <strong>ritual is</strong>.</div>
-      <div class="manifest-line">We believe identity is built through repetition.</div>
-      <div class="manifest-line">We believe powerful tools speak directly — without corporate noise.</div>
-      <div class="manifest-line">We believe everyone — from teen to senior — deserves their own SMASH.</div>
-      <div class="manifest-close">We build it. Solo. Honest. Hulk mode on.</div>
-      <div class="manifest-cta">Date your best self.</div>
-    </div>
-  </div>
-</section>
-
-<!-- ============ WHY WE BUILD ============ -->
-<section id="why">
-  <div class="container">
-    <div class="section-eyebrow">04 &middot; <span data-lang="de">Warum wir bauen</span><span data-lang="en">Why we build</span></div>
-    <h2 class="section-title" data-lang="de">Werte, die nicht aus der Mode kommen</h2>
-    <h2 class="section-title" data-lang="en">Values that don't go out of style</h2>
-
-    <div class="why-grid">
-      <div class="why-text" data-lang="de">
-        <p>SMASH wurzelt in <strong>ewigen Werten</strong> — Disziplin, Identität durch Wiederholung, Selbstbeherrschung, Beharrlichkeit. Konzepte, die seit Jahrtausenden funktionieren, weil sie unabhängig von Trends sind.</p>
-        <p>Der Founder ist Christ. Unsere Werte sind tief biblisch verwurzelt (Galater 5,22-23: „Selbstbeherrschung als Frucht des Geistes" / Sprüche 25,28: „Wer sich nicht beherrscht, ist wie eine Stadt ohne Mauer"). Aber wir bauen kein Christen-Tool — wir bauen ein <strong>Disziplin-Tool für alle</strong>, weil diese Werte universal tragfähig sind: Stoiker, Buddhisten, Christen, Säkulare finden hier alle Heimat.</p>
-        <p>Das ist <strong>Tugend &gt; Trend</strong>. Wenn der nächste Productivity-Hype kommt und geht, bleibt SMASH — weil das Fundament tiefer reicht als jeder Hype.</p>
+    <a href="/manifest/" class="manifest-teaser">
+      <div class="manifest-teaser-eyebrow" data-lang="de">03 &middot; Manifest</div>
+      <div class="manifest-teaser-eyebrow" data-lang="en">03 &middot; Manifesto</div>
+      <div class="manifest-teaser-quote" data-lang="de">„Tracking reicht nicht — <strong>Ritual macht</strong>."</div>
+      <div class="manifest-teaser-quote" data-lang="en">"Tracking isn't enough — <strong>ritual is</strong>."</div>
+      <div class="manifest-teaser-cta">
+        <span data-lang="de">Lies das Manifest</span>
+        <span data-lang="en">Read the manifesto</span>
+        <span class="manifest-teaser-arrow">→</span>
       </div>
-      <div class="why-text" data-lang="en">
-        <p>SMASH is rooted in <strong>eternal values</strong> — discipline, identity through repetition, self-control, perseverance. Concepts that have worked for thousands of years because they're independent of trends.</p>
-        <p>The founder is Christian. Our values are deeply rooted in scripture (Galatians 5:22-23: "self-control as a fruit of the Spirit" / Proverbs 25:28: "a person without self-control is like a city with broken walls"). But we don't build a Christian tool — we build a <strong>discipline tool for everyone</strong>, because these values translate universally: stoics, Buddhists, Christians, secular thinkers all find a home here.</p>
-        <p>This is <strong>virtue over trend</strong>. When the next productivity hype comes and goes, SMASH stays — because the foundation runs deeper than any hype.</p>
-      </div>
-      <div>
-        <blockquote class="why-quote" data-lang="de">
-          „Wer sich nicht beherrscht, ist wie eine Stadt mit niedergerissenen Mauern."
-          <span class="why-quote-source">Sprüche 25,28</span>
-        </blockquote>
-        <blockquote class="why-quote" data-lang="en">
-          "A person without self-control is like a city with broken-down walls."
-          <span class="why-quote-source">Proverbs 25:28</span>
-        </blockquote>
-      </div>
-    </div>
-
-    <!-- 6 Values Grid -->
-    <div class="values-grid">
-      <div class="value-card"><div class="value-num">01</div><div class="value-title">Ritual &gt; Tracking</div><div class="value-desc" data-lang="de">Tools setzen Häkchen. Wir bauen Rituale.</div><div class="value-desc" data-lang="en">Tools check boxes. We build rituals.</div></div>
-      <div class="value-card"><div class="value-num">02</div><div class="value-title">Identität &gt; Goals</div><div class="value-desc" data-lang="de">„Wer wirst du dadurch?" ist die einzige Frage.</div><div class="value-desc" data-lang="en">"Who are you becoming?" is the only question.</div></div>
-      <div class="value-card"><div class="value-num">03</div><div class="value-title">Honest &gt; Hype</div><div class="value-desc" data-lang="de">Build-in-Public. Echte Stats. Keine Vanity-Metriken.</div><div class="value-desc" data-lang="en">Build-in-public. Real stats. No vanity metrics.</div></div>
-      <div class="value-card"><div class="value-num">04</div><div class="value-title">Polish &gt; Bloat</div><div class="value-desc" data-lang="de">5 Features perfekt &gt; 50 halbherzig.</div><div class="value-desc" data-lang="en">5 features perfect &gt; 50 half-baked.</div></div>
-      <div class="value-card"><div class="value-num">05</div><div class="value-title">Hulk &gt; Corporate</div><div class="value-desc" data-lang="de">Direkte Sprache. Kraftvolle Statements.</div><div class="value-desc" data-lang="en">Direct language. Powerful statements.</div></div>
-      <div class="value-card"><div class="value-num">06</div><div class="value-title">Tugend &gt; Trend</div><div class="value-desc" data-lang="de">Ewige Werte schlagen jeden Productivity-Trend.</div><div class="value-desc" data-lang="en">Eternal values beat any productivity trend.</div></div>
-    </div>
+    </a>
   </div>
 </section>
 
