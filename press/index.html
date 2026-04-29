@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SMASH Universe — Full Press Kit</title>
+<meta name="description" content="Full press kit for SMASH Universe. Boilerplate, logos, story hooks, founder bio.">
+<meta name="theme-color" content="#050505">
+<link rel="icon" type="image/svg+xml" href="https://smashtheapp.de/assets/logo-square.svg">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+  :root{
+    --bg:#050505;--surface:#111;--border:#222;--border2:#333;
+    --text:#f0f0f0;--text2:#888;--text3:#555;
+    --green1:#00ff6a;--green2:#00cc55;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100dvh;-webkit-font-smoothing:antialiased;line-height:1.6}
+  a{color:var(--green1);text-decoration:none}
+  a:hover{color:var(--green2)}
+  .page{max-width:880px;margin:0 auto;padding:32px 24px 80px}
+  .topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:48px;font-size:12px;color:var(--text2);font-weight:600;letter-spacing:1px;text-transform:uppercase}
+  .topbar a{color:var(--text2)}
+  .topbar a:hover{color:var(--green1)}
+  .lang-toggle{display:inline-flex;background:#0c0c0c;border:1px solid var(--border);border-radius:8px;overflow:hidden}
+  .lang-toggle button{background:transparent;border:0;color:var(--text2);font-size:11px;font-weight:700;letter-spacing:2px;padding:6px 11px;cursor:pointer;font-family:'Inter'}
+  .lang-toggle button.active{background:var(--green1);color:var(--bg)}
+  h1{font-size:42px;font-weight:900;letter-spacing:-1px;margin-bottom:14px;line-height:1.1}
+  .lead{font-size:16px;color:var(--text2);margin-bottom:48px;max-width:620px;line-height:1.65}
+  section{margin-bottom:48px}
+  h2{font-size:13px;font-weight:800;letter-spacing:3px;color:var(--green1);text-transform:uppercase;margin-bottom:14px}
+  .box{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:24px;font-size:14px;color:var(--text);line-height:1.7;white-space:pre-wrap}
+  .box.copy{cursor:pointer;transition:.15s;position:relative}
+  .box.copy:hover{border-color:var(--green1)}
+  .box.copy::after{content:"📋 Klick zum kopieren";position:absolute;top:8px;right:10px;font-size:10px;color:var(--text3);letter-spacing:1px;text-transform:uppercase;font-weight:700}
+  .box.copy[data-copied]::after{content:"✓ Kopiert";color:var(--green1)}
+  .meta{font-size:13px;color:var(--text2);line-height:1.7}
+  .meta strong{color:var(--text);font-weight:700}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-top:14px}
+  .asset{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:18px;text-align:left;display:flex;flex-direction:column;gap:6px}
+  .asset:hover{border-color:var(--green1)}
+  .asset-name{font-size:14px;font-weight:800;color:var(--text)}
+  .asset-desc{font-size:11px;color:var(--text2)}
+  [data-lang]{display:none}
+  [data-lang].active{display:block}
+  span[data-lang].active{display:inline}
+  html:not(.lang-ready) [data-lang="de"]{display:block}
+  html:not(.lang-ready) span[data-lang="de"]{display:inline}
+  html:not(.lang-ready) [data-lang="en"]{display:none}
+  .footer{margin-top:64px;padding-top:24px;border-top:1px solid var(--border);text-align:center;font-size:11px;color:var(--text3);letter-spacing:1.5px;text-transform:uppercase}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="topbar">
+    <a href="../">← <span data-lang="de">Zurück zum Hub</span><span data-lang="en">Back to Hub</span></a>
+    <div class="lang-toggle">
+      <button data-set-lang="de" class="active">DE</button>
+      <button data-set-lang="en">EN</button>
+    </div>
+  </div>
+
+  <h1 data-lang="de">Press Kit</h1>
+  <h1 data-lang="en">Press Kit</h1>
+  <p class="lead" data-lang="de">Boilerplate, Story-Hooks, Founder-Bio, Brand-Assets. Alles direkt verwendbar — für Press, Podcasts, Influencer, Partner.</p>
+  <p class="lead" data-lang="en">Boilerplate, story hooks, founder bio, brand assets. All ready to use — for press, podcasts, influencers, partners.</p>
+
+  <!-- Boilerplate -->
+  <section>
+    <h2 data-lang="de">Boilerplate (kurz)</h2>
+    <h2 data-lang="en">Boilerplate (short)</h2>
+    <div class="box copy" data-lang="de" onclick="copyText(this)">SMASH Universe baut Habit-Rituale für jeden Lebensabschnitt. Phase 1 ist SMASH — eine Habit-Ritual-App für 16-30 in DACH, gegründet 2026 von Sebastian Wimmer. Solo gebaut, transparent, mit kostenlosem Ritual-Kern und optionalem Pro-Tier. Vision: Eine Welt, in der jeder Mensch täglich auf sein bestes Selbst hinarbeitet.</div>
+    <div class="box copy" data-lang="en" onclick="copyText(this)">SMASH Universe builds habit rituals for every stage of life. Phase 1 is SMASH — a habit ritual app for 16-30 in the German-speaking market, founded in 2026 by Sebastian Wimmer. Solo-built, transparent, with a free ritual core and optional Pro tier. Vision: A world where every human works toward their best self every day.</div>
+  </section>
+
+  <!-- Boilerplate long -->
+  <section>
+    <h2 data-lang="de">Boilerplate (ausführlich)</h2>
+    <h2 data-lang="en">Boilerplate (long)</h2>
+    <div class="box copy" data-lang="de" onclick="copyText(this)">SMASH Universe ist ein Indie-Software-Projekt, gegründet 2026 von Sebastian Wimmer. Das Produkt SMASH (Phase 1, derzeit Beta v0.99.8 unter smashtheapp.de) ist eine Habit-Ritual-App für die deutschsprachige Generation 16-30 — ehrlich, kraftvoll, mit klarer Hulk-Voice und wissenschaftlicher Fundierung (Atomic Habits, Tiny Habits, Wendy Wood, Nir Eyal).
+
+Anders als reine Tracker macht SMASH zwei Touchpoints pro Tag verpflichtend: Morning Kickoff und Evening Reflection. Identität entsteht durch Wiederholung — nicht durch Häkchen. Free-Ritual-Kern bleibt für immer kostenlos, Pro-Features ergänzen Tiefe und Personalisierung (4,99 €/Mo, 39,99 €/Jahr).
+
+Die Universe-Roadmap erweitert Phase 1 ab 2027 schrittweise: SMASH Family für Eltern, SMASH Senior für 60+, SMASH Couple für Paare, SMASH Faith mit subtiler christlicher Verankerung. Vision-Endspiel ab 2030: ein Habit-OS für jeden Lebensabschnitt, weltweit.
+
+Sebastian Wimmer (25, DACH, Christ, Vegetarier-Athletisch, "Vegetarianhulk") baut SMASH solo — von Architektur über Design bis Marketing-Copy. Build-in-Public auf Instagram @smashtheapp.</div>
+    <div class="box copy" data-lang="en" onclick="copyText(this)">SMASH Universe is an indie software project, founded in 2026 by Sebastian Wimmer. The product SMASH (Phase 1, currently in Beta v0.99.8 at smashtheapp.de) is a habit ritual app for the German-speaking 16-30 generation — honest, powerful, with a clear "Hulk voice" and scientific grounding (Atomic Habits, Tiny Habits, Wendy Wood, Nir Eyal).
+
+Unlike pure trackers, SMASH makes two daily touchpoints mandatory: Morning Kickoff and Evening Reflection. Identity is built through repetition — not through checkmarks. The free ritual core stays free forever; Pro features add depth and personalization (€4.99/mo, €39.99/year).
+
+The Universe roadmap extends Phase 1 starting 2027: SMASH Family for parents, SMASH Senior for 60+, SMASH Couple for couples, SMASH Faith with subtle Christian grounding. Vision endgame from 2030: a Habit-OS for every stage of life, globally.
+
+Sebastian Wimmer (25, DACH, Christian, vegetarian-athletic, "Vegetarianhulk") builds SMASH solo — from architecture through design to marketing copy. Build-in-public on Instagram @smashtheapp.</div>
+  </section>
+
+  <!-- Founder bio -->
+  <section>
+    <h2 data-lang="de">Founder-Bio</h2>
+    <h2 data-lang="en">Founder bio</h2>
+    <div class="box copy" data-lang="de" onclick="copyText(this)">Sebastian Wimmer — 25, aus DACH. Solo Indie-Founder von SMASH Universe. Christ, Vegetarier-Athletisch, baut SMASH seit 2026 unter dem Build-in-Public-Handle @smashtheapp. Persönlich getrieben durch eigene Frustration mit bestehenden Habit-Tools — entweder kindlich verspielt oder steril wie eine Excel-Tabelle. SMASH ist Sebis Antwort: ehrliche, kraftvolle, deutsch-sprechende Habit-Rituale, die Identität formen statt nur Daten erfassen.</div>
+    <div class="box copy" data-lang="en" onclick="copyText(this)">Sebastian Wimmer — 25, from the German-speaking region. Solo indie founder of SMASH Universe. Christian, vegetarian-athletic, building SMASH since 2026 under the build-in-public handle @smashtheapp. Personally driven by frustration with existing habit tools — either childishly playful or sterile like an Excel sheet. SMASH is Sebi's answer: honest, powerful, German-speaking habit rituals that shape identity instead of just tracking data.</div>
+  </section>
+
+  <!-- Story Hooks -->
+  <section>
+    <h2 data-lang="de">Story-Hooks (für Press-Pitches)</h2>
+    <h2 data-lang="en">Story hooks (for press pitches)</h2>
+    <div class="box" data-lang="de"><strong>1. Der deutsche Atomic-Habits-Macher</strong>
+James Clear hat 3M Insta-Follower mit englischer Habit-Wisdom. Niemand übersetzt diese Bewegung kraftvoll auf deutsch — bis SMASH.
+
+<strong>2. Solo-Founder vs. Habit-App-Industrie</strong>
+Während US-VC-Apps Habit-Tracking aufkaufen, baut ein deutscher 25-Jähriger eine ehrliche Alternative — kostenlos, ohne Daten-Verkauf, in Solo-Arbeit.
+
+<strong>3. Disziplin als Generationen-Marke</strong>
+Vom Teen zum Senior — eine App-Familie, die jeden Lebensabschnitt mit demselben Kern-Versprechen bedient: tägliches Ritual statt sporadisches Tracken.
+
+<strong>4. Werte-orientiert in der Productivity-Welt</strong>
+SMASH basiert nicht auf Trends, sondern auf "ewigen Werten" — Disziplin, Selbstbeherrschung, Identität durch Wiederholung. Christ-grounded, säkular zugänglich.</div>
+    <div class="box" data-lang="en"><strong>1. The German Atomic Habits voice</strong>
+James Clear has 3M Insta followers with English habit wisdom. No one translates this movement powerfully into German — until SMASH.
+
+<strong>2. Solo founder vs. habit app industry</strong>
+While US VC-backed apps buy up habit tracking, a 25-year-old German is building an honest alternative — free, no data sales, all solo.
+
+<strong>3. Discipline as a generational brand</strong>
+From teen to senior — an app family that serves every stage of life with the same core promise: daily ritual instead of sporadic tracking.
+
+<strong>4. Values-oriented in the productivity world</strong>
+SMASH is built not on trends but on "eternal values" — discipline, self-control, identity through repetition. Christ-grounded, secularly accessible.</div>
+  </section>
+
+  <!-- Quick Facts -->
+  <section>
+    <h2 data-lang="de">Quick Facts</h2>
+    <h2 data-lang="en">Quick facts</h2>
+    <div class="box meta" data-lang="de">
+      <strong>Gegründet:</strong> 2026 (Sebastian Wimmer)
+      <strong>Produkt:</strong> SMASH (Phase 1, Beta v0.99.8)
+      <strong>App-URL:</strong> smashtheapp.de
+      <strong>Hub-URL:</strong> smashuniverse.info
+      <strong>Plattform:</strong> Progressive Web App (iOS, Android, Desktop)
+      <strong>Pricing:</strong> Free Core forever · Pro 4,99 €/Mo · Yearly 39,99 €
+      <strong>Tech:</strong> Vanilla JS, Firebase, GitHub Pages, Brevo
+      <strong>Markt:</strong> DACH (Phase 1), EN-Version Phase 2 (2027)
+      <strong>Team:</strong> Solo (Founder), erste Hires Year 3+
+      <strong>Funding:</strong> Bootstrapped, kein aktiver Round
+      <strong>Press-Kontakt:</strong> press@smashuniverse.info
+      <strong>Investor-Kontakt:</strong> invest@smashuniverse.info
+      <strong>Instagram:</strong> @smashtheapp (Build-in-Public)
+    </div>
+    <div class="box meta" data-lang="en">
+      <strong>Founded:</strong> 2026 (Sebastian Wimmer)
+      <strong>Product:</strong> SMASH (Phase 1, Beta v0.99.8)
+      <strong>App URL:</strong> smashtheapp.de
+      <strong>Hub URL:</strong> smashuniverse.info
+      <strong>Platform:</strong> Progressive Web App (iOS, Android, Desktop)
+      <strong>Pricing:</strong> Free core forever · Pro €4.99/mo · Yearly €39.99
+      <strong>Tech:</strong> Vanilla JS, Firebase, GitHub Pages, Brevo
+      <strong>Market:</strong> DACH (Phase 1), EN version Phase 2 (2027)
+      <strong>Team:</strong> Solo (founder), first hires in Year 3+
+      <strong>Funding:</strong> Bootstrapped, no active round
+      <strong>Press contact:</strong> press@smashuniverse.info
+      <strong>Investor contact:</strong> invest@smashuniverse.info
+      <strong>Instagram:</strong> @smashtheapp (build-in-public)
+    </div>
+  </section>
+
+  <!-- Brand Assets -->
+  <section>
+    <h2 data-lang="de">Brand-Assets</h2>
+    <h2 data-lang="en">Brand assets</h2>
+    <div class="grid">
+      <a class="asset" href="https://smashtheapp.de/assets/logo-square.svg" target="_blank">
+        <div class="asset-name">Logo Square (SVG)</div>
+        <div class="asset-desc" data-lang="de">App-Icon &middot; Square-Posts</div>
+        <div class="asset-desc" data-lang="en">App icon &middot; square posts</div>
+      </a>
+      <a class="asset" href="https://smashtheapp.de/assets/logo-circle.svg" target="_blank">
+        <div class="asset-name">Logo Circle (SVG)</div>
+        <div class="asset-desc" data-lang="de">Insta-Profilbild</div>
+        <div class="asset-desc" data-lang="en">Instagram profile</div>
+      </a>
+      <a class="asset" href="https://smashtheapp.de/assets/logo-mark-only.svg" target="_blank">
+        <div class="asset-name">Logo Mark Only (SVG)</div>
+        <div class="asset-desc" data-lang="de">Overlay auf Fotos</div>
+        <div class="asset-desc" data-lang="en">Overlay on photos</div>
+      </a>
+      <a class="asset" href="https://smashtheapp.de/assets/logo-wordmark.svg" target="_blank">
+        <div class="asset-name">Logo Wordmark (SVG)</div>
+        <div class="asset-desc" data-lang="de">Email-Signatur &middot; Header</div>
+        <div class="asset-desc" data-lang="en">Email signature &middot; headers</div>
+      </a>
+      <a class="asset" href="https://smashtheapp.de/assets/social-card.svg" target="_blank">
+        <div class="asset-name">Social Card (SVG)</div>
+        <div class="asset-desc">1200×630 OG/Twitter</div>
+      </a>
+      <a class="asset" href="https://github.com/sebastianwimmer-sq/life-tracker/blob/main/assets/BRAND.md" target="_blank">
+        <div class="asset-name">Brand Spec</div>
+        <div class="asset-desc" data-lang="de">Farben &middot; Typo &middot; Voice</div>
+        <div class="asset-desc" data-lang="en">Colors &middot; type &middot; voice</div>
+      </a>
+      <a class="asset" href="https://smashtheapp.de/pitch.html" target="_blank">
+        <div class="asset-name">Pitch / Vision PDF</div>
+        <div class="asset-desc" data-lang="de">Bilingual &middot; ⌘+P → PDF</div>
+        <div class="asset-desc" data-lang="en">Bilingual &middot; ⌘+P → PDF</div>
+      </a>
+    </div>
+  </section>
+
+  <div class="footer">
+    SMASH UNIVERSE &copy; 2026 &middot; press@smashuniverse.info
+  </div>
+</div>
+
+<script>
+  const langButtons=document.querySelectorAll('[data-set-lang]');
+  function setLang(lang){
+    langButtons.forEach(b=>b.classList.toggle('active',b.getAttribute('data-set-lang')===lang));
+    document.querySelectorAll('[data-lang]').forEach(el=>el.classList.toggle('active',el.getAttribute('data-lang')===lang));
+    document.documentElement.setAttribute('lang',lang);
+    try{localStorage.setItem('smash_universe_lang',lang)}catch(e){}
+  }
+  langButtons.forEach(b=>b.addEventListener('click',()=>setLang(b.getAttribute('data-set-lang'))));
+  const urlLang=new URLSearchParams(location.search).get('lang');
+  const savedLang=(()=>{try{return localStorage.getItem('smash_universe_lang')}catch(e){return null}})();
+  const browserLang=(navigator.language||'de').toLowerCase().startsWith('en')?'en':'de';
+  setLang(urlLang||savedLang||browserLang);
+  document.documentElement.classList.add('lang-ready');
+
+  function copyText(el){
+    const text=el.innerText.trim();
+    navigator.clipboard.writeText(text).then(()=>{
+      el.dataset.copied='1';
+      setTimeout(()=>delete el.dataset.copied,2000);
+    });
+  }
+</script>
+</body>
+</html>

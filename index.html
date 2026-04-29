@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SMASH Universe — Habit Rituals for Every Stage of Life</title>
+<meta name="description" content="SMASH Universe builds daily rituals that shape identity. Solo. Honest. Hulk mode on. — Habit-Rituale für jeden Lebensabschnitt.">
+<meta name="theme-color" content="#050505">
+<meta property="og:title" content="SMASH Universe — Habit Rituals for Every Stage of Life">
+<meta property="og:description" content="We build daily rituals that shape identity. Solo. Honest. Hulk mode on.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://smashuniverse.info">
+<meta property="og:image" content="https://smashtheapp.de/assets/social-card.svg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="apple-touch-icon" href="https://smashtheapp.de/assets/logo-square.svg">
+<link rel="icon" type="image/svg+xml" href="https://smashtheapp.de/assets/logo-square.svg">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+  :root{
+    --bg:#050505;--bg2:#0a0a0a;--surface:#111;--surface2:#1a1a1a;--border:#222;--border2:#333;
+    --text:#f0f0f0;--text2:#888;--text3:#555;
+    --green1:#00ff6a;--green2:#00cc55;--green-dim:#00aa44;
+    --radius:16px;--radius-sm:10px;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{font-family:'Inter',-apple-system,system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100dvh;-webkit-font-smoothing:antialiased;line-height:1.55;overflow-x:hidden}
+  a{color:var(--green1);text-decoration:none;transition:color .15s}
+  a:hover{color:var(--green2)}
+
+  .container{max-width:1080px;margin:0 auto;padding:0 24px}
+
+  /* ===== TOP NAV ===== */
+  .nav{position:sticky;top:0;z-index:50;background:rgba(5,5,5,.85);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:14px 0}
+  .nav-inner{display:flex;align-items:center;justify-content:space-between;gap:16px}
+  .nav-brand{display:flex;align-items:center;gap:10px;font-weight:900;letter-spacing:3px;font-size:14px;color:var(--green1)}
+  .nav-brand-dot{width:24px;height:24px;background:var(--bg);border:1px solid var(--border);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:900;color:var(--green1);letter-spacing:-1px}
+  .nav-brand-sub{font-size:9px;color:var(--text2);letter-spacing:4px;font-weight:700;margin-top:1px;display:block}
+  .nav-links{display:flex;gap:22px;font-size:12px;font-weight:600;color:var(--text2);letter-spacing:.5px;text-transform:uppercase}
+  .nav-links a{color:var(--text2)}
+  .nav-links a:hover{color:var(--green1)}
+  .nav-actions{display:flex;align-items:center;gap:12px}
+  .lang-toggle{display:inline-flex;background:#0c0c0c;border:1px solid var(--border);border-radius:8px;overflow:hidden}
+  .lang-toggle button{background:transparent;border:0;color:var(--text2);font-size:11px;font-weight:700;letter-spacing:2px;padding:6px 11px;cursor:pointer;font-family:'Inter';transition:.15s}
+  .lang-toggle button.active{background:var(--green1);color:var(--bg)}
+  @media (max-width:720px){.nav-links{display:none}}
+
+  /* ===== HERO ===== */
+  .hero{position:relative;padding:80px 0 96px;text-align:center;overflow:hidden}
+  .hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at top,rgba(0,255,106,.12) 0%,transparent 60%);pointer-events:none}
+  .hero-eyebrow{font-size:11px;font-weight:800;letter-spacing:6px;color:var(--green1);text-transform:uppercase;margin-bottom:26px;position:relative}
+  .hero-mark{width:96px;height:96px;margin:0 auto 28px;background:var(--bg);border:1px solid var(--border);border-radius:22px;display:flex;align-items:center;justify-content:center;position:relative;box-shadow:0 0 80px rgba(0,255,106,.15)}
+  .hero-mark .s{font-size:64px;font-weight:900;color:var(--green1);line-height:1;letter-spacing:-3px}
+  .hero-wordmark{font-size:64px;font-weight:900;letter-spacing:6px;background:linear-gradient(135deg,var(--green1),var(--green2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1;position:relative}
+  .hero-universe{font-size:14px;font-weight:800;letter-spacing:10px;color:var(--text2);text-transform:uppercase;margin-top:6px;position:relative}
+  .hero-vision{font-size:32px;font-weight:800;letter-spacing:-1px;color:var(--text);margin:42px auto 0;max-width:780px;line-height:1.2;position:relative}
+  .hero-vision strong{background:linear-gradient(135deg,var(--green1),var(--green2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+  .hero-mission{font-size:16px;font-weight:500;color:var(--text2);margin:24px auto 0;max-width:580px;line-height:1.6;position:relative}
+  .hero-tagline{font-size:13px;font-weight:700;letter-spacing:5px;color:var(--green1);margin-top:32px;text-transform:uppercase;position:relative}
+  .hero-cta{display:flex;gap:14px;justify-content:center;margin-top:40px;flex-wrap:wrap;position:relative}
+  .btn{padding:14px 26px;border-radius:100px;font-weight:800;font-size:13px;letter-spacing:1.5px;text-transform:uppercase;font-family:'Inter';cursor:pointer;transition:transform .15s,box-shadow .25s;border:none;display:inline-flex;align-items:center;gap:8px}
+  .btn-primary{background:linear-gradient(135deg,var(--green1),var(--green2));color:var(--bg);box-shadow:0 4px 28px rgba(0,255,106,.3)}
+  .btn-primary:hover{transform:translateY(-1px);box-shadow:0 6px 36px rgba(0,255,106,.45)}
+  .btn-ghost{background:transparent;color:var(--text);border:1.5px solid var(--border2)}
+  .btn-ghost:hover{border-color:var(--green1);color:var(--green1)}
+  @media (max-width:560px){
+    .hero-wordmark{font-size:44px;letter-spacing:4px}
+    .hero-vision{font-size:24px}
+    .hero{padding:50px 0 64px}
+  }
+
+  /* ===== SECTION FRAME ===== */
+  section{padding:72px 0;position:relative}
+  section.alt{background:linear-gradient(180deg,var(--bg) 0%,var(--bg2) 50%,var(--bg) 100%)}
+  .section-eyebrow{font-size:11px;font-weight:800;letter-spacing:4px;color:var(--green1);text-transform:uppercase;margin-bottom:10px}
+  .section-title{font-size:36px;font-weight:900;margin-bottom:14px;letter-spacing:-1px;line-height:1.15}
+  .section-lead{font-size:17px;color:var(--text);font-weight:500;line-height:1.6;max-width:680px;margin-bottom:40px}
+  .section-lead strong{color:var(--green1);font-weight:700}
+  @media (max-width:560px){.section-title{font-size:26px}}
+
+  /* ===== MISSION ===== */
+  .mission-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:40px 36px;text-align:center;max-width:780px;margin:0 auto;position:relative}
+  .mission-box::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--green1),var(--green2));border-radius:var(--radius) var(--radius) 0 0}
+  .mission-pretitle{font-size:11px;font-weight:800;letter-spacing:5px;color:var(--green1);text-transform:uppercase;margin-bottom:14px}
+  .mission-text{font-size:22px;font-weight:600;color:var(--text);line-height:1.45;letter-spacing:-.3px}
+  .mission-text strong{color:var(--green1);font-weight:800}
+
+  /* ===== APPS TIMELINE ===== */
+  .timeline{position:relative;max-width:880px;margin:0 auto;padding-left:42px}
+  .timeline::before{content:'';position:absolute;left:18px;top:6px;bottom:6px;width:2px;background:linear-gradient(180deg,var(--green1) 0%,var(--green1) 16%,var(--text3) 16%,var(--text3) 100%)}
+  .tl-item{position:relative;padding-bottom:38px}
+  .tl-item:last-child{padding-bottom:0}
+  .tl-dot{position:absolute;left:-30px;top:6px;width:18px;height:18px;border-radius:50%;background:var(--text3);border:3px solid var(--bg);box-shadow:0 0 0 2px var(--text3);z-index:2}
+  .tl-dot.active{background:var(--green1);box-shadow:0 0 0 2px var(--green1),0 0 24px rgba(0,255,106,.5);animation:pulse 2.5s ease-in-out infinite}
+  @keyframes pulse{0%,100%{box-shadow:0 0 0 2px var(--green1),0 0 24px rgba(0,255,106,.5)}50%{box-shadow:0 0 0 2px var(--green1),0 0 36px rgba(0,255,106,.7)}}
+  .tl-meta{display:flex;align-items:baseline;gap:14px;margin-bottom:8px;flex-wrap:wrap}
+  .tl-phase{font-size:11px;font-weight:800;letter-spacing:3px;color:var(--green1);text-transform:uppercase}
+  .tl-when{font-size:12px;color:var(--text3);font-weight:700;letter-spacing:1px}
+  .tl-status{font-size:10px;font-weight:800;padding:3px 9px;border-radius:100px;text-transform:uppercase;letter-spacing:1px}
+  .tl-status.live{background:rgba(0,255,106,.15);color:var(--green1);border:1px solid var(--green1)}
+  .tl-status.next{background:rgba(255,184,0,.12);color:#ffb800;border:1px solid #ffb800}
+  .tl-status.planned{background:rgba(136,136,136,.1);color:var(--text2);border:1px solid var(--border2)}
+  .tl-app-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:22px 24px;margin-top:6px;transition:.2s}
+  .tl-app-card.hero-app{background:linear-gradient(135deg,var(--surface) 0%,#0d1f12 100%);border-color:rgba(0,255,106,.3)}
+  .tl-app-card:hover{border-color:var(--border2)}
+  .tl-app-card.hero-app:hover{border-color:var(--green1);transform:translateY(-2px)}
+  .tl-app-name{font-size:22px;font-weight:900;color:var(--text);letter-spacing:-.4px}
+  .tl-app-name .tag{display:inline-block;font-size:10px;font-weight:800;background:var(--green1);color:var(--bg);padding:2px 8px;border-radius:6px;margin-left:10px;letter-spacing:1px;vertical-align:middle}
+  .tl-app-desc{font-size:14px;color:var(--text2);line-height:1.6;margin-top:8px}
+  .tl-app-link{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:800;color:var(--green1);margin-top:14px;letter-spacing:1px;text-transform:uppercase}
+  .tl-app-link:hover{color:var(--green2)}
+
+  /* ===== MANIFEST ===== */
+  .manifest-box{background:var(--bg);border:1px solid var(--green1);border-radius:var(--radius);padding:48px 40px;max-width:780px;margin:0 auto;position:relative;overflow:hidden}
+  .manifest-box::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at top right,rgba(0,255,106,.1) 0%,transparent 65%);pointer-events:none}
+  .manifest-head{font-size:14px;font-weight:800;color:var(--green1);letter-spacing:5px;text-transform:uppercase;margin-bottom:24px;position:relative}
+  .manifest-line{font-size:18px;font-weight:600;color:var(--text);line-height:1.55;margin-bottom:10px;position:relative}
+  .manifest-line strong{color:var(--green1);font-weight:800}
+  .manifest-close{margin-top:28px;padding-top:20px;border-top:1px solid var(--border2);font-size:16px;font-weight:700;color:var(--text);font-style:italic;position:relative}
+  .manifest-cta{font-size:24px;font-weight:900;color:var(--green1);margin-top:18px;letter-spacing:-.5px;position:relative}
+
+  /* ===== WHY WE BUILD ===== */
+  .why-grid{display:grid;grid-template-columns:1fr 1fr;gap:32px;align-items:start}
+  @media (max-width:780px){.why-grid{grid-template-columns:1fr}}
+  .why-text{font-size:15px;color:var(--text2);line-height:1.7}
+  .why-text strong{color:var(--text);font-weight:700}
+  .why-text p+p{margin-top:14px}
+  .why-quote{background:linear-gradient(135deg,var(--surface),var(--bg2));border:1px solid var(--border);border-left:3px solid var(--green1);border-radius:var(--radius);padding:28px 26px;font-style:italic;color:var(--text);font-size:15px;line-height:1.65}
+  .why-quote-source{display:block;margin-top:14px;font-style:normal;font-size:12px;color:var(--text3);letter-spacing:1.5px;text-transform:uppercase;font-weight:700}
+
+  /* ===== VALUES GRID ===== */
+  .values-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;margin-top:32px}
+  .value-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:22px;transition:.2s}
+  .value-card:hover{border-color:var(--green1);transform:translateY(-2px)}
+  .value-num{font-size:11px;font-weight:800;letter-spacing:2px;color:var(--green1);text-transform:uppercase;margin-bottom:6px}
+  .value-title{font-size:17px;font-weight:900;color:var(--text);margin-bottom:6px}
+  .value-desc{font-size:13px;color:var(--text2);line-height:1.6}
+
+  /* ===== INVESTOR ===== */
+  .investor-box{background:linear-gradient(180deg,var(--surface),var(--bg2));border:1px solid var(--border);border-radius:var(--radius);padding:44px 40px;position:relative;overflow:hidden}
+  .investor-box::before{content:'';position:absolute;top:0;right:0;width:200px;height:200px;background:radial-gradient(circle,rgba(0,255,106,.1) 0%,transparent 70%);pointer-events:none}
+  .investor-eyebrow{font-size:11px;font-weight:800;letter-spacing:4px;color:var(--green1);text-transform:uppercase;margin-bottom:14px;position:relative}
+  .investor-title{font-size:28px;font-weight:900;color:var(--text);margin-bottom:14px;letter-spacing:-.6px;position:relative}
+  .investor-text{font-size:15px;color:var(--text2);line-height:1.7;margin-bottom:28px;max-width:620px;position:relative}
+  .investor-text strong{color:var(--text)}
+  .stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin-bottom:28px;position:relative}
+  .stat{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);padding:18px 16px}
+  .stat-val{font-size:28px;font-weight:900;color:var(--green1);line-height:1;letter-spacing:-1px}
+  .stat-lbl{font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:1.5px;margin-top:8px}
+  .stat-sub{font-size:10px;color:var(--text3);margin-top:3px}
+  .investor-cta{display:flex;gap:12px;flex-wrap:wrap;position:relative}
+
+  /* ===== FOUNDER ===== */
+  .founder-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:36px 32px;display:flex;gap:28px;align-items:flex-start}
+  @media (max-width:680px){.founder-box{flex-direction:column;gap:18px;padding:24px}}
+  .founder-avatar{flex-shrink:0;width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,var(--green1),var(--green2));display:flex;align-items:center;justify-content:center;font-size:36px;font-weight:900;color:var(--bg);letter-spacing:-2px}
+  .founder-content{flex:1;min-width:0}
+  .founder-name{font-size:22px;font-weight:900;color:var(--text);letter-spacing:-.4px}
+  .founder-role{font-size:12px;font-weight:700;color:var(--green1);letter-spacing:2px;text-transform:uppercase;margin-top:4px}
+  .founder-bio{margin-top:18px;font-size:14px;color:var(--text2);line-height:1.7}
+  .founder-bio strong{color:var(--text);font-weight:700}
+  .founder-bio p+p{margin-top:12px}
+  .founder-links{display:flex;gap:14px;margin-top:18px;flex-wrap:wrap;font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase}
+  .founder-links a{color:var(--text2);display:inline-flex;gap:6px;align-items:center}
+  .founder-links a:hover{color:var(--green1)}
+
+  /* ===== PRESS KIT INLINE ===== */
+  .press-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin-bottom:24px}
+  .press-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:20px;text-align:left;transition:.15s;display:flex;flex-direction:column;gap:8px}
+  .press-card:hover{border-color:var(--green1);transform:translateY(-2px)}
+  .press-icon{font-size:24px}
+  .press-name{font-size:14px;font-weight:800;color:var(--text)}
+  .press-desc{font-size:11px;color:var(--text2);line-height:1.5}
+
+  /* ===== CONTACT ===== */
+  .contact-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
+  .contact-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:22px}
+  .contact-label{font-size:10px;font-weight:800;letter-spacing:2px;color:var(--green1);text-transform:uppercase;margin-bottom:8px}
+  .contact-val{font-size:14px;font-weight:700;color:var(--text);word-break:break-all}
+  .contact-val a{color:var(--text)}
+  .contact-val a:hover{color:var(--green1)}
+
+  /* ===== FOOTER ===== */
+  .footer{padding:40px 0 32px;border-top:1px solid var(--border);background:var(--bg);text-align:center;font-size:11px;color:var(--text3);letter-spacing:1.5px}
+  .footer-links{margin-bottom:14px;display:flex;gap:20px;justify-content:center;flex-wrap:wrap;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:1.5px}
+  .footer-links a{color:var(--text2)}
+  .footer-tag{margin-top:14px;color:var(--text2);font-size:10px;letter-spacing:2px}
+
+  /* ===== BILINGUAL VISIBILITY ===== */
+  [data-lang]{display:none}
+  [data-lang].active{display:block}
+  span[data-lang].active{display:inline}
+  /* Pre-JS fallback: show DE */
+  html:not(.lang-ready) [data-lang="de"]{display:block}
+  html:not(.lang-ready) span[data-lang="de"]{display:inline}
+  html:not(.lang-ready) [data-lang="en"]{display:none}
+</style>
+</head>
+<body>
+
+<!-- ============ NAV ============ -->
+<nav class="nav">
+  <div class="container nav-inner">
+    <a href="#" class="nav-brand" aria-label="SMASH Universe">
+      <div class="nav-brand-dot">S</div>
+      <span>SMASH<span class="nav-brand-sub">UNIVERSE</span></span>
+    </a>
+    <div class="nav-links">
+      <a href="#vision"><span data-lang="de">Vision</span><span data-lang="en">Vision</span></a>
+      <a href="#apps"><span data-lang="de">Apps</span><span data-lang="en">Apps</span></a>
+      <a href="#manifest"><span data-lang="de">Manifest</span><span data-lang="en">Manifesto</span></a>
+      <a href="#why"><span data-lang="de">Warum</span><span data-lang="en">Why</span></a>
+      <a href="#invest"><span data-lang="de">Investor</span><span data-lang="en">Invest</span></a>
+      <a href="#press">Press</a>
+      <a href="#contact">Contact</a>
+    </div>
+    <div class="nav-actions">
+      <div class="lang-toggle" role="group" aria-label="Sprache">
+        <button data-set-lang="de" class="active">DE</button>
+        <button data-set-lang="en">EN</button>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- ============ HERO ============ -->
+<header class="hero">
+  <div class="container">
+    <div class="hero-eyebrow">SMASH Universe</div>
+    <div class="hero-mark"><div class="s">S</div></div>
+    <div class="hero-wordmark">SMASH</div>
+    <div class="hero-universe">UNIVERSE</div>
+    <h1 class="hero-vision" data-lang="de">
+      Habit-Rituale für jeden Lebensabschnitt — <strong>vom Teen bis zum Rentner.</strong>
+    </h1>
+    <h1 class="hero-vision" data-lang="en">
+      Habit rituals for every stage of life — <strong>from teen to senior.</strong>
+    </h1>
+    <p class="hero-mission" data-lang="de">
+      Wir bauen tägliche Rituale, die Identität formen. Solo. Ehrlich. Hulk-Modus an.
+    </p>
+    <p class="hero-mission" data-lang="en">
+      We build daily rituals that shape identity. Solo. Honest. Hulk mode on.
+    </p>
+    <div class="hero-tagline">Date your best self.</div>
+    <div class="hero-cta">
+      <a href="https://smashtheapp.de" target="_blank" class="btn btn-primary">
+        <span data-lang="de">SMASH öffnen →</span>
+        <span data-lang="en">Open SMASH →</span>
+      </a>
+      <a href="#apps" class="btn btn-ghost">
+        <span data-lang="de">Universe entdecken</span>
+        <span data-lang="en">Explore the Universe</span>
+      </a>
+    </div>
+  </div>
+</header>
+
+<!-- ============ VISION / MISSION ============ -->
+<section id="vision" class="alt">
+  <div class="container">
+    <div class="section-eyebrow">01 &middot; <span data-lang="de">Vision &amp; Mission</span><span data-lang="en">Vision &amp; Mission</span></div>
+    <h2 class="section-title" data-lang="de">Disziplin als tägliches Ritual — global.</h2>
+    <h2 class="section-title" data-lang="en">Discipline as a daily ritual — globally.</h2>
+    <p class="section-lead" data-lang="de">
+      Eine Welt, in der jeder Mensch — egal ob 16 oder 86, Berlin oder Brasilien — täglich auf sein bestes Selbst hinarbeitet. <strong>SMASH Universe macht Disziplin zum täglichen Ritual</strong>, nicht zur Ausnahme.
+    </p>
+    <p class="section-lead" data-lang="en">
+      A world where every human — 16 or 86, Berlin or Brazil — works toward their best self every day. <strong>SMASH Universe turns discipline into a daily ritual</strong>, not an exception.
+    </p>
+
+    <div class="mission-box">
+      <div class="mission-pretitle" data-lang="de">Unsere Mission</div>
+      <div class="mission-pretitle" data-lang="en">Our Mission</div>
+      <div class="mission-text" data-lang="de">
+        Wir bauen <strong>ehrliche, kraftvolle Habit-Rituale</strong> für jeden Lebensabschnitt. Kein Tracker-Bullshit. Kein Productivity-Theater. Tägliche Rituale, die Identität formen — und Menschen wieder auf den guten Weg bringen.
+      </div>
+      <div class="mission-text" data-lang="en">
+        We build <strong>honest, powerful habit rituals</strong> for every stage of life. No tracker BS. No productivity theater. Daily rituals that shape identity — and bring people back to the path that matters.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ APPS TIMELINE ============ -->
+<section id="apps">
+  <div class="container">
+    <div class="section-eyebrow">02 &middot; <span data-lang="de">Unsere Apps</span><span data-lang="en">Our Apps</span></div>
+    <h2 class="section-title" data-lang="de">Die Universe-Roadmap</h2>
+    <h2 class="section-title" data-lang="en">The Universe Roadmap</h2>
+    <p class="section-lead" data-lang="de">
+      Eine App pro Lebensabschnitt. SMASH ist Phase 1 — der Beweis. Family, Senior, Couple und Faith kommen, sobald die Foundation stabil ist.
+    </p>
+    <p class="section-lead" data-lang="en">
+      One app per stage of life. SMASH is Phase 1 — the proof. Family, Senior, Couple, and Faith come once the foundation is solid.
+    </p>
+
+    <div class="timeline">
+      <!-- Phase 1: SMASH live -->
+      <div class="tl-item">
+        <div class="tl-dot active"></div>
+        <div class="tl-meta">
+          <span class="tl-phase">Phase 1</span>
+          <span class="tl-when">2026</span>
+          <span class="tl-status live">Live</span>
+        </div>
+        <div class="tl-app-card hero-app">
+          <div class="tl-app-name">SMASH <span class="tag">v0.99.8</span></div>
+          <div class="tl-app-desc" data-lang="de">
+            Habit-Ritual-App für 16-30 in DACH. Morning Kickoff &middot; Habits &middot; Streaks &middot; Smashbros &middot; Evening Reflection. <strong style="color:var(--green1)">Beta läuft kostenlos.</strong>
+          </div>
+          <div class="tl-app-desc" data-lang="en">
+            Habit ritual app for 16-30 in DACH (German-speaking market). Morning Kickoff &middot; Habits &middot; Streaks &middot; Smashbros &middot; Evening Reflection. <strong style="color:var(--green1)">Beta is free.</strong>
+          </div>
+          <a href="https://smashtheapp.de" target="_blank" class="tl-app-link">
+            <span data-lang="de">smashtheapp.de öffnen →</span>
+            <span data-lang="en">Open smashtheapp.de →</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Phase 2: Sub-Modes + EN -->
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-meta">
+          <span class="tl-phase">Phase 2</span>
+          <span class="tl-when">2026 &middot; 2027</span>
+          <span class="tl-status next" data-lang="de">Als Nächstes</span>
+          <span class="tl-status next" data-lang="en">Up Next</span>
+        </div>
+        <div class="tl-app-card">
+          <div class="tl-app-name" data-lang="de">SMASH Premium-Modes + EN-Version</div>
+          <div class="tl-app-name" data-lang="en">SMASH Premium Modes + EN version</div>
+          <div class="tl-app-desc" data-lang="de">
+            Family-Mode, Faith-Mode und Couple-Mode innerhalb von SMASH. Englische Version für globalen Markt-Eintritt. Foundation für eigenständige Sub-Apps.
+          </div>
+          <div class="tl-app-desc" data-lang="en">
+            Family Mode, Faith Mode, and Couple Mode within SMASH. English version for global market entry. Foundation for standalone sub-apps.
+          </div>
+        </div>
+      </div>
+
+      <!-- Phase 3: Family -->
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-meta">
+          <span class="tl-phase">Phase 3</span>
+          <span class="tl-when">2027 &middot; 2028</span>
+          <span class="tl-status planned" data-lang="de">Geplant</span>
+          <span class="tl-status planned" data-lang="en">Planned</span>
+        </div>
+        <div class="tl-app-card">
+          <div class="tl-app-name">SMASH Family</div>
+          <div class="tl-app-desc" data-lang="de">
+            Erste eigenständige Sub-App. Eltern 25-40 mit Kindern. Habit-Tracking für Kids + Eltern-Self-Care + Family-Rituale. Erste Hires (Designer, Backend).
+          </div>
+          <div class="tl-app-desc" data-lang="en">
+            First standalone sub-app. Parents 25-40 with kids. Habit tracking for kids + parent self-care + family rituals. First hires (designer, backend).
+          </div>
+        </div>
+      </div>
+
+      <!-- Phase 4: Senior -->
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-meta">
+          <span class="tl-phase">Phase 4</span>
+          <span class="tl-when">2028 &middot; 2029</span>
+          <span class="tl-status planned" data-lang="de">Geplant</span>
+          <span class="tl-status planned" data-lang="en">Planned</span>
+        </div>
+        <div class="tl-app-card">
+          <div class="tl-app-name">SMASH Senior</div>
+          <div class="tl-app-desc" data-lang="de">
+            60+. Eigene UX-Patterns. Routine-Stabilität, Health-Markers, Family-Connect-Brücken. Größeres Schrift-System, klarere Hierarchien.
+          </div>
+          <div class="tl-app-desc" data-lang="en">
+            60+. Dedicated UX patterns. Routine stability, health markers, family-connect bridges. Larger typography, clearer hierarchies.
+          </div>
+        </div>
+      </div>
+
+      <!-- Phase 5: International + more -->
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-meta">
+          <span class="tl-phase">Phase 5</span>
+          <span class="tl-when">2029 &middot; 2030</span>
+          <span class="tl-status planned" data-lang="de">Vision</span>
+          <span class="tl-status planned" data-lang="en">Vision</span>
+        </div>
+        <div class="tl-app-card">
+          <div class="tl-app-name" data-lang="de">SMASH Couple &middot; Faith &middot; Recovery + International</div>
+          <div class="tl-app-name" data-lang="en">SMASH Couple &middot; Faith &middot; Recovery + International</div>
+          <div class="tl-app-desc" data-lang="de">
+            Weitere Sub-Apps für gezielte Lebenssituationen. Internationale Expansion: ES, FR, PT für EU + LATAM-Märkte.
+          </div>
+          <div class="tl-app-desc" data-lang="en">
+            More sub-apps for specific life situations. International expansion: ES, FR, PT for EU + LATAM markets.
+          </div>
+        </div>
+      </div>
+
+      <!-- Phase 6: Habit-OS -->
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-meta">
+          <span class="tl-phase">Phase 6</span>
+          <span class="tl-when">2030+</span>
+          <span class="tl-status planned" data-lang="de">Endspiel</span>
+          <span class="tl-status planned" data-lang="en">Endgame</span>
+        </div>
+        <div class="tl-app-card">
+          <div class="tl-app-name" data-lang="de">Habit-OS &mdash; das Universe als Plattform</div>
+          <div class="tl-app-name" data-lang="en">Habit-OS &mdash; the Universe as a platform</div>
+          <div class="tl-app-desc" data-lang="de">
+            SMASH wird zur Plattform: Apps für jede Lebenslage, miteinander verbunden, mit Community + Coach-Layer. Vision: weltweit Standard für Disziplin-Apps.
+          </div>
+          <div class="tl-app-desc" data-lang="en">
+            SMASH becomes a platform: apps for every life stage, interconnected, with community + coach layer. Vision: global standard for discipline apps.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ MANIFEST ============ -->
+<section id="manifest" class="alt">
+  <div class="container">
+    <div class="section-eyebrow">03 &middot; Manifest</div>
+    <h2 class="section-title" data-lang="de">Wofür wir stehen</h2>
+    <h2 class="section-title" data-lang="en">What we stand for</h2>
+
+    <div class="manifest-box" data-lang="de">
+      <div class="manifest-head">Wir glauben.</div>
+      <div class="manifest-line">Wir glauben, dass Disziplin kein Talent ist.</div>
+      <div class="manifest-line">Wir glauben, dass jeder Tag ein Date mit dem besten Selbst ist.</div>
+      <div class="manifest-line">Wir glauben, dass Tracking nicht reicht — <strong>Ritual macht</strong>.</div>
+      <div class="manifest-line">Wir glauben, dass Identität durch Wiederholung entsteht.</div>
+      <div class="manifest-line">Wir glauben, dass kraftvolle Tools direkt sprechen — ohne Corporate-Lärm.</div>
+      <div class="manifest-line">Wir glauben, dass jeder — vom Teen bis zum Rentner — sein SMASH verdient.</div>
+      <div class="manifest-close">Wir bauen es. Solo. Ehrlich. Hulk-Modus an.</div>
+      <div class="manifest-cta">Date your best self.</div>
+    </div>
+    <div class="manifest-box" data-lang="en">
+      <div class="manifest-head">We believe.</div>
+      <div class="manifest-line">We believe discipline is not a talent.</div>
+      <div class="manifest-line">We believe every day is a date with your best self.</div>
+      <div class="manifest-line">We believe tracking isn't enough — <strong>ritual is</strong>.</div>
+      <div class="manifest-line">We believe identity is built through repetition.</div>
+      <div class="manifest-line">We believe powerful tools speak directly — without corporate noise.</div>
+      <div class="manifest-line">We believe everyone — from teen to senior — deserves their own SMASH.</div>
+      <div class="manifest-close">We build it. Solo. Honest. Hulk mode on.</div>
+      <div class="manifest-cta">Date your best self.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ WHY WE BUILD ============ -->
+<section id="why">
+  <div class="container">
+    <div class="section-eyebrow">04 &middot; <span data-lang="de">Warum wir bauen</span><span data-lang="en">Why we build</span></div>
+    <h2 class="section-title" data-lang="de">Werte, die nicht aus der Mode kommen</h2>
+    <h2 class="section-title" data-lang="en">Values that don't go out of style</h2>
+
+    <div class="why-grid">
+      <div class="why-text" data-lang="de">
+        <p>SMASH wurzelt in <strong>ewigen Werten</strong> — Disziplin, Identität durch Wiederholung, Selbstbeherrschung, Beharrlichkeit. Konzepte, die seit Jahrtausenden funktionieren, weil sie unabhängig von Trends sind.</p>
+        <p>Der Founder ist Christ. Unsere Werte sind tief biblisch verwurzelt (Galater 5,22-23: „Selbstbeherrschung als Frucht des Geistes" / Sprüche 25,28: „Wer sich nicht beherrscht, ist wie eine Stadt ohne Mauer"). Aber wir bauen kein Christen-Tool — wir bauen ein <strong>Disziplin-Tool für alle</strong>, weil diese Werte universal tragfähig sind: Stoiker, Buddhisten, Christen, Säkulare finden hier alle Heimat.</p>
+        <p>Das ist <strong>Tugend &gt; Trend</strong>. Wenn der nächste Productivity-Hype kommt und geht, bleibt SMASH — weil das Fundament tiefer reicht als jeder Hype.</p>
+      </div>
+      <div class="why-text" data-lang="en">
+        <p>SMASH is rooted in <strong>eternal values</strong> — discipline, identity through repetition, self-control, perseverance. Concepts that have worked for thousands of years because they're independent of trends.</p>
+        <p>The founder is Christian. Our values are deeply rooted in scripture (Galatians 5:22-23: "self-control as a fruit of the Spirit" / Proverbs 25:28: "a person without self-control is like a city with broken walls"). But we don't build a Christian tool — we build a <strong>discipline tool for everyone</strong>, because these values translate universally: stoics, Buddhists, Christians, secular thinkers all find a home here.</p>
+        <p>This is <strong>virtue over trend</strong>. When the next productivity hype comes and goes, SMASH stays — because the foundation runs deeper than any hype.</p>
+      </div>
+      <div>
+        <blockquote class="why-quote" data-lang="de">
+          „Wer sich nicht beherrscht, ist wie eine Stadt mit niedergerissenen Mauern."
+          <span class="why-quote-source">Sprüche 25,28</span>
+        </blockquote>
+        <blockquote class="why-quote" data-lang="en">
+          "A person without self-control is like a city with broken-down walls."
+          <span class="why-quote-source">Proverbs 25:28</span>
+        </blockquote>
+      </div>
+    </div>
+
+    <!-- 6 Values Grid -->
+    <div class="values-grid">
+      <div class="value-card"><div class="value-num">01</div><div class="value-title">Ritual &gt; Tracking</div><div class="value-desc" data-lang="de">Tools setzen Häkchen. Wir bauen Rituale.</div><div class="value-desc" data-lang="en">Tools check boxes. We build rituals.</div></div>
+      <div class="value-card"><div class="value-num">02</div><div class="value-title">Identität &gt; Goals</div><div class="value-desc" data-lang="de">„Wer wirst du dadurch?" ist die einzige Frage.</div><div class="value-desc" data-lang="en">"Who are you becoming?" is the only question.</div></div>
+      <div class="value-card"><div class="value-num">03</div><div class="value-title">Honest &gt; Hype</div><div class="value-desc" data-lang="de">Build-in-Public. Echte Stats. Keine Vanity-Metriken.</div><div class="value-desc" data-lang="en">Build-in-public. Real stats. No vanity metrics.</div></div>
+      <div class="value-card"><div class="value-num">04</div><div class="value-title">Polish &gt; Bloat</div><div class="value-desc" data-lang="de">5 Features perfekt &gt; 50 halbherzig.</div><div class="value-desc" data-lang="en">5 features perfect &gt; 50 half-baked.</div></div>
+      <div class="value-card"><div class="value-num">05</div><div class="value-title">Hulk &gt; Corporate</div><div class="value-desc" data-lang="de">Direkte Sprache. Kraftvolle Statements.</div><div class="value-desc" data-lang="en">Direct language. Powerful statements.</div></div>
+      <div class="value-card"><div class="value-num">06</div><div class="value-title">Tugend &gt; Trend</div><div class="value-desc" data-lang="de">Ewige Werte schlagen jeden Productivity-Trend.</div><div class="value-desc" data-lang="en">Eternal values beat any productivity trend.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ INVESTOR ============ -->
+<section id="invest" class="alt">
+  <div class="container">
+    <div class="section-eyebrow">05 &middot; Investor</div>
+    <h2 class="section-title" data-lang="de">Building, openly.</h2>
+    <h2 class="section-title" data-lang="en">Building, openly.</h2>
+
+    <div class="investor-box">
+      <div class="investor-eyebrow" data-lang="de">Aktueller Stand</div>
+      <div class="investor-eyebrow" data-lang="en">Current state</div>
+      <div class="investor-title" data-lang="de">Year 1 Goal: 1-3k €/Mo MRR &middot; 150-430 zahlende Pro-User</div>
+      <div class="investor-title" data-lang="en">Year 1 Goal: €1-3k MRR &middot; 150-430 paying Pro users</div>
+      <div class="investor-text" data-lang="de">
+        SMASH läuft bootstrapped. Solo entwickelt seit Anfang 2026, Beta v0.99.8 ist live. Wir sind <strong>offen für strategische Gespräche</strong> — Investoren, Press, Influencer, Partner. Aktuell <strong>kein aktiver Funding-Round</strong>, aber wir hören zu, wenn der Match passt.
+      </div>
+      <div class="investor-text" data-lang="en">
+        SMASH is bootstrapped. Solo-built since early 2026, Beta v0.99.8 is live. We're <strong>open for strategic conversations</strong> — investors, press, influencers, partners. Currently <strong>no active funding round</strong>, but we're listening when the match makes sense.
+      </div>
+
+      <div class="stats-row">
+        <div class="stat">
+          <div class="stat-val">v0.99.8</div>
+          <div class="stat-lbl" data-lang="de">Beta Live</div>
+          <div class="stat-lbl" data-lang="en">Beta Live</div>
+          <div class="stat-sub">smashtheapp.de</div>
+        </div>
+        <div class="stat">
+          <div class="stat-val">100+</div>
+          <div class="stat-lbl" data-lang="de">Pushes / 7 Tage</div>
+          <div class="stat-lbl" data-lang="en">Pushes / 7 days</div>
+          <div class="stat-sub" data-lang="de">Indie-Velocity</div>
+          <div class="stat-sub" data-lang="en">Indie velocity</div>
+        </div>
+        <div class="stat">
+          <div class="stat-val">PWA</div>
+          <div class="stat-lbl" data-lang="de">Web App</div>
+          <div class="stat-lbl" data-lang="en">Web App</div>
+          <div class="stat-sub">iOS &middot; Android &middot; Desktop</div>
+        </div>
+        <div class="stat">
+          <div class="stat-val">DACH</div>
+          <div class="stat-lbl" data-lang="de">Markt-Start</div>
+          <div class="stat-lbl" data-lang="en">Launch market</div>
+          <div class="stat-sub" data-lang="de">DE jetzt &middot; EN ab Year 2</div>
+          <div class="stat-sub" data-lang="en">DE now &middot; EN Year 2</div>
+        </div>
+      </div>
+
+      <div class="investor-cta">
+        <a href="mailto:invest@smashuniverse.info" class="btn btn-primary">
+          <span data-lang="de">invest@smashuniverse.info</span>
+          <span data-lang="en">invest@smashuniverse.info</span>
+        </a>
+        <a href="https://smashtheapp.de/pitch.html" target="_blank" class="btn btn-ghost">
+          <span data-lang="de">Pitch-PDF ansehen →</span>
+          <span data-lang="en">View pitch PDF →</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FOUNDER ============ -->
+<section id="founder">
+  <div class="container">
+    <div class="section-eyebrow">06 &middot; Founder</div>
+    <h2 class="section-title">Sebastian Wimmer</h2>
+
+    <div class="founder-box">
+      <div class="founder-avatar">S</div>
+      <div class="founder-content">
+        <div class="founder-name">Sebastian Wimmer</div>
+        <div class="founder-role" data-lang="de">Solo-Founder &middot; Vegetarianhulk</div>
+        <div class="founder-role" data-lang="en">Solo Founder &middot; Vegetarianhulk</div>
+        <div class="founder-bio" data-lang="de">
+          <p>25, DACH. Indie-Founder. Christ. Vegetarier-Athletisch. Baut SMASH solo seit 2026 — von Architektur bis Marketing-Copy. Build-in-Public auf @smashtheapp.</p>
+          <p>SMASH ist persönlich: Sebi nutzt die App selbst täglich. Das Produkt entsteht aus echtem Schmerz mit bestehenden Habit-Tools, die entweder spielzeughaft oder steril sind. Die deutsche Hulk-Voice ist nicht Marketing — sie ist Sebis natürliche Ausdrucksweise.</p>
+          <p><strong>Werte-Quelle:</strong> Christlich verwurzelt. Disziplin, Selbstbeherrschung, Identität durch Wiederholung — biblische Konzepte, im Produkt für alle (Säkulare, Stoiker, Buddhisten, Christen) zugänglich gemacht.</p>
+        </div>
+        <div class="founder-bio" data-lang="en">
+          <p>25, DACH. Indie founder. Christian. Vegetarian-athletic. Building SMASH solo since 2026 — from architecture to marketing copy. Build-in-public on @smashtheapp.</p>
+          <p>SMASH is personal: Sebi uses the app daily himself. The product was born from real frustration with existing habit tools that are either toy-like or sterile. The German Hulk-voice isn't marketing — it's Sebi's natural way of speaking.</p>
+          <p><strong>Values source:</strong> Christ-grounded. Discipline, self-control, identity through repetition — biblical concepts made universally accessible in the product (secular, stoic, Buddhist, Christian users all find a home).</p>
+        </div>
+        <div class="founder-links">
+          <a href="https://instagram.com/smashtheapp" target="_blank">📷 @smashtheapp</a>
+          <a href="https://github.com/sebastianwimmer-sq" target="_blank">⌨ GitHub</a>
+          <a href="mailto:hello@smashuniverse.info">✉ hello@smashuniverse.info</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PRESS KIT INLINE ============ -->
+<section id="press" class="alt">
+  <div class="container">
+    <div class="section-eyebrow">07 &middot; Press Kit</div>
+    <h2 class="section-title" data-lang="de">Brand-Assets &amp; Press</h2>
+    <h2 class="section-title" data-lang="en">Brand assets &amp; press</h2>
+    <p class="section-lead" data-lang="de">
+      Für Press, Influencer und Partner. Logos, Brand-Spec, Pitch-PDF — alles direkt verlinkt.
+    </p>
+    <p class="section-lead" data-lang="en">
+      For press, influencers, and partners. Logos, brand spec, pitch PDF — all linked directly.
+    </p>
+
+    <div class="press-grid">
+      <a href="https://smashtheapp.de/assets/logo-square.svg" target="_blank" class="press-card">
+        <div class="press-icon">🟢</div>
+        <div class="press-name">Logo Square</div>
+        <div class="press-desc" data-lang="de">SVG &middot; App-Icon &middot; Square-Posts</div>
+        <div class="press-desc" data-lang="en">SVG &middot; app icon &middot; square posts</div>
+      </a>
+      <a href="https://smashtheapp.de/assets/logo-wordmark.svg" target="_blank" class="press-card">
+        <div class="press-icon">🟢</div>
+        <div class="press-name">Logo Wordmark</div>
+        <div class="press-desc" data-lang="de">SVG &middot; Header &middot; Email-Signatur</div>
+        <div class="press-desc" data-lang="en">SVG &middot; headers &middot; email signature</div>
+      </a>
+      <a href="https://smashtheapp.de/assets/social-card.svg" target="_blank" class="press-card">
+        <div class="press-icon">🖼</div>
+        <div class="press-name">Social Card</div>
+        <div class="press-desc">1200×630 &middot; OG &middot; Twitter</div>
+      </a>
+      <a href="https://smashtheapp.de/pitch.html" target="_blank" class="press-card">
+        <div class="press-icon">📄</div>
+        <div class="press-name">Pitch &amp; Vision</div>
+        <div class="press-desc" data-lang="de">DE/EN &middot; ⌘+P → PDF-Export</div>
+        <div class="press-desc" data-lang="en">DE/EN &middot; ⌘+P → PDF export</div>
+      </a>
+      <a href="https://github.com/sebastianwimmer-sq/life-tracker/blob/main/assets/BRAND.md" target="_blank" class="press-card">
+        <div class="press-icon">📋</div>
+        <div class="press-name">Brand Spec</div>
+        <div class="press-desc" data-lang="de">Farben &middot; Typo &middot; Voice</div>
+        <div class="press-desc" data-lang="en">Colors &middot; type &middot; voice</div>
+      </a>
+      <a href="press/" class="press-card">
+        <div class="press-icon">📦</div>
+        <div class="press-name" data-lang="de">Volle Press-Page →</div>
+        <div class="press-name" data-lang="en">Full press page →</div>
+        <div class="press-desc" data-lang="de">Boilerplate &middot; Bilder &middot; Story-Hooks</div>
+        <div class="press-desc" data-lang="en">Boilerplate &middot; images &middot; story hooks</div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CONTACT ============ -->
+<section id="contact">
+  <div class="container">
+    <div class="section-eyebrow">08 &middot; Contact</div>
+    <h2 class="section-title" data-lang="de">Reden wir.</h2>
+    <h2 class="section-title" data-lang="en">Let's talk.</h2>
+    <p class="section-lead" data-lang="de">
+      Drei Inboxen, ein Founder. Du wirst eine echte Antwort bekommen.
+    </p>
+    <p class="section-lead" data-lang="en">
+      Three inboxes, one founder. You'll get a real reply.
+    </p>
+
+    <div class="contact-grid">
+      <div class="contact-card">
+        <div class="contact-label">Investor</div>
+        <div class="contact-val"><a href="mailto:invest@smashuniverse.info">invest@smashuniverse.info</a></div>
+      </div>
+      <div class="contact-card">
+        <div class="contact-label">Press</div>
+        <div class="contact-val"><a href="mailto:press@smashuniverse.info">press@smashuniverse.info</a></div>
+      </div>
+      <div class="contact-card">
+        <div class="contact-label">Partner</div>
+        <div class="contact-val"><a href="mailto:partner@smashuniverse.info">partner@smashuniverse.info</a></div>
+      </div>
+      <div class="contact-card">
+        <div class="contact-label">General</div>
+        <div class="contact-val"><a href="mailto:hello@smashuniverse.info">hello@smashuniverse.info</a></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-links">
+      <a href="https://smashtheapp.de" target="_blank">SMASH App</a>
+      <a href="https://smashtheapp.de/pitch.html" target="_blank">Pitch</a>
+      <a href="https://smashtheapp.de/brand.html" target="_blank">Brand</a>
+      <a href="https://instagram.com/smashtheapp" target="_blank">Instagram</a>
+      <a href="https://github.com/sebastianwimmer-sq" target="_blank">GitHub</a>
+    </div>
+    <div>SMASH UNIVERSE &copy; 2026 &middot; Built solo &middot; Hulk mode on</div>
+    <div class="footer-tag">DATE YOUR BEST SELF.</div>
+  </div>
+</footer>
+
+<script>
+  // ============ Bilingual Auto-Detect + Toggle ============
+  const langButtons=document.querySelectorAll('[data-set-lang]');
+  function setLang(lang){
+    langButtons.forEach(b=>b.classList.toggle('active',b.getAttribute('data-set-lang')===lang));
+    document.querySelectorAll('[data-lang]').forEach(el=>{
+      el.classList.toggle('active',el.getAttribute('data-lang')===lang);
+    });
+    document.documentElement.setAttribute('lang',lang);
+    try{localStorage.setItem('smash_universe_lang',lang)}catch(e){}
+  }
+  langButtons.forEach(b=>b.addEventListener('click',()=>setLang(b.getAttribute('data-set-lang'))));
+
+  // Init priority: URL ?lang= > localStorage > Browser-Auto-Detect > DE fallback
+  const urlLang=new URLSearchParams(location.search).get('lang');
+  const savedLang=(()=>{try{return localStorage.getItem('smash_universe_lang')}catch(e){return null}})();
+  const browserLang=(navigator.language||'de').toLowerCase().startsWith('en')?'en':'de';
+  setLang(urlLang||savedLang||browserLang);
+  document.documentElement.classList.add('lang-ready');
+</script>
+</body>
+</html>
