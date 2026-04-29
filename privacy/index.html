@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SMASH Universe — Datenschutz / Privacy</title>
+<meta name="description" content="Datenschutzerklärung SMASH Universe. DSGVO-konform, transparent, ohne Tracking-Cookies.">
+<meta name="theme-color" content="#050505">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" type="image/svg+xml" href="https://smashtheapp.de/assets/logo-square.svg">
+<script defer data-domain="smashuniverse.info" src="https://plausible.io/js/script.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+  :root{--bg:#050505;--surface:#111;--border:#222;--text:#f0f0f0;--text2:#888;--text3:#555;--green1:#00ff6a;--green2:#00cc55}
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100dvh;-webkit-font-smoothing:antialiased;line-height:1.65}
+  a{color:var(--green1);text-decoration:none}
+  a:hover{color:var(--green2)}
+  .page{max-width:760px;margin:0 auto;padding:32px 24px 80px}
+  .topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:48px;font-size:12px;color:var(--text2);font-weight:600;letter-spacing:1px;text-transform:uppercase}
+  .topbar a{color:var(--text2)}
+  .topbar a:hover{color:var(--green1)}
+  .lang-toggle{display:inline-flex;background:#0c0c0c;border:1px solid var(--border);border-radius:8px;overflow:hidden}
+  .lang-toggle button{background:transparent;border:0;color:var(--text2);font-size:11px;font-weight:700;letter-spacing:2px;padding:6px 11px;cursor:pointer;font-family:'Inter'}
+  .lang-toggle button.active{background:var(--green1);color:var(--bg)}
+  h1{font-size:42px;font-weight:900;letter-spacing:-1px;margin-bottom:14px;line-height:1.1}
+  .stand{color:var(--text2);font-size:13px;margin-bottom:36px;font-style:italic}
+  h2{font-size:18px;font-weight:900;color:var(--text);margin:32px 0 10px;letter-spacing:-.3px}
+  h2:first-of-type{margin-top:8px}
+  p{font-size:15px;color:var(--text2);margin-bottom:12px}
+  p strong{color:var(--text);font-weight:700}
+  ul{margin-left:22px;margin-bottom:14px;color:var(--text2);font-size:14px}
+  ul li{margin-bottom:6px}
+  .box{background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--green1);border-radius:10px;padding:18px 20px;margin:18px 0;font-size:14px;color:var(--text2);line-height:1.7}
+  .box strong{color:var(--green1)}
+  [data-lang]{display:none}
+  [data-lang].active{display:block}
+  span[data-lang].active{display:inline}
+  html:not(.lang-ready) [data-lang="de"]{display:block}
+  html:not(.lang-ready) span[data-lang="de"]{display:inline}
+  html:not(.lang-ready) [data-lang="en"]{display:none}
+  .footer{margin-top:64px;padding-top:24px;border-top:1px solid var(--border);text-align:center;font-size:11px;color:var(--text3);letter-spacing:1.5px;text-transform:uppercase}
+  .footer a{color:var(--text2);margin:0 10px}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="topbar">
+    <a href="../">← <span data-lang="de">Zurück zum Hub</span><span data-lang="en">Back to Hub</span></a>
+    <div class="lang-toggle">
+      <button data-set-lang="de" class="active">DE</button>
+      <button data-set-lang="en">EN</button>
+    </div>
+  </div>
+
+  <!-- ========== DEUTSCH ========== -->
+  <div data-lang="de">
+    <h1>Datenschutzerklärung</h1>
+    <div class="stand">Stand: 29.04.2026</div>
+
+    <div class="box">
+      <strong>Kurz gesagt:</strong> smashuniverse.info ist eine reine Informations-Webseite ohne Login, ohne Mailing-Liste, ohne Tracking-Cookies. Wir nutzen <strong>Plausible Analytics</strong> (cookieless, DSGVO-konform) für Reichweiten-Messung. Mehr siehst du unten.
+    </div>
+
+    <h2>1. Verantwortlicher</h2>
+    <p>Sebastian Wimmer<br>(Anschrift wird auf berechtigte Anfrage mitgeteilt)<br>Deutschland</p>
+    <p>Kontakt: <a href="mailto:hello@smashuniverse.info">hello@smashuniverse.info</a></p>
+
+    <h2>2. Welche Daten wir verarbeiten</h2>
+    <p>smashuniverse.info ist die Unternehmens-Webseite des SMASH Universe. Hier findest du Vision, Mission, Roadmap, Founder-Story und Press-Kit. Du musst dich <strong>nicht registrieren</strong>, wir senden dir <strong>keine Mails</strong>, wir setzen <strong>keine Werbe-Cookies</strong>.</p>
+    <p>Folgende Daten fallen technisch an:</p>
+    <ul>
+      <li><strong>Server-Logs:</strong> Beim Aufruf der Seite werden vom Hosting-Provider (GitHub Pages, GitHub Inc.) Standard-Logfiles geführt (IP-Adresse, Browser, Zeitstempel). Wir haben keinen direkten Zugriff darauf.</li>
+      <li><strong>localStorage:</strong> Deine Sprachwahl (DE/EN) wird in deinem Browser gespeichert (`smash_universe_lang`). Reine UX-Funktion, kein personenbezogener Bezug.</li>
+      <li><strong>Plausible Analytics:</strong> Aggregierte Reichweiten-Statistik ohne personenbezogene Daten. Details unten.</li>
+    </ul>
+
+    <h2>3. Hosting (GitHub Pages)</h2>
+    <p>Diese Webseite wird statisch über <strong>GitHub Pages</strong> (GitHub, Inc., USA) ausgeliefert. GitHub speichert Server-Logs nach eigenen Datenschutzbestimmungen: <a href="https://docs.github.com/en/site-policy/privacy-policies/github-privacy-statement" target="_blank">docs.github.com/.../privacy-statement</a></p>
+    <p>Drittstaaten-Transfer erfolgt auf Basis von <strong>EU-Standardvertragsklauseln (SCC)</strong> sowie der Zertifizierung nach dem <strong>EU-US Data Privacy Framework</strong>.</p>
+
+    <h2>4. Plausible Analytics (cookieless)</h2>
+    <p>Wir nutzen <strong>Plausible Analytics</strong> (Plausible Insights OÜ, Estland/EU) zur cookieless Reichweiten-Messung. Plausible</p>
+    <ul>
+      <li>setzt <strong>keine Cookies</strong></li>
+      <li>speichert <strong>keine personenbezogenen Daten</strong> (keine IPs, keine Fingerprints)</li>
+      <li>ermöglicht <strong>kein Cross-Site-Tracking</strong></li>
+      <li>läuft auf EU-Servern</li>
+    </ul>
+    <p>Mehr: <a href="https://plausible.io/data-policy" target="_blank">plausible.io/data-policy</a></p>
+    <p>Rechtsgrundlage: <strong>Art. 6 Abs. 1 lit. f DSGVO</strong> (berechtigtes Interesse an statistischer Reichweiten-Auswertung).</p>
+
+    <h2>5. Cookies</h2>
+    <p>Wir setzen <strong>keine Tracking-Cookies und keine Werbe-Cookies</strong>. Wir verwenden ausschließlich <code>localStorage</code> für deine Sprachwahl (essential UX, keine Banner-Pflicht nach §25 TTDSG).</p>
+
+    <h2>6. Externe Links</h2>
+    <p>Diese Seite enthält Links zu externen Plattformen (Instagram, GitHub, smashtheapp.de). Beim Klick verlässt du smashuniverse.info — die Datenschutzbestimmungen der jeweiligen Plattformen gelten.</p>
+
+    <h2>7. Kontakt-Mails</h2>
+    <p>Wenn du uns Mails an <a href="mailto:invest@smashuniverse.info">invest@</a>, <a href="mailto:press@smashuniverse.info">press@</a>, <a href="mailto:partner@smashuniverse.info">partner@</a> oder <a href="mailto:hello@smashuniverse.info">hello@smashuniverse.info</a> schickst, verarbeiten wir deine Mail-Daten zur Beantwortung deiner Anfrage. Rechtsgrundlage: Art. 6 Abs. 1 lit. b oder f DSGVO. Wir nutzen <strong>Brevo</strong> (Sendinblue SAS, Frankreich) als Mail-Infrastruktur.</p>
+
+    <h2>8. Deine Rechte</h2>
+    <p>Du hast jederzeit das Recht auf:</p>
+    <ul>
+      <li>Auskunft (Art. 15 DSGVO)</li>
+      <li>Berichtigung (Art. 16 DSGVO)</li>
+      <li>Löschung (Art. 17 DSGVO)</li>
+      <li>Einschränkung der Verarbeitung (Art. 18 DSGVO)</li>
+      <li>Datenübertragbarkeit (Art. 20 DSGVO)</li>
+      <li>Widerspruch (Art. 21 DSGVO)</li>
+      <li>Beschwerde bei einer Aufsichtsbehörde</li>
+    </ul>
+    <p>Anfragen an: <a href="mailto:hello@smashuniverse.info">hello@smashuniverse.info</a>. Antwort innerhalb von 7 Tagen.</p>
+
+    <h2>9. SMASH App (smashtheapp.de)</h2>
+    <p>Die SMASH App auf <a href="https://smashtheapp.de" target="_blank">smashtheapp.de</a> hat eine eigene, ausführlichere Datenschutzerklärung — dort werden tatsächlich Nutzer-Daten verarbeitet (Habits, Streaks etc.). Siehe Settings → Datenschutz in der App.</p>
+
+    <h2>10. Sicherheit</h2>
+    <p>HTTPS-Verschlüsselung über Let's Encrypt. Statische Seite ohne Server-Side-Code (kein Datenbank-Zugriff, keine User-Eingaben).</p>
+  </div>
+
+  <!-- ========== ENGLISH ========== -->
+  <div data-lang="en">
+    <h1>Privacy Policy</h1>
+    <div class="stand">As of: April 29, 2026</div>
+
+    <div class="box">
+      <strong>In short:</strong> smashuniverse.info is a pure information website without login, mailing list, or tracking cookies. We use <strong>Plausible Analytics</strong> (cookieless, GDPR-compliant) for reach measurement. Details below.
+    </div>
+
+    <h2>1. Controller</h2>
+    <p>Sebastian Wimmer<br>(Address provided upon legitimate request)<br>Germany</p>
+    <p>Contact: <a href="mailto:hello@smashuniverse.info">hello@smashuniverse.info</a></p>
+
+    <h2>2. What data we process</h2>
+    <p>smashuniverse.info is the corporate website of SMASH Universe. Here you find vision, mission, roadmap, founder story, and press kit. You don't need to <strong>register</strong>, we don't send you <strong>any mails</strong>, we set <strong>no advertising cookies</strong>.</p>
+    <p>The following data is technically generated:</p>
+    <ul>
+      <li><strong>Server logs:</strong> When accessing the page, the hosting provider (GitHub Pages, GitHub Inc.) keeps standard log files (IP address, browser, timestamp). We have no direct access.</li>
+      <li><strong>localStorage:</strong> Your language choice (DE/EN) is stored in your browser (`smash_universe_lang`). Pure UX function, no personal reference.</li>
+      <li><strong>Plausible Analytics:</strong> Aggregated reach statistics without personal data. Details below.</li>
+    </ul>
+
+    <h2>3. Hosting (GitHub Pages)</h2>
+    <p>This website is delivered statically via <strong>GitHub Pages</strong> (GitHub, Inc., USA). GitHub stores server logs according to its own privacy policy: <a href="https://docs.github.com/en/site-policy/privacy-policies/github-privacy-statement" target="_blank">docs.github.com/.../privacy-statement</a></p>
+    <p>Third-country transfer is based on <strong>EU Standard Contractual Clauses (SCC)</strong> as well as certification under the <strong>EU-US Data Privacy Framework</strong>.</p>
+
+    <h2>4. Plausible Analytics (cookieless)</h2>
+    <p>We use <strong>Plausible Analytics</strong> (Plausible Insights OÜ, Estonia/EU) for cookieless reach measurement. Plausible</p>
+    <ul>
+      <li>sets <strong>no cookies</strong></li>
+      <li>stores <strong>no personal data</strong> (no IPs, no fingerprints)</li>
+      <li>enables <strong>no cross-site tracking</strong></li>
+      <li>runs on EU servers</li>
+    </ul>
+    <p>More: <a href="https://plausible.io/data-policy" target="_blank">plausible.io/data-policy</a></p>
+    <p>Legal basis: <strong>Art. 6 (1) (f) GDPR</strong> (legitimate interest in statistical reach evaluation).</p>
+
+    <h2>5. Cookies</h2>
+    <p>We set <strong>no tracking cookies and no advertising cookies</strong>. We exclusively use <code>localStorage</code> for your language choice (essential UX, no banner requirement under §25 TTDSG).</p>
+
+    <h2>6. External links</h2>
+    <p>This page contains links to external platforms (Instagram, GitHub, smashtheapp.de). Upon clicking, you leave smashuniverse.info — the privacy policies of the respective platforms apply.</p>
+
+    <h2>7. Contact mails</h2>
+    <p>If you send mails to <a href="mailto:invest@smashuniverse.info">invest@</a>, <a href="mailto:press@smashuniverse.info">press@</a>, <a href="mailto:partner@smashuniverse.info">partner@</a> or <a href="mailto:hello@smashuniverse.info">hello@smashuniverse.info</a>, we process your mail data to answer your request. Legal basis: Art. 6 (1) (b) or (f) GDPR. We use <strong>Brevo</strong> (Sendinblue SAS, France) as mail infrastructure.</p>
+
+    <h2>8. Your rights</h2>
+    <p>You have the right at any time to:</p>
+    <ul>
+      <li>Information (Art. 15 GDPR)</li>
+      <li>Rectification (Art. 16 GDPR)</li>
+      <li>Erasure (Art. 17 GDPR)</li>
+      <li>Restriction of processing (Art. 18 GDPR)</li>
+      <li>Data portability (Art. 20 GDPR)</li>
+      <li>Objection (Art. 21 GDPR)</li>
+      <li>Complaint to a supervisory authority</li>
+    </ul>
+    <p>Requests to: <a href="mailto:hello@smashuniverse.info">hello@smashuniverse.info</a>. Reply within 7 days.</p>
+
+    <h2>9. SMASH App (smashtheapp.de)</h2>
+    <p>The SMASH app on <a href="https://smashtheapp.de" target="_blank">smashtheapp.de</a> has its own, more detailed privacy policy — actual user data (habits, streaks etc.) is processed there. See Settings → Privacy in the app.</p>
+
+    <h2>10. Security</h2>
+    <p>HTTPS encryption via Let's Encrypt. Static site without server-side code (no database access, no user input).</p>
+  </div>
+
+  <div class="footer">
+    <a href="../">SMASH Universe Hub</a> ·
+    <a href="https://smashtheapp.de" target="_blank">SMASH App</a> ·
+    <a href="mailto:hello@smashuniverse.info">Contact</a>
+    <div style="margin-top:14px">SMASH UNIVERSE © 2026</div>
+  </div>
+</div>
+
+<script>
+  const langButtons=document.querySelectorAll('[data-set-lang]');
+  function setLang(lang){
+    langButtons.forEach(b=>b.classList.toggle('active',b.getAttribute('data-set-lang')===lang));
+    document.querySelectorAll('[data-lang]').forEach(el=>el.classList.toggle('active',el.getAttribute('data-lang')===lang));
+    document.documentElement.setAttribute('lang',lang);
+    try{localStorage.setItem('smash_universe_lang',lang)}catch(e){}
+  }
+  langButtons.forEach(b=>b.addEventListener('click',()=>setLang(b.getAttribute('data-set-lang'))));
+  const urlLang=new URLSearchParams(location.search).get('lang');
+  const savedLang=(()=>{try{return localStorage.getItem('smash_universe_lang')}catch(e){return null}})();
+  const browserLang=(navigator.language||'de').toLowerCase().startsWith('en')?'en':'de';
+  setLang(urlLang||savedLang||browserLang);
+  document.documentElement.classList.add('lang-ready');
+</script>
+</body>
+</html>
