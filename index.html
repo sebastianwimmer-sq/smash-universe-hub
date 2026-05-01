@@ -280,6 +280,48 @@
   html:not(.lang-ready) [data-lang="de"]{display:block}
   html:not(.lang-ready) span[data-lang="de"]{display:inline}
   html:not(.lang-ready) [data-lang="en"]{display:none}
+
+  /* === Animations + 3D (01.05. Aufhuebschung) === */
+  /* Scroll-Reveal */
+  .reveal{opacity:0;transform:translateY(40px);transition:opacity .8s ease-out,transform .8s cubic-bezier(.34,1.56,.64,1)}
+  .reveal.in{opacity:1;transform:translateY(0)}
+  .reveal.delay-1{transition-delay:.1s}
+  .reveal.delay-2{transition-delay:.2s}
+  .reveal.delay-3{transition-delay:.3s}
+
+  /* 3D-Tilt-Cards */
+  .tilt-card{transform-style:preserve-3d;transition:transform .15s cubic-bezier(.4,0,.2,1),box-shadow .25s}
+  .tilt-card:hover{box-shadow:0 25px 60px rgba(0,255,106,.18)}
+
+  /* Hero-Glow */
+  .hero-glow-bg{position:absolute;inset:-200px;background:radial-gradient(ellipse at center,rgba(0,255,106,.15) 0%,transparent 55%);pointer-events:none;z-index:0;animation:heroGlow 6s ease-in-out infinite alternate}
+  @keyframes heroGlow{0%{opacity:.6;transform:scale(1)}100%{opacity:1;transform:scale(1.18)}}
+
+  /* Floating-Particles */
+  .particle-field{position:absolute;inset:0;pointer-events:none;overflow:hidden;z-index:0}
+  .pfp{position:absolute;width:5px;height:5px;border-radius:50%;background:var(--green1);box-shadow:0 0 14px var(--green1);opacity:0;animation:particleFloat 9s linear infinite}
+  @keyframes particleFloat{0%{opacity:0;transform:translateY(0) translateX(0)}10%{opacity:.7}90%{opacity:.5}100%{opacity:0;transform:translateY(-260px) translateX(30px)}}
+  .pfp:nth-child(1){left:8%;bottom:0;animation-delay:0s}
+  .pfp:nth-child(2){left:22%;bottom:0;animation-delay:1.2s}
+  .pfp:nth-child(3){left:48%;bottom:0;animation-delay:2.4s}
+  .pfp:nth-child(4){left:68%;bottom:0;animation-delay:3.6s}
+  .pfp:nth-child(5){left:86%;bottom:0;animation-delay:4.8s}
+  .pfp:nth-child(6){left:35%;bottom:0;animation-delay:6s}
+  .pfp:nth-child(7){left:60%;bottom:0;animation-delay:7s}
+
+  /* Hero-Wordmark Pulse */
+  .hero-pulse{animation:heroPulseShine 4s ease-in-out infinite}
+  @keyframes heroPulseShine{0%,100%{text-shadow:0 0 0 rgba(0,255,106,0)}50%{text-shadow:0 0 40px rgba(0,255,106,.4),0 0 80px rgba(0,255,106,.2)}}
+
+  /* Phase-Card Hover (Apps Timeline) */
+  .phase-card{transition:transform .25s cubic-bezier(.34,1.56,.64,1),box-shadow .25s,border-color .25s}
+  .phase-card:hover{transform:translateY(-6px) scale(1.02);border-color:var(--green1);box-shadow:0 12px 40px rgba(0,255,106,.18)}
+
+  /* Reduced-Motion Respect */
+  @media (prefers-reduced-motion:reduce){
+    .reveal,.reveal.in{opacity:1;transform:none;transition:none}
+    .hero-glow-bg,.pfp,.hero-pulse,.phase-card{animation:none;transition:none}
+  }
 </style>
 </head>
 <body>
@@ -309,11 +351,16 @@
 </nav>
 
 <!-- ============ HERO ============ -->
-<header class="hero">
-  <div class="container">
+<header class="hero" style="position:relative;overflow:hidden">
+  <div class="hero-glow-bg"></div>
+  <div class="particle-field">
+    <span class="pfp"></span><span class="pfp"></span><span class="pfp"></span><span class="pfp"></span>
+    <span class="pfp"></span><span class="pfp"></span><span class="pfp"></span>
+  </div>
+  <div class="container" style="position:relative;z-index:1">
     <div class="hero-eyebrow">SMASH Universe</div>
     <div class="hero-mark"><div class="s">S</div></div>
-    <div class="hero-wordmark">SMASH</div>
+    <div class="hero-wordmark hero-pulse">SMASH</div>
     <div class="hero-universe">UNIVERSE</div>
     <h1 class="hero-vision" data-lang="de">
       Habit-Rituale für jeden Lebensabschnitt — <strong>vom Teen bis zum Rentner.</strong>
@@ -869,6 +916,37 @@
   const browserLang=(navigator.language||'de').toLowerCase().startsWith('en')?'en':'de';
   setLang(urlLang||savedLang||browserLang);
   document.documentElement.classList.add('lang-ready');
+
+  // === Animations + 3D Setup (01.05.) ===
+  // 1. Scroll-Reveal: alle Section-Eyebrows / Titles / Cards / Timeline-Items mit .reveal versehen
+  document.querySelectorAll('.section-eyebrow, .section-title, .section-lead, .tl-item, .investor-box, .founder-box, .contact-card, .manifest-teaser, .tam-box, .pricing-card, .why-card').forEach((el,i)=>{
+    el.classList.add('reveal');
+    if(i%3===1)el.classList.add('delay-1');
+    if(i%3===2)el.classList.add('delay-2');
+  });
+
+  // 2. IntersectionObserver triggert .in beim Scrollen-Sichtbar
+  const _io=new IntersectionObserver(es=>es.forEach(e=>{
+    if(e.isIntersecting){e.target.classList.add('in');_io.unobserve(e.target)}
+  }),{threshold:0.12,rootMargin:'0px 0px -60px 0px'});
+  document.querySelectorAll('.reveal').forEach(el=>_io.observe(el));
+
+  // 3. tl-item bekommt phase-card Klasse fuer Hover-Lift
+  document.querySelectorAll('.tl-item').forEach(el=>el.classList.add('phase-card'));
+
+  // 4. 3D-Tilt fuer ausgewaehlte Karten (nur Desktop, keine Touch-Geraete)
+  const _isTouch=('ontouchstart' in window)||navigator.maxTouchPoints>0;
+  if(!_isTouch){
+    document.querySelectorAll('.contact-card, .why-card, .pricing-card').forEach(el=>{
+      el.addEventListener('mousemove',ev=>{
+        const r=el.getBoundingClientRect();
+        const x=(ev.clientX-r.left)/r.width-0.5;
+        const y=(ev.clientY-r.top)/r.height-0.5;
+        el.style.transform=`perspective(1200px) rotateY(${x*6}deg) rotateX(${-y*6}deg) translateY(-3px)`;
+      });
+      el.addEventListener('mouseleave',()=>{el.style.transform=''});
+    });
+  }
 </script>
 </body>
 </html>
