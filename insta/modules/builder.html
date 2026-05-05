@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🏔️ Carousel Builder - vegetarianhulk</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="../js/app.js"></script>
+<style>
+  body { 
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    min-height: 100vh;
+    color: white;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+  .glass {
+    background: rgba(30, 41, 59, 0.6);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+  .neon { color: #39FF14; }
+  .neon-bg { background: #39FF14; color: #0f172a; }
+  input, select, textarea {
+    background: rgba(15, 23, 42, 0.6);
+    border: 1px solid rgba(255,255,255,0.15);
+    color: white;
+  }
+  input:focus, select:focus, textarea:focus {
+    outline: none;
+    border-color: #39FF14;
+  }
+  .btn-primary {
+    background: linear-gradient(135deg, #39FF14, #2ecc71);
+    color: #0f172a;
+    transition: all 0.2s;
+    font-weight: bold;
+  }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(57, 255, 20, 0.3); }
+  .btn-secondary {
+    background: rgba(15, 23, 42, 0.6);
+    border: 1px solid rgba(255,255,255,0.2);
+    color: white;
+  }
+  .slide-card {
+    transition: all 0.2s;
+  }
+  .slide-card:hover { transform: translateY(-2px); }
+  .upload-zone {
+    border: 2px dashed rgba(57, 255, 20, 0.4);
+    transition: all 0.2s;
+  }
+  .upload-zone:hover {
+    border-color: #39FF14;
+    background: rgba(57, 255, 20, 0.05);
+  }
+  .draggable {
+    cursor: move;
+  }
+  .draggable.dragging {
+    opacity: 0.5;
+  }
+</style>
+</head>
+<body class="p-4 md:p-8">
+
+<div class="max-w-6xl mx-auto">
+  
+  <!-- Header -->
+  <div class="text-center mb-8">
+    <h1 class="text-4xl md:text-5xl font-bold mb-2">🏔️ Carousel Builder</h1>
+    <p class="text-gray-400">vegetarianhulk · Make Insta Carousels in 5 minutes</p>
+  </div>
+
+  <!-- Settings -->
+  <div class="glass rounded-3xl p-6 mb-6">
+    <h2 class="text-xl font-bold mb-4">⚙️ Style Settings</h2>
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div>
+        <label class="block text-sm text-gray-400 mb-1">Akzent-Farbe</label>
+        <input type="color" id="accentColor" value="#39FF14" class="w-full h-10 rounded-lg cursor-pointer">
+      </div>
+      <div>
+        <label class="block text-sm text-gray-400 mb-1">Zahlen-Position</label>
+        <select id="numberPosition" class="w-full p-2 rounded-lg">
+          <option value="top-left">Oben Links</option>
+          <option value="top-right">Oben Rechts</option>
+          <option value="center" selected>Mittig</option>
+          <option value="bottom-left">Unten Links</option>
+          <option value="bottom-right">Unten Rechts</option>
+        </select>
+      </div>
+      <div>
+        <label class="block text-sm text-gray-400 mb-1">Zahlen-Größe</label>
+        <select id="numberSize" class="w-full p-2 rounded-lg">
+          <option value="200">Klein</option>
+          <option value="350" selected>Mittel</option>
+          <option value="500">Groß</option>
+          <option value="700">XXL</option>
+        </select>
+      </div>
+      <div>
+        <label class="block text-sm text-gray-400 mb-1">Format</label>
+        <select id="format" class="w-full p-2 rounded-lg">
+          <option value="4:5" selected>4:5 (Insta Carousel)</option>
+          <option value="1:1">1:1 (Quadrat)</option>
+          <option value="9:16">9:16 (Story)</option>
+        </select>
+      </div>
+    </div>
+    <div class="mt-4">
+      <label class="flex items-center gap-2 cursor-pointer">
+        <input type="checkbox" id="showInfo" class="w-4 h-4">
+        <span class="text-sm">Bergname + Datum unten anzeigen (optional)</span>
+      </label>
+    </div>
+  </div>
+
+  <!-- Upload Zone -->
+  <div class="glass rounded-3xl p-6 mb-6">
+    <h2 class="text-xl font-bold mb-4">📸 Lade deine 10 Berg-Fotos hoch</h2>
+    
+    <label for="fileInput" class="upload-zone block rounded-2xl p-8 text-center cursor-pointer mb-4">
+      <div class="text-5xl mb-2">📤</div>
+      <div class="text-lg font-bold neon">Klick hier oder zieh Fotos rein</div>
+      <div class="text-sm text-gray-400 mt-1">Du kannst alle 10 auf einmal auswählen!</div>
+    </label>
+    <input type="file" id="fileInput" accept="image/*" multiple class="hidden">
+    
+    <div id="counter" class="text-center text-gray-400 text-sm">
+      Noch keine Fotos hochgeladen
+    </div>
+  </div>
+
+  <!-- Slides Grid -->
+  <div class="glass rounded-3xl p-6 mb-6">
+    <div class="flex items-center justify-between mb-4">
+      <h2 class="text-xl font-bold">🎨 Deine Carousel Slides</h2>
+      <div class="flex gap-2">
+        <button onclick="downloadAll()" id="downloadBtn" class="btn-primary px-4 py-2 rounded-xl text-sm hidden">
+          📥 Alle 10 downloaden
+        </button>
+        <button onclick="clearAll()" class="btn-secondary px-4 py-2 rounded-xl text-sm">
+          🗑️ Reset
+        </button>
+      </div>
+    </div>
+    
+    <div class="text-sm text-gray-400 mb-4">
+      💡 Tipp: Drag & Drop zum Sortieren. Klick auf eine Slide zum Bearbeiten/Löschen.
+    </div>
+
+    <div id="slidesGrid" class="grid grid-cols-2 md:grid-cols-5 gap-3">
+      <!-- Slides werden hier gerendert -->
+    </div>
+  </div>
+
+  <!-- Edit Modal -->
+  <div id="editModal" class="hidden fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4">
+    <div class="glass rounded-3xl p-6 max-w-md w-full">
+      <h3 class="text-xl font-bold mb-4">✏️ Slide bearbeiten</h3>
+      <div class="space-y-3">
+        <div>
+          <label class="block text-sm text-gray-400 mb-1">Bergname (optional)</label>
+          <input type="text" id="editMountain" placeholder="z.B. Königssee Watzmann" class="w-full p-3 rounded-xl">
+        </div>
+        <div>
+          <label class="block text-sm text-gray-400 mb-1">Monat/Datum (optional)</label>
+          <input type="text" id="editDate" placeholder="z.B. Mai 2025" class="w-full p-3 rounded-xl">
+        </div>
+        <div>
+          <label class="block text-sm text-gray-400 mb-1">Höhe (optional)</label>
+          <input type="text" id="editHeight" placeholder="z.B. 1.972m" class="w-full p-3 rounded-xl">
+        </div>
+        <div class="flex gap-2 pt-2">
+          <button onclick="saveEdit()" class="btn-primary flex-1 py-3 rounded-xl">💾 Speichern</button>
+          <button onclick="deleteSlide()" class="btn-secondary px-4 rounded-xl" style="background: rgba(239, 68, 68, 0.2); border-color: rgba(239, 68, 68, 0.5);">🗑️</button>
+          <button onclick="closeModal()" class="btn-secondary px-4 rounded-xl">✖️</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Anleitung -->
+  <div class="glass rounded-3xl p-6">
+    <h2 class="text-xl font-bold mb-4">📖 Anleitung</h2>
+    <ol class="space-y-2 text-sm text-gray-300">
+      <li><b class="neon">1.</b> Lade deine 10 Berg-Fotos hoch (alle gleichzeitig auswählbar)</li>
+      <li><b class="neon">2.</b> Sortier sie per Drag & Drop — <b>Best for Last!</b> 🏆</li>
+      <li><b class="neon">3.</b> Klick auf eine Slide um Bergname/Datum hinzuzufügen (optional)</li>
+      <li><b class="neon">4.</b> Pass Style-Settings an wenn du willst</li>
+      <li><b class="neon">5.</b> Klick "Alle 10 downloaden" — bekommst alle Slides als JPEG</li>
+      <li><b class="neon">6.</b> Slide 1 ist dein Hook-Bild (das musst du selbst voranstellen beim Posten)</li>
+    </ol>
+  </div>
+
+  <div class="text-center mt-6 text-gray-500 text-sm">
+    💪 Made for vegetarianhulk · Strategy: 4-Säulen-System
+  </div>
+</div>
+
+<script>
+SmashApp.requireAuth();
+
+let slides = [];
+let editingIndex = -1;
+
+const fileInput = document.getElementById('fileInput');
+const slidesGrid = document.getElementById('slidesGrid');
+const counter = document.getElementById('counter');
+const downloadBtn = document.getElementById('downloadBtn');
+
+fileInput.addEventListener('change', handleFiles);
+
+function handleFiles(e) {
+  const files = Array.from(e.target.files);
+  
+  files.forEach(file => {
+    if (slides.length >= 10) return;
+    const reader = new FileReader();
+    reader.onload = (evt) => {
+      slides.push({
+        src: evt.target.result,
+        mountain: '',
+        date: '',
+        height: ''
+      });
+      renderSlides();
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+function renderSlides() {
+  counter.textContent = `${slides.length} / 10 Fotos hochgeladen`;
+  downloadBtn.classList.toggle('hidden', slides.length === 0);
+
+  slidesGrid.innerHTML = slides.map((slide, idx) => `
+    <div class="slide-card bg-slate-800/50 rounded-xl overflow-hidden cursor-pointer draggable" 
+         draggable="true"
+         ondragstart="dragStart(event, ${idx})"
+         ondragover="event.preventDefault()"
+         ondrop="dropSlide(event, ${idx})"
+         onclick="editSlide(${idx})">
+      <div class="relative">
+        <canvas id="canvas-${idx}" class="w-full block"></canvas>
+        <div class="absolute top-1 right-1 bg-black/70 text-xs px-2 py-1 rounded-full">
+          #${idx + 1}
+        </div>
+      </div>
+      <div class="p-2 text-xs">
+        ${slide.mountain ? `<div class="font-bold truncate">${slide.mountain}</div>` : '<div class="text-gray-500">Klick zum Bearbeiten</div>'}
+        ${slide.date ? `<div class="text-gray-400 truncate">${slide.date}</div>` : ''}
+      </div>
+    </div>
+  `).join('');
+
+  // Render Canvases
+  setTimeout(() => slides.forEach((s, i) => renderSlideCanvas(i)), 50);
+}
+
+function getFormatRatio() {
+  const f = document.getElementById('format').value;
+  if (f === '1:1') return { w: 1080, h: 1080 };
+  if (f === '9:16') return { w: 1080, h: 1920 };
+  return { w: 1080, h: 1350 }; // 4:5
+}
+
+function renderSlideCanvas(idx) {
+  const canvas = document.getElementById(`canvas-${idx}`);
+  if (!canvas) return;
+  
+  const slide = slides[idx];
+  const { w, h } = getFormatRatio();
+  canvas.width = w;
+  canvas.height = h;
+  
+  const ctx = canvas.getContext('2d');
+  
+  const img = new Image();
+  img.onload = () => {
+    // Cover-fit
+    const imgRatio = img.width / img.height;
+    const canvasRatio = w / h;
+    let drawW, drawH, drawX, drawY;
+    
+    if (imgRatio > canvasRatio) {
+      drawH = h;
+      drawW = h * imgRatio;
+      drawX = (w - drawW) / 2;
+      drawY = 0;
+    } else {
+      drawW = w;
+      drawH = w / imgRatio;
+      drawX = 0;
+      drawY = (h - drawH) / 2;
+    }
+    
+    ctx.fillStyle = '#000';
+    ctx.fillRect(0, 0, w, h);
+    ctx.drawImage(img, drawX, drawY, drawW, drawH);
+    
+    // Dark overlay for contrast
+    const gradient = ctx.createLinearGradient(0, 0, 0, h);
+    gradient.addColorStop(0, 'rgba(0,0,0,0.2)');
+    gradient.addColorStop(0.5, 'rgba(0,0,0,0.1)');
+    gradient.addColorStop(1, 'rgba(0,0,0,0.6)');
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, w, h);
+    
+    // Number
+    drawNumber(ctx, idx + 1, w, h);
+    
+    // Info bottom
+    if (document.getElementById('showInfo').checked) {
+      drawInfo(ctx, slide, w, h);
+    }
+  };
+  img.src = slide.src;
+}
+
+function drawNumber(ctx, num, w, h) {
+  const color = document.getElementById('accentColor').value;
+  const size = parseInt(document.getElementById('numberSize').value);
+  const position = document.getElementById('numberPosition').value;
+  
+  ctx.font = `bold ${size}px Impact, "Anton", sans-serif`;
+  ctx.fillStyle = color;
+  ctx.strokeStyle = 'rgba(0,0,0,0.5)';
+  ctx.lineWidth = size / 30;
+  
+  let x, y;
+  const padding = size / 4;
+  
+  ctx.textBaseline = 'middle';
+  
+  switch(position) {
+    case 'top-left':
+      ctx.textAlign = 'left';
+      x = padding;
+      y = padding + size / 2;
+      break;
+    case 'top-right':
+      ctx.textAlign = 'right';
+      x = w - padding;
+      y = padding + size / 2;
+      break;
+    case 'bottom-left':
+      ctx.textAlign = 'left';
+      x = padding;
+      y = h - padding - size / 2;
+      break;
+    case 'bottom-right':
+      ctx.textAlign = 'right';
+      x = w - padding;
+      y = h - padding - size / 2;
+      break;
+    default: // center
+      ctx.textAlign = 'center';
+      x = w / 2;
+      y = h / 2;
+  }
+  
+  ctx.strokeText(num.toString(), x, y);
+  ctx.fillText(num.toString(), x, y);
+}
+
+function drawInfo(ctx, slide, w, h) {
+  if (!slide.mountain && !slide.date && !slide.height) return;
+  
+  const lines = [];
+  if (slide.mountain) lines.push(slide.mountain);
+  const meta = [slide.date, slide.height].filter(x => x).join(' · ');
+  if (meta) lines.push(meta);
+  
+  const padding = 40;
+  const fontSize = 36;
+  const lineHeight = fontSize * 1.3;
+  const totalHeight = lines.length * lineHeight + 30;
+  
+  // Background
+  ctx.fillStyle = 'rgba(0,0,0,0.6)';
+  ctx.fillRect(0, h - totalHeight - 60, w, totalHeight + 60);
+  
+  // Text
+  ctx.textAlign = 'left';
+  ctx.textBaseline = 'top';
+  
+  let y = h - totalHeight - 30;
+  lines.forEach((line, i) => {
+    if (i === 0) {
+      ctx.font = `bold ${fontSize}px sans-serif`;
+      ctx.fillStyle = '#FFFFFF';
+    } else {
+      ctx.font = `${fontSize - 6}px sans-serif`;
+      ctx.fillStyle = '#CCCCCC';
+    }
+    ctx.fillText('📍 ' + line, padding, y);
+    y += lineHeight;
+  });
+}
+
+function editSlide(idx) {
+  editingIndex = idx;
+  document.getElementById('editMountain').value = slides[idx].mountain;
+  document.getElementById('editDate').value = slides[idx].date;
+  document.getElementById('editHeight').value = slides[idx].height;
+  document.getElementById('editModal').classList.remove('hidden');
+}
+
+function saveEdit() {
+  if (editingIndex < 0) return;
+  slides[editingIndex].mountain = document.getElementById('editMountain').value;
+  slides[editingIndex].date = document.getElementById('editDate').value;
+  slides[editingIndex].height = document.getElementById('editHeight').value;
+  closeModal();
+  renderSlides();
+}
+
+function deleteSlide() {
+  if (editingIndex < 0) return;
+  if (!confirm('Slide wirklich löschen?')) return;
+  slides.splice(editingIndex, 1);
+  closeModal();
+  renderSlides();
+}
+
+function closeModal() {
+  editingIndex = -1;
+  document.getElementById('editModal').classList.add('hidden');
+}
+
+function clearAll() {
+  if (!confirm('Alle Slides wirklich löschen?')) return;
+  slides = [];
+  fileInput.value = '';
+  renderSlides();
+}
+
+// Drag & Drop reorder
+let draggedIdx = -1;
+
+function dragStart(e, idx) {
+  draggedIdx = idx;
+  e.target.classList.add('dragging');
+}
+
+function dropSlide(e, dropIdx) {
+  e.preventDefault();
+  if (draggedIdx < 0 || draggedIdx === dropIdx) return;
+  
+  const dragged = slides[draggedIdx];
+  slides.splice(draggedIdx, 1);
+  slides.splice(dropIdx, 0, dragged);
+  
+  draggedIdx = -1;
+  renderSlides();
+}
+
+// Settings change → re-render
+['accentColor', 'numberPosition', 'numberSize', 'format', 'showInfo'].forEach(id => {
+  document.getElementById(id).addEventListener('change', renderSlides);
+});
+
+// Download all
+async function downloadAll() {
+  for (let i = 0; i < slides.length; i++) {
+    await downloadSlide(i);
+    await new Promise(r => setTimeout(r, 300));
+  }
+}
+
+function downloadSlide(idx) {
+  return new Promise(resolve => {
+    const canvas = document.getElementById(`canvas-${idx}`);
+    if (!canvas) return resolve();
+    
+    canvas.toBlob(blob => {
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `slide-${String(idx + 1).padStart(2, '0')}.jpg`;
+      a.click();
+      URL.revokeObjectURL(url);
+      resolve();
+    }, 'image/jpeg', 0.95);
+  });
+}
+
+renderSlides();
+</script>
+
+</body>
+</html>

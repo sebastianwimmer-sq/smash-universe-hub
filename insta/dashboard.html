@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+<title>🏔️ Dashboard - Smash IG Manager</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  body { 
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    min-height: 100dvh;
+    color: white;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+  .glass {
+    background: rgba(30, 41, 59, 0.6);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+  .neon { color: #39FF14; }
+  .module-card {
+    transition: all 0.2s;
+    cursor: pointer;
+  }
+  .module-card:hover { 
+    transform: translateY(-4px); 
+    box-shadow: 0 12px 24px rgba(57, 255, 20, 0.15);
+    border-color: rgba(57, 255, 20, 0.3);
+  }
+  .stat-card {
+    transition: all 0.2s;
+  }
+  .pillar-bar {
+    transition: width 0.5s ease;
+  }
+</style>
+</head>
+<body class="p-4 md:p-6">
+
+<div class="max-w-6xl mx-auto">
+  
+  <!-- Header -->
+  <div class="flex justify-between items-center mb-6">
+    <div>
+      <h1 class="text-2xl md:text-4xl font-bold">🏔️ Dashboard</h1>
+      <p class="text-gray-400 text-sm">vegetarianhulk · <span id="todayDate"></span></p>
+    </div>
+    <button onclick="SmashApp.logout()" class="text-sm text-gray-400 hover:text-white">
+      🔒 Logout
+    </button>
+  </div>
+
+  <!-- Quick Stats -->
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+    <div class="glass rounded-2xl p-4 stat-card">
+      <div class="text-gray-400 text-xs">Follower</div>
+      <div class="text-2xl md:text-3xl font-bold neon" id="followerCount">2.080</div>
+    </div>
+    <div class="glass rounded-2xl p-4 stat-card">
+      <div class="text-gray-400 text-xs">Diese Woche</div>
+      <div class="text-2xl md:text-3xl font-bold" id="weekCount">0/4</div>
+    </div>
+    <div class="glass rounded-2xl p-4 stat-card">
+      <div class="text-gray-400 text-xs">Streak</div>
+      <div class="text-2xl md:text-3xl font-bold" id="streakCount">0🔥</div>
+    </div>
+    <div class="glass rounded-2xl p-4 stat-card">
+      <div class="text-gray-400 text-xs">Total Reels</div>
+      <div class="text-2xl md:text-3xl font-bold" id="totalReels">0</div>
+    </div>
+  </div>
+
+  <!-- Today/Next Action -->
+  <div class="glass rounded-3xl p-5 mb-6 border-l-4" style="border-left-color: #39FF14;">
+    <div class="text-xs text-gray-400 mb-1">🎯 NÄCHSTER POST</div>
+    <div class="text-lg md:text-xl font-bold mb-1" id="nextPost">Heute: 💪 Gym-Reel</div>
+    <div class="text-sm text-gray-400" id="nextPostTime">Empfohlene Zeit: 19:00 Uhr</div>
+  </div>
+
+  <!-- Module Grid -->
+  <h2 class="text-lg font-bold mb-3">⚡ Quick Actions</h2>
+  <div class="grid grid-cols-2 md:grid-cols-3 gap-3 mb-6">
+    
+    <a href="modules/tracker.html" class="glass module-card rounded-2xl p-5">
+      <div class="text-3xl mb-2">📊</div>
+      <div class="font-bold mb-1">Reel Tracker</div>
+      <div class="text-xs text-gray-400">Performance tracken</div>
+    </a>
+    
+    <a href="modules/builder.html" class="glass module-card rounded-2xl p-5">
+      <div class="text-3xl mb-2">🖼️</div>
+      <div class="font-bold mb-1">Carousel Builder</div>
+      <div class="text-xs text-gray-400">Slides erstellen</div>
+    </a>
+    
+    <a href="modules/ideas.html" class="glass module-card rounded-2xl p-5">
+      <div class="text-3xl mb-2">💡</div>
+      <div class="font-bold mb-1">Idea Bank</div>
+      <div class="text-xs text-gray-400">Reel-Ideen</div>
+    </a>
+    
+    <a href="modules/calendar.html" class="glass module-card rounded-2xl p-5">
+      <div class="text-3xl mb-2">📅</div>
+      <div class="font-bold mb-1">Calendar</div>
+      <div class="text-xs text-gray-400">Wochenplan</div>
+    </a>
+    
+    <a href="modules/captions.html" class="glass module-card rounded-2xl p-5">
+      <div class="text-3xl mb-2">🎨</div>
+      <div class="font-bold mb-1">Captions</div>
+      <div class="text-xs text-gray-400">Templates</div>
+    </a>
+    
+    <a href="modules/analytics.html" class="glass module-card rounded-2xl p-5">
+      <div class="text-3xl mb-2">📈</div>
+      <div class="font-bold mb-1">Analytics</div>
+      <div class="text-xs text-gray-400">Trends & Insights</div>
+    </a>
+    
+  </div>
+
+  <!-- Säulen-Balance -->
+  <div class="glass rounded-3xl p-5 mb-6">
+    <h2 class="text-lg font-bold mb-4">⚖️ Säulen-Balance</h2>
+    <div id="pillarBalance" class="space-y-3">
+      <!-- Wird via JS gefüllt -->
+    </div>
+  </div>
+
+  <!-- Recent Reels -->
+  <div class="glass rounded-3xl p-5 mb-6">
+    <h2 class="text-lg font-bold mb-4">📝 Letzte Reels</h2>
+    <div id="recentReels" class="space-y-2">
+      <p class="text-gray-500 italic text-sm">Noch keine Reels getrackt. <a href="modules/tracker.html" class="neon underline">Jetzt starten →</a></p>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="text-center text-gray-500 text-xs mt-8">
+    💪 Made for vegetarianhulk · Built with discipline
+  </div>
+</div>
+
+<script src="js/app.js"></script>
+<script>
+SmashApp.requireAuth();
+
+// Today's date
+const today = new Date();
+document.getElementById('todayDate').textContent = today.toLocaleDateString('de-DE', { 
+  weekday: 'long', day: 'numeric', month: 'long' 
+});
+
+// Next Post Logic
+const day = today.getDay(); // 0=So, 1=Mo, 2=Di, 3=Mi, 4=Do, 5=Fr, 6=Sa
+const postingPlan = {
+  1: { emoji: '💪', name: 'Gym-Reel', pillar: 'gym' },
+  3: { emoji: '🏔️', name: 'Outdoor-Reel', pillar: 'outdoor' },
+  5: { emoji: '🧠', name: 'Mindset-Reel', pillar: 'mindset' },
+  0: { emoji: '🌿', name: 'Plant-Based oder Outdoor', pillar: 'rotating' }
+};
+const todayPost = postingPlan[day];
+if (todayPost) {
+  document.getElementById('nextPost').textContent = `Heute: ${todayPost.emoji} ${todayPost.name}`;
+} else {
+  document.getElementById('nextPost').textContent = '✨ Heute Pause — morgen geht\'s weiter!';
+  document.getElementById('nextPostTime').textContent = 'Engagement-Tag: kommentiere auf 5 Profilen';
+}
+
+// Load Stats
+const reels = SmashApp.getData('reels', []);
+
+document.getElementById('totalReels').textContent = reels.length;
+document.getElementById('weekCount').textContent = `${SmashApp.getThisWeekPostCount(reels)}/4`;
+document.getElementById('streakCount').textContent = `${SmashApp.getStreak(reels)}🔥`;
+
+// Pillar Balance
+function renderPillarBalance() {
+  const stats = SmashApp.getPillarStats(reels);
+  const el = document.getElementById('pillarBalance');
+  
+  if (reels.length === 0) {
+    el.innerHTML = '<p class="text-gray-500 italic text-sm">Trag Reels ein um die Balance zu sehen!</p>';
+    return;
+  }
+  
+  el.innerHTML = Object.keys(SmashApp.PILLAR_INFO).map(p => {
+    const info = SmashApp.PILLAR_INFO[p];
+    const stat = stats[p];
+    const diff = stat.percentage - info.target;
+    const status = Math.abs(diff) <= 5 ? '✅' : diff > 5 ? '⬆️' : '⬇️';
+    
+    return `
+      <div>
+        <div class="flex justify-between text-xs mb-1">
+          <span><b>${info.emoji} ${info.name}</b> · ${stat.count} (${stat.percentage}%)</span>
+          <span class="text-gray-400">Ziel: ${info.target}% ${status}</span>
+        </div>
+        <div class="bg-slate-700/50 rounded-full h-2 overflow-hidden relative">
+          <div class="pillar-bar h-full rounded-full" style="width: ${stat.percentage}%; background: ${info.color}"></div>
+          <div class="absolute top-0 h-full w-0.5 bg-white/40" style="left: ${info.target}%"></div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+renderPillarBalance();
+
+// Recent Reels
+function renderRecentReels() {
+  const el = document.getElementById('recentReels');
+  if (reels.length === 0) return;
+  
+  const sorted = [...reels].sort((a, b) => new Date(b.date) - new Date(a.date)).slice(0, 3);
+  
+  el.innerHTML = sorted.map(r => {
+    const info = SmashApp.PILLAR_INFO[r.pillar] || { emoji: '🎬', name: 'Other' };
+    return `
+      <div class="bg-slate-800/50 rounded-xl p-3 flex items-center justify-between">
+        <div class="flex items-center gap-3 min-w-0 flex-1">
+          <span class="text-2xl">${info.emoji}</span>
+          <div class="min-w-0 flex-1">
+            <div class="font-bold text-sm truncate">${r.title}</div>
+            <div class="text-xs text-gray-400">${SmashApp.formatDate(r.date)}</div>
+          </div>
+        </div>
+        <div class="text-right text-sm">
+          <div class="font-bold neon">${SmashApp.formatNumber(r.views)}</div>
+          <div class="text-xs text-gray-400">Views</div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+renderRecentReels();
+</script>
+
+</body>
+</html>

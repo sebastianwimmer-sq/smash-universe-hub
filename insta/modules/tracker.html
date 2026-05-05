@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reel Performance Tracker 🏔️</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="../js/app.js"></script>
+<style>
+  body { 
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    min-height: 100vh;
+    color: white;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+  .glass {
+    background: rgba(30, 41, 59, 0.6);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+  .pillar-outdoor { background: linear-gradient(135deg, #10b981, #059669); }
+  .pillar-gym { background: linear-gradient(135deg, #f59e0b, #d97706); }
+  .pillar-mindset { background: linear-gradient(135deg, #8b5cf6, #7c3aed); }
+  .pillar-plantbased { background: linear-gradient(135deg, #84cc16, #65a30d); }
+  input, select, textarea {
+    background: rgba(15, 23, 42, 0.6);
+    border: 1px solid rgba(255,255,255,0.15);
+    color: white;
+  }
+  input:focus, select:focus, textarea:focus {
+    outline: none;
+    border-color: #10b981;
+  }
+  .btn-primary {
+    background: linear-gradient(135deg, #10b981, #059669);
+    transition: all 0.2s;
+  }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3); }
+  .btn-danger {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+  }
+  .stat-card {
+    transition: all 0.2s;
+  }
+  .stat-card:hover { transform: translateY(-4px); }
+</style>
+</head>
+<body class="p-4 md:p-8">
+
+<div class="max-w-6xl mx-auto">
+  
+  <!-- Header -->
+  <div class="text-center mb-8">
+    <h1 class="text-4xl md:text-5xl font-bold mb-2">🏔️ Reel Tracker</h1>
+    <p class="text-gray-400">vegetarianhulk · Lifestyle-Mix Strategy</p>
+  </div>
+
+  <!-- Smash-Style Screenshot Analyzer -->
+  <div class="rounded-3xl p-6 mb-8" style="background: linear-gradient(135deg, rgba(236, 72, 153, 0.15), rgba(139, 92, 246, 0.15)); border: 1px solid rgba(236, 72, 153, 0.3);">
+    <div class="flex items-center gap-3 mb-4">
+      <div class="text-3xl">📸</div>
+      <div>
+        <h2 class="text-2xl font-bold">Smash-Style Auto-Analyzer</h2>
+        <p class="text-gray-400 text-sm">Screenshot → KI-Analyse → Tracker-Daten in 60 Sek</p>
+      </div>
+    </div>
+
+    <div class="bg-slate-900/50 rounded-2xl p-5 mb-4">
+      <h3 class="font-bold mb-3 flex items-center gap-2">🎯 So funktioniert's:</h3>
+      <ol class="space-y-2 text-sm text-gray-300">
+        <li><b>1.</b> Mach Screenshots vom Insta Pro-Dashboard (alle 3 Tabs: Übersicht, Aufrufe, Interaktionen)</li>
+        <li><b>2.</b> Schick die Screenshots an Claude im Chat mit dem Befehl:<br>
+          <code class="block mt-1 p-2 bg-slate-800 rounded-lg text-emerald-400">"Analysiere mein neues Reel wie ein viraler Influencer-Manager"</code>
+        </li>
+        <li><b>3.</b> Claude gibt dir zurück:
+          <ul class="mt-1 ml-4 space-y-1">
+            <li>📊 Alle Zahlen ready zum Copy-Paste in den Tracker unten</li>
+            <li>🧠 Marketing-Analyse (was lief, was nicht, warum)</li>
+            <li>🎯 Konkrete Next-Steps für's nächste Reel</li>
+            <li>🏆 Vergleich zu deinen vorherigen Reels</li>
+          </ul>
+        </li>
+        <li><b>4.</b> Daten unten eintragen → Tracker updated automatisch alle Charts</li>
+      </ol>
+    </div>
+
+    <div class="bg-slate-900/50 rounded-2xl p-5">
+      <h3 class="font-bold mb-3 flex items-center gap-2">📋 Welche Screenshots brauche ich?</h3>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-sm">
+        <div class="bg-slate-800/50 rounded-xl p-3">
+          <div class="font-bold text-emerald-400 mb-1">📸 Screenshot 1</div>
+          <div class="text-gray-300">Übersicht mit Aufrufe, Erreichte Konten, Watch-Time, Likes/Comments/Saves/Shares</div>
+        </div>
+        <div class="bg-slate-800/50 rounded-xl p-3">
+          <div class="font-bold text-emerald-400 mb-1">📸 Screenshot 2</div>
+          <div class="text-gray-300">Aufrufe-Verlauf + "Übersprungen"-Rate, "Geteilt"-Rate, "Gefällt mir"-Rate</div>
+        </div>
+        <div class="bg-slate-800/50 rounded-xl p-3">
+          <div class="font-bold text-emerald-400 mb-1">📸 Screenshot 3</div>
+          <div class="text-gray-300">Watch-Time-Kurve + Saves/Repost/Comment-Rate</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-4 p-4 bg-emerald-900/20 border border-emerald-500/30 rounded-2xl text-sm">
+      💡 <b>Pro-Tipp:</b> Mach die Screenshots 24-48h nach dem Posten — dann sind die Daten "stabil" und vergleichbar zu deinen vorherigen Reels.
+    </div>
+  </div>
+
+
+  <!-- Quick Stats -->
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+    <div class="glass rounded-2xl p-4 stat-card">
+      <div class="text-gray-400 text-sm">Total Reels</div>
+      <div class="text-3xl font-bold" id="totalReels">0</div>
+    </div>
+    <div class="glass rounded-2xl p-4 stat-card">
+      <div class="text-gray-400 text-sm">Ø Views</div>
+      <div class="text-3xl font-bold" id="avgViews">0</div>
+    </div>
+    <div class="glass rounded-2xl p-4 stat-card">
+      <div class="text-gray-400 text-sm">Best Reel</div>
+      <div class="text-3xl font-bold" id="bestViews">0</div>
+    </div>
+    <div class="glass rounded-2xl p-4 stat-card">
+      <div class="text-gray-400 text-sm">Ø Watch Time</div>
+      <div class="text-3xl font-bold" id="avgWatch">0s</div>
+    </div>
+  </div>
+
+  <!-- Add Reel Form -->
+  <div class="glass rounded-3xl p-6 mb-8">
+    <h2 class="text-2xl font-bold mb-4">➕ Neues Reel tracken</h2>
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div>
+        <label class="block text-sm text-gray-400 mb-1">Reel-Titel/Hook</label>
+        <input type="text" id="title" placeholder='z.B. "She left. The mountains stayed."' class="w-full p-3 rounded-xl">
+      </div>
+      
+      <div>
+        <label class="block text-sm text-gray-400 mb-1">Datum</label>
+        <input type="date" id="date" class="w-full p-3 rounded-xl">
+      </div>
+
+      <div>
+        <label class="block text-sm text-gray-400 mb-1">Content-Säule</label>
+        <select id="pillar" class="w-full p-3 rounded-xl">
+          <option value="outdoor">🏔️ Outdoor (40%)</option>
+          <option value="gym">💪 Gym/Fitness (25%)</option>
+          <option value="mindset">🧠 Mindset (20%)</option>
+          <option value="plantbased">🌿 Plant-Based (15%)</option>
+        </select>
+      </div>
+
+      <div>
+        <label class="block text-sm text-gray-400 mb-1">Posting-Zeit (Stunde)</label>
+        <input type="number" id="hour" min="0" max="23" placeholder="19" class="w-full p-3 rounded-xl">
+      </div>
+
+      <div>
+        <label class="block text-sm text-gray-400 mb-1">Aufrufe (Views)</label>
+        <input type="number" id="views" placeholder="465" class="w-full p-3 rounded-xl">
+      </div>
+
+      <div>
+        <label class="block text-sm text-gray-400 mb-1">Erreichte Konten</label>
+        <input type="number" id="reach" placeholder="247" class="w-full p-3 rounded-xl">
+      </div>
+
+      <div>
+        <label class="block text-sm text-gray-400 mb-1">Watch Time (Sek)</label>
+        <input type="number" step="0.1" id="watchTime" placeholder="4.5" class="w-full p-3 rounded-xl">
+      </div>
+
+      <div>
+        <label class="block text-sm text-gray-400 mb-1">Reel-Länge (Sek)</label>
+        <input type="number" step="0.1" id="length" placeholder="6" class="w-full p-3 rounded-xl">
+      </div>
+
+      <div>
+        <label class="block text-sm text-gray-400 mb-1">Likes</label>
+        <input type="number" id="likes" placeholder="13" class="w-full p-3 rounded-xl">
+      </div>
+
+      <div>
+        <label class="block text-sm text-gray-400 mb-1">Kommentare</label>
+        <input type="number" id="comments" placeholder="0" class="w-full p-3 rounded-xl">
+      </div>
+
+      <div>
+        <label class="block text-sm text-gray-400 mb-1">Saves</label>
+        <input type="number" id="saves" placeholder="0" class="w-full p-3 rounded-xl">
+      </div>
+
+      <div>
+        <label class="block text-sm text-gray-400 mb-1">Shares</label>
+        <input type="number" id="shares" placeholder="1" class="w-full p-3 rounded-xl">
+      </div>
+
+      <div>
+        <label class="block text-sm text-gray-400 mb-1">Neue Follower</label>
+        <input type="number" id="followers" placeholder="0" class="w-full p-3 rounded-xl">
+      </div>
+
+      <div>
+        <label class="block text-sm text-gray-400 mb-1">Audio (Name)</label>
+        <input type="text" id="audio" placeholder="z.B. Discipline - Hellblade" class="w-full p-3 rounded-xl">
+      </div>
+
+      <div class="md:col-span-2">
+        <label class="block text-sm text-gray-400 mb-1">Notizen (Was hat gut/schlecht funktioniert?)</label>
+        <textarea id="notes" rows="2" placeholder="z.B. Hook war zu subtil, Watch Time niedrig" class="w-full p-3 rounded-xl"></textarea>
+      </div>
+    </div>
+
+    <button onclick="addReel()" class="btn-primary mt-4 px-6 py-3 rounded-xl font-bold w-full md:w-auto">
+      ✅ Reel hinzufügen
+    </button>
+  </div>
+
+  <!-- Insights Panel -->
+  <div class="glass rounded-3xl p-6 mb-8">
+    <h2 class="text-2xl font-bold mb-4">🧠 Auto-Insights</h2>
+    <div id="insights" class="space-y-2 text-gray-300">
+      <p class="text-gray-500 italic">Trag dein erstes Reel ein, dann gibt's hier Insights! 🚀</p>
+    </div>
+  </div>
+
+  <!-- Pillar Balance -->
+  <div class="glass rounded-3xl p-6 mb-8">
+    <h2 class="text-2xl font-bold mb-4">⚖️ Säulen-Balance (Ziel: 40/25/20/15)</h2>
+    <div id="pillarBalance" class="space-y-3">
+      <p class="text-gray-500 italic">Trag Reels ein um die Verteilung zu sehen!</p>
+    </div>
+  </div>
+
+  <!-- Charts -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+    <div class="glass rounded-3xl p-6">
+      <h3 class="text-xl font-bold mb-4">📈 Views über Zeit</h3>
+      <canvas id="viewsChart"></canvas>
+    </div>
+    <div class="glass rounded-3xl p-6">
+      <h3 class="text-xl font-bold mb-4">🏛️ Performance pro Säule</h3>
+      <canvas id="pillarChart"></canvas>
+    </div>
+  </div>
+
+  <!-- Reel List -->
+  <div class="glass rounded-3xl p-6">
+    <h2 class="text-2xl font-bold mb-4">📋 Alle Reels</h2>
+    <div id="reelList" class="space-y-3">
+      <p class="text-gray-500 italic">Noch keine Reels getrackt.</p>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="text-center mt-8 text-gray-500 text-sm">
+    <p>💡 Tipp: Trag jedes Reel 24h nach Posting ein für saubere Daten</p>
+    <button onclick="exportData()" class="mt-2 text-emerald-400 hover:underline">📥 Daten exportieren (JSON)</button>
+    <span class="mx-2">·</span>
+    <button onclick="clearAll()" class="text-red-400 hover:underline">🗑️ Alle Daten löschen</button>
+  </div>
+</div>
+
+<script>
+SmashApp.requireAuth();
+
+let reels = [];
+let viewsChart, pillarChart;
+
+// Load data on start
+function loadData() {
+  reels = SmashApp.getData('reels', []);
+  updateUI();
+  return Promise.resolve();
+}
+
+function saveData() {
+  SmashApp.setData('reels', reels);
+  return Promise.resolve();
+}
+
+async function addReel() {
+  const reel = {
+    id: Date.now(),
+    title: document.getElementById('title').value || 'Untitled',
+    date: document.getElementById('date').value || new Date().toISOString().split('T')[0],
+    pillar: document.getElementById('pillar').value,
+    hour: parseInt(document.getElementById('hour').value) || 19,
+    views: parseInt(document.getElementById('views').value) || 0,
+    reach: parseInt(document.getElementById('reach').value) || 0,
+    watchTime: parseFloat(document.getElementById('watchTime').value) || 0,
+    length: parseFloat(document.getElementById('length').value) || 0,
+    likes: parseInt(document.getElementById('likes').value) || 0,
+    comments: parseInt(document.getElementById('comments').value) || 0,
+    saves: parseInt(document.getElementById('saves').value) || 0,
+    shares: parseInt(document.getElementById('shares').value) || 0,
+    followers: parseInt(document.getElementById('followers').value) || 0,
+    audio: document.getElementById('audio').value || '',
+    notes: document.getElementById('notes').value || ''
+  };
+
+  if (!reel.title || reel.title === 'Untitled') {
+    alert('Bitte mindestens einen Titel eingeben!');
+    return;
+  }
+
+  reels.push(reel);
+  await saveData();
+  
+  // Clear form
+  ['title', 'views', 'reach', 'watchTime', 'length', 'likes', 'comments', 'saves', 'shares', 'followers', 'audio', 'notes', 'hour'].forEach(id => {
+    document.getElementById(id).value = '';
+  });
+
+  updateUI();
+}
+
+async function deleteReel(id) {
+  if (!confirm('Reel wirklich löschen?')) return;
+  reels = reels.filter(r => r.id !== id);
+  await saveData();
+  updateUI();
+}
+
+function updateUI() {
+  updateStats();
+  updateInsights();
+  updatePillarBalance();
+  updateCharts();
+  updateList();
+}
+
+function updatePillarBalance() {
+  const el = document.getElementById('pillarBalance');
+  if (reels.length === 0) {
+    el.innerHTML = '<p class="text-gray-500 italic">Trag Reels ein um die Verteilung zu sehen!</p>';
+    return;
+  }
+
+  const targets = { outdoor: 40, gym: 25, mindset: 20, plantbased: 15 };
+  const names = { outdoor: '🏔️ Outdoor', gym: '💪 Gym/Fitness', mindset: '🧠 Mindset', plantbased: '🌿 Plant-Based' };
+  const colors = { outdoor: '#10b981', gym: '#f59e0b', mindset: '#8b5cf6', plantbased: '#84cc16' };
+
+  const counts = { outdoor: 0, gym: 0, mindset: 0, plantbased: 0 };
+  reels.forEach(r => { if (counts[r.pillar] !== undefined) counts[r.pillar]++; });
+
+  const total = reels.length;
+  
+  const html = Object.keys(targets).map(p => {
+    const actual = Math.round((counts[p] / total) * 100);
+    const target = targets[p];
+    const diff = actual - target;
+    const status = Math.abs(diff) <= 5 ? '✅' : diff > 5 ? '⬆️ zu viel' : '⬇️ zu wenig';
+    
+    return `
+      <div>
+        <div class="flex justify-between mb-1 text-sm">
+          <span><b>${names[p]}</b> · ${counts[p]} Reels (${actual}%)</span>
+          <span class="text-gray-400">Ziel: ${target}% ${status}</span>
+        </div>
+        <div class="bg-slate-700/50 rounded-full h-3 overflow-hidden relative">
+          <div class="h-full rounded-full" style="width: ${actual}%; background: ${colors[p]}"></div>
+          <div class="absolute top-0 h-full w-0.5 bg-white/50" style="left: ${target}%"></div>
+        </div>
+      </div>
+    `;
+  }).join('');
+  
+  el.innerHTML = html;
+}
+
+function updateStats() {
+  const total = reels.length;
+  document.getElementById('totalReels').textContent = total;
+  
+  if (total === 0) {
+    document.getElementById('avgViews').textContent = '0';
+    document.getElementById('bestViews').textContent = '0';
+    document.getElementById('avgWatch').textContent = '0s';
+    return;
+  }
+  
+  const avgViews = Math.round(reels.reduce((s, r) => s + r.views, 0) / total);
+  const bestViews = Math.max(...reels.map(r => r.views));
+  const avgWatch = (reels.reduce((s, r) => s + r.watchTime, 0) / total).toFixed(1);
+  
+  document.getElementById('avgViews').textContent = avgViews.toLocaleString('de-DE');
+  document.getElementById('bestViews').textContent = bestViews.toLocaleString('de-DE');
+  document.getElementById('avgWatch').textContent = avgWatch + 's';
+}
+
+function updateInsights() {
+  const el = document.getElementById('insights');
+  if (reels.length === 0) {
+    el.innerHTML = '<p class="text-gray-500 italic">Trag dein erstes Reel ein, dann gibt\'s hier Insights! 🚀</p>';
+    return;
+  }
+
+  const insights = [];
+
+  // Best pillar
+  if (reels.length >= 2) {
+    const pillarStats = {};
+    reels.forEach(r => {
+      if (!pillarStats[r.pillar]) pillarStats[r.pillar] = { views: 0, count: 0, saves: 0, shares: 0 };
+      pillarStats[r.pillar].views += r.views;
+      pillarStats[r.pillar].count++;
+      pillarStats[r.pillar].saves += r.saves;
+      pillarStats[r.pillar].shares += r.shares;
+    });
+
+    const pillarAvg = Object.entries(pillarStats).map(([p, s]) => ({
+      pillar: p, avg: Math.round(s.views / s.count), count: s.count
+    })).sort((a, b) => b.avg - a.avg);
+
+    if (pillarAvg.length > 1) {
+      const emoji = { outdoor: '🏔️', gym: '💪', mindset: '🧠', plantbased: '🌿' };
+      const name = { outdoor: 'Outdoor', gym: 'Gym/Fitness', mindset: 'Mindset', plantbased: 'Plant-Based' };
+      insights.push(`🏆 <b>${emoji[pillarAvg[0].pillar]} ${name[pillarAvg[0].pillar]}</b> performt am besten mit ⌀ ${pillarAvg[0].avg.toLocaleString('de-DE')} Views`);
+    }
+  }
+
+  // Watch time analysis
+  const totalWithLength = reels.filter(r => r.length > 0);
+  if (totalWithLength.length > 0) {
+    const avgRetention = totalWithLength.reduce((s, r) => s + (r.watchTime / r.length), 0) / totalWithLength.length;
+    const retPercent = Math.round(avgRetention * 100);
+    if (retPercent < 50) {
+      insights.push(`⚠️ <b>Watch-Time bei nur ${retPercent}%</b> — Hooks stärker machen oder Reels kürzen!`);
+    } else if (retPercent >= 70) {
+      insights.push(`✅ <b>Starke Watch-Time (${retPercent}%)</b> — der Algorithmus pusht dich!`);
+    }
+  }
+
+  // Engagement rate
+  const totalEngagement = reels.reduce((s, r) => s + r.likes + r.comments + r.saves + r.shares, 0);
+  const totalViews = reels.reduce((s, r) => s + r.views, 0);
+  if (totalViews > 0) {
+    const engRate = ((totalEngagement / totalViews) * 100).toFixed(1);
+    if (engRate < 5) {
+      insights.push(`📉 Engagement-Rate ${engRate}% — Hooks brauchen mehr <b>Diskussions-Trigger</b> (Fragen, Kontroverse, Listen)`);
+    } else {
+      insights.push(`🔥 Engagement-Rate ${engRate}% — solide!`);
+    }
+  }
+
+  // Best posting time
+  if (reels.length >= 3) {
+    const hourStats = {};
+    reels.forEach(r => {
+      if (!hourStats[r.hour]) hourStats[r.hour] = { views: 0, count: 0 };
+      hourStats[r.hour].views += r.views;
+      hourStats[r.hour].count++;
+    });
+    const bestHour = Object.entries(hourStats)
+      .map(([h, s]) => ({ hour: h, avg: s.views / s.count }))
+      .sort((a, b) => b.avg - a.avg)[0];
+    insights.push(`⏰ Beste Posting-Zeit für DICH: <b>${bestHour.hour}:00 Uhr</b>`);
+  }
+
+  // Saves importance
+  const totalSaves = reels.reduce((s, r) => s + r.saves, 0);
+  if (totalSaves === 0 && reels.length >= 2) {
+    insights.push(`💾 <b>0 Saves bisher</b> — bau mehr "Tipps/Listen/Anleitungen" ein, das triggert Saves`);
+  }
+
+  // Follower conversion
+  const totalNewFollowers = reels.reduce((s, r) => s + r.followers, 0);
+  if (totalNewFollowers === 0 && reels.length >= 2) {
+    insights.push(`👤 Noch keine neuen Follower — <b>Bio + Profil-Konsistenz</b> checken!`);
+  }
+
+  el.innerHTML = insights.length > 0 
+    ? insights.map(i => `<p class="p-3 bg-slate-800/50 rounded-xl">${i}</p>`).join('')
+    : '<p class="text-gray-500">Mehr Daten sammeln für Insights...</p>';
+}
+
+function updateCharts() {
+  // Views over time
+  const ctx1 = document.getElementById('viewsChart').getContext('2d');
+  if (viewsChart) viewsChart.destroy();
+  
+  const sorted = [...reels].sort((a, b) => new Date(a.date) - new Date(b.date));
+  
+  viewsChart = new Chart(ctx1, {
+    type: 'line',
+    data: {
+      labels: sorted.map(r => r.date),
+      datasets: [{
+        label: 'Views',
+        data: sorted.map(r => r.views),
+        borderColor: '#10b981',
+        backgroundColor: 'rgba(16, 185, 129, 0.1)',
+        fill: true,
+        tension: 0.3
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { labels: { color: 'white' } } },
+      scales: {
+        x: { ticks: { color: '#94a3b8' }, grid: { color: 'rgba(255,255,255,0.05)' } },
+        y: { ticks: { color: '#94a3b8' }, grid: { color: 'rgba(255,255,255,0.05)' } }
+      }
+    }
+  });
+
+  // Pillar performance
+  const ctx2 = document.getElementById('pillarChart').getContext('2d');
+  if (pillarChart) pillarChart.destroy();
+  
+  const pillarStats = {};
+  reels.forEach(r => {
+    if (!pillarStats[r.pillar]) pillarStats[r.pillar] = { views: 0, count: 0 };
+    pillarStats[r.pillar].views += r.views;
+    pillarStats[r.pillar].count++;
+  });
+  
+  const labels = Object.keys(pillarStats);
+  const data = labels.map(p => Math.round(pillarStats[p].views / pillarStats[p].count));
+  const colors = { outdoor: '#10b981', gym: '#f59e0b', mindset: '#8b5cf6', plantbased: '#84cc16' };
+  
+  pillarChart = new Chart(ctx2, {
+    type: 'bar',
+    data: {
+      labels: labels,
+      datasets: [{
+        label: 'Ø Views',
+        data: data,
+        backgroundColor: labels.map(l => colors[l] || '#10b981')
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { labels: { color: 'white' } } },
+      scales: {
+        x: { ticks: { color: '#94a3b8' }, grid: { color: 'rgba(255,255,255,0.05)' } },
+        y: { ticks: { color: '#94a3b8' }, grid: { color: 'rgba(255,255,255,0.05)' } }
+      }
+    }
+  });
+}
+
+function updateList() {
+  const el = document.getElementById('reelList');
+  if (reels.length === 0) {
+    el.innerHTML = '<p class="text-gray-500 italic">Noch keine Reels getrackt.</p>';
+    return;
+  }
+
+  const sorted = [...reels].sort((a, b) => new Date(b.date) - new Date(a.date));
+  const emojis = { outdoor: '🏔️', gym: '💪', mindset: '🧠', plantbased: '🌿' };
+
+  el.innerHTML = sorted.map(r => {
+    const retention = r.length > 0 ? Math.round((r.watchTime / r.length) * 100) : 0;
+    const engagement = r.views > 0 ? (((r.likes + r.comments + r.saves + r.shares) / r.views) * 100).toFixed(1) : 0;
+    
+    return `
+      <div class="bg-slate-800/50 rounded-2xl p-4">
+        <div class="flex items-start justify-between gap-3">
+          <div class="flex-1">
+            <div class="flex items-center gap-2 mb-1">
+              <span class="text-xl">${emojis[r.pillar]}</span>
+              <span class="font-bold">${r.title}</span>
+            </div>
+            <div class="text-sm text-gray-400 mb-2">${r.date} · ${r.hour}:00 Uhr ${r.audio ? '· 🎵 ' + r.audio : ''}</div>
+            <div class="grid grid-cols-3 md:grid-cols-6 gap-2 text-sm">
+              <div><span class="text-gray-400">Views:</span> <b>${r.views.toLocaleString('de-DE')}</b></div>
+              <div><span class="text-gray-400">Reach:</span> <b>${r.reach.toLocaleString('de-DE')}</b></div>
+              <div><span class="text-gray-400">Watch:</span> <b>${retention}%</b></div>
+              <div><span class="text-gray-400">Likes:</span> <b>${r.likes}</b></div>
+              <div><span class="text-gray-400">Saves:</span> <b>${r.saves}</b></div>
+              <div><span class="text-gray-400">Eng:</span> <b>${engagement}%</b></div>
+            </div>
+            ${r.notes ? `<div class="mt-2 text-sm text-gray-400 italic">📝 ${r.notes}</div>` : ''}
+          </div>
+          <button onclick="deleteReel(${r.id})" class="btn-danger text-white px-3 py-1 rounded-lg text-sm">🗑️</button>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function exportData() {
+  const dataStr = JSON.stringify(reels, null, 2);
+  const blob = new Blob([dataStr], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `reel-tracker-${new Date().toISOString().split('T')[0]}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+async function clearAll() {
+  if (!confirm('WIRKLICH alle Daten löschen? Geht nicht rückgängig!')) return;
+  reels = [];
+  await saveData();
+  updateUI();
+}
+
+// Set today's date as default
+document.getElementById('date').valueAsDate = new Date();
+
+// Pre-fill with the first reel data
+function preloadFirstReel() {
+  if (reels.length === 0) {
+    document.getElementById('title').value = 'She left. The mountains stayed.';
+    document.getElementById('pillar').value = 'outdoor';
+    document.getElementById('hour').value = 19;
+    document.getElementById('views').value = 465;
+    document.getElementById('reach').value = 247;
+    document.getElementById('watchTime').value = 4.5;
+    document.getElementById('length').value = 6;
+    document.getElementById('likes').value = 13;
+    document.getElementById('comments').value = 0;
+    document.getElementById('saves').value = 0;
+    document.getElementById('shares').value = 1;
+    document.getElementById('followers').value = 0;
+    document.getElementById('audio').value = 'Discipline - Hellblade';
+    document.getElementById('notes').value = 'Hook zu subtil, Watch-Time niedrig, gute Share-Rate';
+  }
+}
+
+// Initialize
+loadData().then(() => {
+  preloadFirstReel();
+});
+</script>
+
+</body>
+</html>

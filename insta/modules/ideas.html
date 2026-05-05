@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+<title>💡 Idea Bank - Smash IG Manager</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="../js/app.js"></script>
+<style>
+  body {
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    min-height: 100dvh;
+    color: white;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+  .glass {
+    background: rgba(30, 41, 59, 0.6);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+  .neon { color: #39FF14; }
+  .btn-primary {
+    background: linear-gradient(135deg, #39FF14, #2ecc71);
+    color: #0f172a;
+    font-weight: bold;
+    transition: all 0.2s;
+  }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(57, 255, 20, 0.3); }
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 12px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 600;
+    border: 1px solid rgba(255,255,255,0.15);
+    background: rgba(15, 23, 42, 0.6);
+    color: #cbd5e1;
+    cursor: pointer;
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+  .chip:hover { border-color: rgba(57, 255, 20, 0.5); }
+  .chip.active {
+    background: linear-gradient(135deg, #39FF14, #2ecc71);
+    color: #0f172a;
+    border-color: #39FF14;
+  }
+  .pillar-pill {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 700;
+    color: #0f172a;
+  }
+  .format-tag {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 6px;
+    font-size: 10px;
+    font-weight: 600;
+    background: rgba(255,255,255,0.08);
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .idea-card {
+    transition: all 0.2s;
+  }
+  .idea-card:hover {
+    transform: translateY(-2px);
+    border-color: rgba(57, 255, 20, 0.3);
+  }
+  .idea-card.status-using { border-left: 4px solid #f59e0b; }
+  .idea-card.status-posted { border-left: 4px solid #10b981; opacity: 0.65; }
+  .idea-card.status-unused { border-left: 4px solid transparent; }
+  input, select, textarea {
+    background: rgba(15, 23, 42, 0.6);
+    border: 1px solid rgba(255,255,255,0.15);
+    color: white;
+  }
+  input:focus, select:focus, textarea:focus {
+    outline: none;
+    border-color: #39FF14;
+  }
+  .modal-bg {
+    background: rgba(0,0,0,0.7);
+    backdrop-filter: blur(4px);
+  }
+  .filter-scroll::-webkit-scrollbar { display: none; }
+  .filter-scroll { -ms-overflow-style: none; scrollbar-width: none; }
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    background: #39FF14;
+    color: #0f172a;
+    padding: 12px 24px;
+    border-radius: 999px;
+    font-weight: bold;
+    box-shadow: 0 8px 24px rgba(57, 255, 20, 0.4);
+    transition: transform 0.3s ease;
+    z-index: 100;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+  .fab {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 56px;
+    height: 56px;
+    border-radius: 999px;
+    background: linear-gradient(135deg, #39FF14, #2ecc71);
+    color: #0f172a;
+    font-size: 28px;
+    font-weight: bold;
+    box-shadow: 0 8px 24px rgba(57, 255, 20, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 50;
+    border: none;
+    transition: transform 0.2s;
+  }
+  .fab:hover { transform: scale(1.1); }
+</style>
+</head>
+<body class="p-4 md:p-6 pb-24">
+
+<div class="max-w-5xl mx-auto">
+
+  <!-- Header -->
+  <div class="flex justify-between items-center mb-4">
+    <div>
+      <a href="../dashboard.html" class="text-xs text-gray-400 hover:text-white">← Dashboard</a>
+      <h1 class="text-2xl md:text-3xl font-bold mt-1">💡 Idea Bank</h1>
+      <p class="text-gray-400 text-sm" id="ideaStats">0 Ideen</p>
+    </div>
+    <button onclick="SmashApp.logout()" class="text-sm text-gray-400 hover:text-white">🔒 Logout</button>
+  </div>
+
+  <!-- Search -->
+  <div class="mb-3">
+    <input type="text" id="searchInput" placeholder="🔍 Idee suchen..." class="w-full p-3 rounded-xl text-sm" oninput="render()">
+  </div>
+
+  <!-- Filter Chips -->
+  <div class="mb-2 text-xs text-gray-500 font-bold uppercase tracking-wider">Säule</div>
+  <div class="filter-scroll flex gap-2 mb-3 overflow-x-auto pb-1">
+    <button class="chip active" data-filter="pillar" data-value="all">Alle</button>
+    <button class="chip" data-filter="pillar" data-value="outdoor">🏔️ Outdoor</button>
+    <button class="chip" data-filter="pillar" data-value="gym">💪 Gym</button>
+    <button class="chip" data-filter="pillar" data-value="mindset">🧠 Mindset</button>
+    <button class="chip" data-filter="pillar" data-value="plantbased">🌿 Plant</button>
+  </div>
+
+  <div class="mb-2 text-xs text-gray-500 font-bold uppercase tracking-wider">Format</div>
+  <div class="filter-scroll flex gap-2 mb-3 overflow-x-auto pb-1">
+    <button class="chip active" data-filter="format" data-value="all">Alle</button>
+    <button class="chip" data-filter="format" data-value="pov">POV</button>
+    <button class="chip" data-filter="format" data-value="list">Liste</button>
+    <button class="chip" data-filter="format" data-value="story">Story</button>
+    <button class="chip" data-filter="format" data-value="quote">Quote</button>
+    <button class="chip" data-filter="format" data-value="comparison">Vergleich</button>
+    <button class="chip" data-filter="format" data-value="tutorial">Tutorial</button>
+    <button class="chip" data-filter="format" data-value="myth">Mythos</button>
+    <button class="chip" data-filter="format" data-value="transformation">Transform</button>
+  </div>
+
+  <div class="mb-2 text-xs text-gray-500 font-bold uppercase tracking-wider">Status</div>
+  <div class="filter-scroll flex gap-2 mb-5 overflow-x-auto pb-1">
+    <button class="chip active" data-filter="status" data-value="all">Alle</button>
+    <button class="chip" data-filter="status" data-value="unused">⚪ Frisch</button>
+    <button class="chip" data-filter="status" data-value="using">🟡 In Arbeit</button>
+    <button class="chip" data-filter="status" data-value="posted">🟢 Gepostet</button>
+  </div>
+
+  <!-- Idea List -->
+  <div id="ideasList" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
+
+  <div id="emptyState" class="hidden text-center py-12 text-gray-500">
+    <div class="text-5xl mb-3">🤷</div>
+    <p>Keine Ideen mit diesen Filtern.</p>
+    <button onclick="resetFilters()" class="mt-3 text-sm neon underline">Filter zurücksetzen</button>
+  </div>
+
+  <!-- Footer -->
+  <div class="text-center text-gray-500 text-xs mt-12">
+    💡 Built for vegetarianhulk · Tap +  rechts unten für eigene Idee
+  </div>
+</div>
+
+<!-- FAB -->
+<button class="fab" onclick="openAddModal()" title="Neue Idee">+</button>
+
+<!-- Add/Edit Modal -->
+<div id="addModal" class="hidden fixed inset-0 modal-bg z-50 flex items-center justify-center p-4">
+  <div class="glass rounded-3xl p-6 w-full max-w-md max-h-[90vh] overflow-y-auto">
+    <div class="flex justify-between items-center mb-4">
+      <h2 class="text-xl font-bold" id="modalTitle">💡 Neue Idee</h2>
+      <button onclick="closeAddModal()" class="text-gray-400 hover:text-white text-2xl">×</button>
+    </div>
+
+    <div class="space-y-3">
+      <div>
+        <label class="block text-xs text-gray-400 mb-1">Hook / Idee *</label>
+        <textarea id="ideaHook" rows="3" class="w-full p-3 rounded-xl text-sm" placeholder="z.B. POV: 6 AM Pump before everyone's awake"></textarea>
+      </div>
+
+      <div class="grid grid-cols-2 gap-3">
+        <div>
+          <label class="block text-xs text-gray-400 mb-1">Säule</label>
+          <select id="ideaPillar" class="w-full p-3 rounded-xl text-sm">
+            <option value="outdoor">🏔️ Outdoor</option>
+            <option value="gym">💪 Gym</option>
+            <option value="mindset">🧠 Mindset</option>
+            <option value="plantbased">🌿 Plant-Based</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-xs text-gray-400 mb-1">Format</label>
+          <select id="ideaFormat" class="w-full p-3 rounded-xl text-sm">
+            <option value="pov">POV</option>
+            <option value="list">Liste</option>
+            <option value="story">Story</option>
+            <option value="quote">Quote</option>
+            <option value="comparison">Vergleich</option>
+            <option value="tutorial">Tutorial</option>
+            <option value="myth">Mythos</option>
+            <option value="transformation">Transformation</option>
+          </select>
+        </div>
+      </div>
+
+      <div>
+        <label class="block text-xs text-gray-400 mb-1">Notizen (optional)</label>
+        <textarea id="ideaNotes" rows="2" class="w-full p-3 rounded-xl text-sm" placeholder="Warum funktioniert die Idee? Wo gesehen?"></textarea>
+      </div>
+
+      <button onclick="saveIdea()" class="btn-primary w-full p-3 rounded-xl">💾 Speichern</button>
+      <button id="deleteBtn" onclick="deleteIdea()" class="hidden w-full p-2 text-sm text-red-400 hover:text-red-300">🗑️ Löschen</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div id="toast" class="toast">✓ OK</div>
+
+<script>
+SmashApp.requireAuth();
+
+let ideas = [];
+let editingId = null;
+const filters = { pillar: 'all', format: 'all', status: 'all' };
+
+// ============ INIT ============
+async function init() {
+  ideas = SmashApp.getData('ideas', null);
+  if (!ideas) {
+    // First-time: seed from JSON
+    try {
+      const res = await fetch('../data/seed-ideas.json');
+      ideas = await res.json();
+      // Normalize status: "used" → "posted" for consistency
+      ideas = ideas.map(i => ({
+        ...i,
+        status: i.status === 'used' ? 'posted' : (i.status || 'unused')
+      }));
+      SmashApp.setData('ideas', ideas);
+    } catch (e) {
+      ideas = [];
+    }
+  }
+  bindFilters();
+  render();
+}
+
+// ============ FILTERS ============
+function bindFilters() {
+  document.querySelectorAll('.chip[data-filter]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const filter = btn.dataset.filter;
+      const value = btn.dataset.value;
+      filters[filter] = value;
+      // Update active state in same filter group
+      document.querySelectorAll(`.chip[data-filter="${filter}"]`).forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      render();
+    });
+  });
+}
+
+function resetFilters() {
+  filters.pillar = 'all';
+  filters.format = 'all';
+  filters.status = 'all';
+  document.getElementById('searchInput').value = '';
+  document.querySelectorAll('.chip[data-filter]').forEach(b => {
+    b.classList.toggle('active', b.dataset.value === 'all');
+  });
+  render();
+}
+
+// ============ RENDER ============
+function render() {
+  const search = document.getElementById('searchInput').value.toLowerCase().trim();
+  const filtered = ideas.filter(idea => {
+    if (filters.pillar !== 'all' && idea.pillar !== filters.pillar) return false;
+    if (filters.format !== 'all' && idea.format !== filters.format) return false;
+    if (filters.status !== 'all') {
+      // status mapping: 'using' chip filters status === 'using'
+      if (idea.status !== filters.status) return false;
+    }
+    if (search && !idea.hook.toLowerCase().includes(search) && !(idea.notes || '').toLowerCase().includes(search)) return false;
+    return true;
+  });
+
+  // Stats line
+  const total = ideas.length;
+  const unused = ideas.filter(i => i.status === 'unused').length;
+  const using = ideas.filter(i => i.status === 'using').length;
+  const posted = ideas.filter(i => i.status === 'posted').length;
+  document.getElementById('ideaStats').textContent =
+    `${total} Ideen · ⚪ ${unused} frisch · 🟡 ${using} in Arbeit · 🟢 ${posted} gepostet`;
+
+  const list = document.getElementById('ideasList');
+  const empty = document.getElementById('emptyState');
+
+  if (filtered.length === 0) {
+    list.innerHTML = '';
+    empty.classList.remove('hidden');
+    return;
+  }
+  empty.classList.add('hidden');
+
+  // Sort: unused first, then using, then posted (within: newest first by id)
+  const order = { unused: 0, using: 1, posted: 2 };
+  const sorted = [...filtered].sort((a, b) => {
+    const o = (order[a.status] ?? 0) - (order[b.status] ?? 0);
+    if (o !== 0) return o;
+    return b.id - a.id;
+  });
+
+  list.innerHTML = sorted.map(idea => renderCard(idea)).join('');
+}
+
+function renderCard(idea) {
+  const info = SmashApp.PILLAR_INFO[idea.pillar] || { emoji: '🎬', name: 'Other', color: '#64748b' };
+  const statusClass = `status-${idea.status || 'unused'}`;
+  const statusLabel = idea.status === 'using' ? '🟡 In Arbeit'
+    : idea.status === 'posted' ? '🟢 Gepostet'
+    : '⚪ Frisch';
+
+  return `
+    <div class="glass rounded-2xl p-4 idea-card ${statusClass}">
+      <div class="flex items-center justify-between mb-2">
+        <span class="pillar-pill" style="background: ${info.color}">${info.emoji} ${info.name}</span>
+        <span class="format-tag">${escapeHtml(idea.format || '')}</span>
+      </div>
+      <p class="text-sm font-bold mb-2 leading-snug">${escapeHtml(idea.hook)}</p>
+      ${idea.notes ? `<p class="text-xs text-gray-400 mb-3 italic">${escapeHtml(idea.notes)}</p>` : ''}
+      <div class="text-xs text-gray-500 mb-3">${statusLabel}</div>
+      <div class="flex gap-2 flex-wrap">
+        ${idea.status !== 'using' ? `<button onclick="setStatus(${idea.id}, 'using')" class="text-xs px-3 py-1.5 rounded-lg bg-amber-500/20 text-amber-300 hover:bg-amber-500/30">▶ Verwenden</button>` : ''}
+        ${idea.status !== 'posted' ? `<button onclick="setStatus(${idea.id}, 'posted')" class="text-xs px-3 py-1.5 rounded-lg bg-green-500/20 text-green-300 hover:bg-green-500/30">✓ Gepostet</button>` : ''}
+        ${idea.status === 'posted' ? `<button onclick="setStatus(${idea.id}, 'unused')" class="text-xs px-3 py-1.5 rounded-lg bg-slate-500/20 text-slate-300 hover:bg-slate-500/30">↺ Recyclen</button>` : ''}
+        <button onclick="openEditModal(${idea.id})" class="text-xs px-3 py-1.5 rounded-lg bg-slate-500/20 text-slate-300 hover:bg-slate-500/30">✏️ Edit</button>
+      </div>
+    </div>
+  `;
+}
+
+function escapeHtml(s) {
+  return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+// ============ ACTIONS ============
+function setStatus(id, status) {
+  const idea = ideas.find(i => i.id === id);
+  if (!idea) return;
+  idea.status = status;
+  SmashApp.setData('ideas', ideas);
+  render();
+  const msg = status === 'using' ? '▶ Idee in Arbeit'
+    : status === 'posted' ? '✓ Als gepostet markiert'
+    : '↺ Idee zurückgesetzt';
+  showToast(msg);
+}
+
+function openAddModal() {
+  editingId = null;
+  document.getElementById('modalTitle').textContent = '💡 Neue Idee';
+  document.getElementById('ideaHook').value = '';
+  document.getElementById('ideaPillar').value = 'outdoor';
+  document.getElementById('ideaFormat').value = 'pov';
+  document.getElementById('ideaNotes').value = '';
+  document.getElementById('deleteBtn').classList.add('hidden');
+  document.getElementById('addModal').classList.remove('hidden');
+}
+
+function openEditModal(id) {
+  const idea = ideas.find(i => i.id === id);
+  if (!idea) return;
+  editingId = id;
+  document.getElementById('modalTitle').textContent = '✏️ Idee bearbeiten';
+  document.getElementById('ideaHook').value = idea.hook || '';
+  document.getElementById('ideaPillar').value = idea.pillar || 'outdoor';
+  document.getElementById('ideaFormat').value = idea.format || 'pov';
+  document.getElementById('ideaNotes').value = idea.notes || '';
+  document.getElementById('deleteBtn').classList.remove('hidden');
+  document.getElementById('addModal').classList.remove('hidden');
+}
+
+function closeAddModal() {
+  document.getElementById('addModal').classList.add('hidden');
+  editingId = null;
+}
+
+function saveIdea() {
+  const hook = document.getElementById('ideaHook').value.trim();
+  if (!hook) { showToast('⚠️ Hook fehlt'); return; }
+
+  const data = {
+    hook,
+    pillar: document.getElementById('ideaPillar').value,
+    format: document.getElementById('ideaFormat').value,
+    notes: document.getElementById('ideaNotes').value.trim()
+  };
+
+  if (editingId) {
+    const idea = ideas.find(i => i.id === editingId);
+    Object.assign(idea, data);
+    showToast('💾 Aktualisiert');
+  } else {
+    ideas.push({ id: Date.now(), status: 'unused', ...data });
+    showToast('💡 Idee gespeichert');
+  }
+
+  SmashApp.setData('ideas', ideas);
+  closeAddModal();
+  render();
+}
+
+function deleteIdea() {
+  if (!editingId) return;
+  if (!confirm('Diese Idee wirklich löschen?')) return;
+  ideas = ideas.filter(i => i.id !== editingId);
+  SmashApp.setData('ideas', ideas);
+  closeAddModal();
+  render();
+  showToast('🗑️ Gelöscht');
+}
+
+// ============ TOAST ============
+let toastTimer;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 1800);
+}
+
+// Close modal on backdrop click
+document.getElementById('addModal').addEventListener('click', (e) => {
+  if (e.target.id === 'addModal') closeAddModal();
+});
+
+init();
+</script>
+
+</body>
+</html>

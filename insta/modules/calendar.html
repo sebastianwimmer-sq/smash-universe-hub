@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+<title>📅 Calendar - Smash IG Manager</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="../js/app.js"></script>
+<style>
+  body {
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    min-height: 100dvh;
+    color: white;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+  .glass {
+    background: rgba(30, 41, 59, 0.6);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+  .neon { color: #39FF14; }
+  .btn-primary {
+    background: linear-gradient(135deg, #39FF14, #2ecc71);
+    color: #0f172a;
+    font-weight: bold;
+    transition: all 0.2s;
+  }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(57, 255, 20, 0.3); }
+  .day-card {
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+  .day-card.posting-day {
+    border-color: rgba(57, 255, 20, 0.2);
+  }
+  .day-card.today {
+    border-color: rgba(57, 255, 20, 0.6);
+    box-shadow: 0 0 24px rgba(57, 255, 20, 0.15);
+  }
+  .pillar-stripe {
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 4px;
+  }
+  .pillar-pill {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 700;
+    color: #0f172a;
+  }
+  .status-pill {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 700;
+  }
+  .status-planned { background: rgba(245, 158, 11, 0.2); color: #fbbf24; }
+  .status-posted { background: rgba(16, 185, 129, 0.2); color: #34d399; }
+  .status-skipped { background: rgba(100, 116, 139, 0.2); color: #94a3b8; }
+  input, select, textarea {
+    background: rgba(15, 23, 42, 0.6);
+    border: 1px solid rgba(255,255,255,0.15);
+    color: white;
+  }
+  input:focus, select:focus { outline: none; border-color: #39FF14; }
+  .modal-bg { background: rgba(0,0,0,0.7); backdrop-filter: blur(4px); }
+  .toast {
+    position: fixed; bottom: 24px; left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    background: #39FF14; color: #0f172a;
+    padding: 12px 24px; border-radius: 999px; font-weight: bold;
+    box-shadow: 0 8px 24px rgba(57, 255, 20, 0.4);
+    transition: transform 0.3s ease; z-index: 100;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+  .idea-pick-card {
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .idea-pick-card:hover { border-color: rgba(57, 255, 20, 0.5); }
+  .week-stats-bar {
+    height: 6px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 999px;
+    overflow: hidden;
+  }
+  .week-stats-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #39FF14, #2ecc71);
+    transition: width 0.4s ease;
+  }
+</style>
+</head>
+<body class="p-4 md:p-6 pb-12">
+
+<div class="max-w-4xl mx-auto">
+
+  <!-- Header -->
+  <div class="flex justify-between items-center mb-4">
+    <div>
+      <a href="../dashboard.html" class="text-xs text-gray-400 hover:text-white">← Dashboard</a>
+      <h1 class="text-2xl md:text-3xl font-bold mt-1">📅 Content Calendar</h1>
+    </div>
+    <button onclick="SmashApp.logout()" class="text-sm text-gray-400 hover:text-white">🔒 Logout</button>
+  </div>
+
+  <!-- Week Navigation -->
+  <div class="glass rounded-2xl p-4 mb-5 flex items-center justify-between">
+    <button onclick="navWeek(-1)" class="text-2xl hover:text-green-400">←</button>
+    <div class="text-center">
+      <div class="text-xs text-gray-400" id="weekRange"></div>
+      <div class="text-lg font-bold" id="weekLabel"></div>
+    </div>
+    <button onclick="navWeek(1)" class="text-2xl hover:text-green-400">→</button>
+  </div>
+
+  <!-- Week Stats -->
+  <div class="glass rounded-2xl p-4 mb-5">
+    <div class="flex justify-between items-baseline mb-2">
+      <div class="text-sm font-bold">🎯 Wochen-Plan</div>
+      <div class="text-xs text-gray-400" id="weekProgress">0 / 4 Posts</div>
+    </div>
+    <div class="week-stats-bar mb-3">
+      <div class="week-stats-fill" id="weekFill" style="width: 0%"></div>
+    </div>
+    <div class="text-xs text-gray-500" id="weekPillarBalance"></div>
+  </div>
+
+  <!-- Days Grid -->
+  <div id="daysGrid" class="space-y-3"></div>
+
+  <div class="text-center text-gray-500 text-xs mt-12">
+    📅 Built for vegetarianhulk · Mo · Mi · Fr · So sind Posting-Tage
+  </div>
+</div>
+
+<!-- Pick Idea Modal -->
+<div id="pickModal" class="hidden fixed inset-0 modal-bg z-50 flex items-center justify-center p-4">
+  <div class="glass rounded-3xl p-6 w-full max-w-lg max-h-[90vh] overflow-y-auto">
+    <div class="flex justify-between items-center mb-3">
+      <h2 class="text-xl font-bold">💡 Idee zuweisen</h2>
+      <button onclick="closePickModal()" class="text-gray-400 hover:text-white text-2xl">×</button>
+    </div>
+    <p class="text-xs text-gray-400 mb-4" id="pickModalSub">Für: ...</p>
+
+    <input type="text" id="pickSearch" placeholder="🔍 Idee suchen..." class="w-full p-3 rounded-xl text-sm mb-4" oninput="renderPickList()">
+
+    <div id="pickList" class="space-y-2"></div>
+    <div id="pickEmpty" class="hidden text-center py-8 text-gray-500">
+      <p>Keine passenden Ideen gefunden.</p>
+      <p class="text-xs mt-1"><a href="ideas.html" class="neon underline">Zur Idea Bank →</a></p>
+    </div>
+  </div>
+</div>
+
+<!-- Manage Slot Modal -->
+<div id="slotModal" class="hidden fixed inset-0 modal-bg z-50 flex items-center justify-center p-4">
+  <div class="glass rounded-3xl p-6 w-full max-w-md">
+    <div class="flex justify-between items-center mb-4">
+      <h2 class="text-xl font-bold">📌 Slot verwalten</h2>
+      <button onclick="closeSlotModal()" class="text-gray-400 hover:text-white text-2xl">×</button>
+    </div>
+    <div id="slotInfo" class="mb-4 p-3 rounded-xl bg-slate-800/50"></div>
+    <div class="space-y-2">
+      <button onclick="setSlotStatus('planned')" class="w-full p-3 rounded-xl bg-amber-500/20 text-amber-300 hover:bg-amber-500/30 font-bold">📌 Geplant</button>
+      <button onclick="setSlotStatus('posted')" class="w-full p-3 rounded-xl bg-green-500/20 text-green-300 hover:bg-green-500/30 font-bold">✓ Gepostet</button>
+      <button onclick="setSlotStatus('skipped')" class="w-full p-3 rounded-xl bg-slate-500/20 text-slate-300 hover:bg-slate-500/30 font-bold">⏭ Übersprungen</button>
+      <button onclick="removeSlot()" class="w-full p-3 rounded-xl text-red-400 hover:text-red-300 text-sm">🗑️ Idee entfernen</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast" class="toast">✓ OK</div>
+
+<script>
+SmashApp.requireAuth();
+
+// ============ STATE ============
+const DAY_NAMES = ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'];
+const POSTING_PLAN = {
+  Mo: { emoji: '💪', name: 'Gym-Reel', pillar: 'gym' },
+  Mi: { emoji: '🏔️', name: 'Outdoor-Reel', pillar: 'outdoor' },
+  Fr: { emoji: '🧠', name: 'Mindset-Reel', pillar: 'mindset' },
+  So: { emoji: '🌿', name: 'Plant-Based / Outdoor', pillar: 'plantbased' }
+};
+
+let currentWeekStart = getMonday(new Date());
+let calendar = []; // [{id, date: "YYYY-MM-DD", ideaId, status: "planned"|"posted"|"skipped"}]
+let ideas = [];
+let pickContext = null; // { date }
+let manageContext = null; // { id }
+
+// ============ DATE HELPERS ============
+function getMonday(d) {
+  const date = new Date(d);
+  const day = date.getDay();
+  const diff = date.getDate() - day + (day === 0 ? -6 : 1);
+  const monday = new Date(date.setDate(diff));
+  monday.setHours(0, 0, 0, 0);
+  return monday;
+}
+
+function fmtISO(d) {
+  return d.toISOString().split('T')[0];
+}
+
+function fmtDay(d) {
+  return d.toLocaleDateString('de-DE', { day: '2-digit', month: 'short' });
+}
+
+function getWeekNumber(d) {
+  const date = new Date(d);
+  date.setHours(0, 0, 0, 0);
+  date.setDate(date.getDate() + 4 - (date.getDay() || 7));
+  const yearStart = new Date(date.getFullYear(), 0, 1);
+  return Math.ceil((((date - yearStart) / 86400000) + 1) / 7);
+}
+
+function isToday(d) {
+  const today = new Date();
+  return d.toDateString() === today.toDateString();
+}
+
+function isPast(d) {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  return d < today;
+}
+
+// ============ INIT ============
+function init() {
+  calendar = SmashApp.getData('calendar', []);
+  ideas = SmashApp.getData('ideas', []);
+  render();
+}
+
+// ============ NAVIGATION ============
+function navWeek(delta) {
+  const newDate = new Date(currentWeekStart);
+  newDate.setDate(newDate.getDate() + delta * 7);
+  currentWeekStart = newDate;
+  render();
+}
+
+// ============ RENDER ============
+function render() {
+  const weekEnd = new Date(currentWeekStart);
+  weekEnd.setDate(weekEnd.getDate() + 6);
+  const weekNum = getWeekNumber(currentWeekStart);
+  document.getElementById('weekRange').textContent = `${fmtDay(currentWeekStart)} – ${fmtDay(weekEnd)} ${weekEnd.getFullYear()}`;
+  document.getElementById('weekLabel').textContent = `Woche ${weekNum}`;
+
+  // Days
+  const grid = document.getElementById('daysGrid');
+  grid.innerHTML = '';
+  for (let i = 0; i < 7; i++) {
+    const day = new Date(currentWeekStart);
+    day.setDate(day.getDate() + i);
+    grid.innerHTML += renderDay(day, DAY_NAMES[i]);
+  }
+
+  renderWeekStats();
+}
+
+function renderDay(date, dayName) {
+  const isoDate = fmtISO(date);
+  const slots = calendar.filter(c => c.date === isoDate);
+  const plan = POSTING_PLAN[dayName];
+  const isPosting = !!plan;
+  const todayClass = isToday(date) ? 'today' : '';
+  const postingClass = isPosting ? 'posting-day' : '';
+  const dayLabel = date.toLocaleDateString('de-DE', { weekday: 'long' });
+
+  let recommendation = '';
+  if (isPosting) {
+    const info = SmashApp.PILLAR_INFO[plan.pillar];
+    recommendation = `<div class="text-xs text-gray-400 mb-3">💡 Empfehlung: ${plan.emoji} ${plan.name} um 19:00</div>`;
+  }
+
+  let slotsHTML = '';
+  if (slots.length === 0) {
+    slotsHTML = `<button onclick="openPickModal('${isoDate}')" class="w-full p-3 rounded-xl border border-dashed border-white/15 text-gray-400 hover:border-green-400/40 hover:text-green-400 text-sm">
+      + Idee zuweisen
+    </button>`;
+  } else {
+    slotsHTML = slots.map(s => renderSlot(s)).join('') +
+      `<button onclick="openPickModal('${isoDate}')" class="w-full p-2 mt-2 rounded-xl text-xs text-gray-500 hover:text-green-400">+ Weitere Idee</button>`;
+  }
+
+  return `
+    <div class="glass rounded-2xl p-4 day-card ${todayClass} ${postingClass}">
+      <div class="flex justify-between items-baseline mb-2">
+        <div>
+          <div class="font-bold text-lg">${dayLabel}${isToday(date) ? ' <span class="neon text-xs">· HEUTE</span>' : ''}</div>
+          <div class="text-xs text-gray-400">${fmtDay(date)}</div>
+        </div>
+        ${isPosting ? `<span class="text-xs text-gray-500">🎯 Posting-Tag</span>` : ''}
+      </div>
+      ${recommendation}
+      <div class="space-y-2">${slotsHTML}</div>
+    </div>
+  `;
+}
+
+function renderSlot(slot) {
+  const idea = ideas.find(i => i.id === slot.ideaId);
+  const info = idea ? SmashApp.PILLAR_INFO[idea.pillar] : { emoji: '🎬', name: '?', color: '#64748b' };
+  const statusLabel = {
+    planned: '📌 Geplant',
+    posted: '✓ Gepostet',
+    skipped: '⏭ Übersprungen'
+  }[slot.status] || '📌 Geplant';
+
+  if (!idea) {
+    return `
+      <div class="rounded-xl p-3 bg-slate-800/40 text-sm text-gray-400 italic flex justify-between items-center">
+        <span>⚠️ Idee gelöscht</span>
+        <button onclick="removeSlotById(${slot.id})" class="text-xs text-red-400 hover:text-red-300">🗑️</button>
+      </div>
+    `;
+  }
+
+  return `
+    <div class="rounded-xl p-3 bg-slate-800/40 cursor-pointer hover:bg-slate-700/60 relative" onclick="openSlotModal(${slot.id})">
+      <div class="pillar-stripe" style="background: ${info.color}"></div>
+      <div class="pl-2">
+        <div class="flex justify-between items-start gap-2 mb-1">
+          <span class="pillar-pill" style="background: ${info.color}">${info.emoji} ${info.name}</span>
+          <span class="status-pill status-${slot.status}">${statusLabel}</span>
+        </div>
+        <p class="text-sm font-medium leading-snug">${escapeHtml(idea.hook)}</p>
+      </div>
+    </div>
+  `;
+}
+
+function renderWeekStats() {
+  const weekStart = currentWeekStart;
+  const weekEnd = new Date(weekStart);
+  weekEnd.setDate(weekEnd.getDate() + 7);
+
+  const weekSlots = calendar.filter(c => {
+    const d = new Date(c.date);
+    return d >= weekStart && d < weekEnd;
+  });
+
+  const posted = weekSlots.filter(s => s.status === 'posted').length;
+  const planned = weekSlots.filter(s => s.status === 'planned').length;
+  const total = posted + planned;
+  const goalCount = 4;
+  const progressPct = Math.min(100, Math.round((total / goalCount) * 100));
+
+  document.getElementById('weekProgress').textContent = `${posted}/${goalCount} gepostet · ${planned} geplant`;
+  document.getElementById('weekFill').style.width = `${progressPct}%`;
+
+  // Pillar balance
+  const pillarCounts = {};
+  weekSlots.forEach(s => {
+    if (s.status === 'skipped') return;
+    const idea = ideas.find(i => i.id === s.ideaId);
+    if (!idea) return;
+    pillarCounts[idea.pillar] = (pillarCounts[idea.pillar] || 0) + 1;
+  });
+
+  const balanceText = Object.keys(SmashApp.PILLAR_INFO).map(p => {
+    const info = SmashApp.PILLAR_INFO[p];
+    const count = pillarCounts[p] || 0;
+    return `${info.emoji} ${count}`;
+  }).join(' · ');
+
+  document.getElementById('weekPillarBalance').textContent = total > 0 ? `Säulen: ${balanceText}` : 'Noch keine Posts diese Woche geplant.';
+}
+
+function escapeHtml(s) {
+  return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+// ============ PICK IDEA MODAL ============
+function openPickModal(isoDate) {
+  pickContext = { date: isoDate };
+  const date = new Date(isoDate);
+  const dayName = DAY_NAMES[(date.getDay() + 6) % 7];
+  const plan = POSTING_PLAN[dayName];
+  document.getElementById('pickModalSub').textContent =
+    `Für: ${date.toLocaleDateString('de-DE', { weekday: 'long', day: 'numeric', month: 'long' })}` +
+    (plan ? ` · 💡 Empfehlung: ${plan.emoji} ${plan.name}` : '');
+  document.getElementById('pickSearch').value = '';
+  document.getElementById('pickModal').classList.remove('hidden');
+  renderPickList();
+}
+
+function renderPickList() {
+  if (!pickContext) return;
+  const search = document.getElementById('pickSearch').value.toLowerCase().trim();
+  const date = new Date(pickContext.date);
+  const dayName = DAY_NAMES[(date.getDay() + 6) % 7];
+  const plan = POSTING_PLAN[dayName];
+  const usedIdeaIds = new Set(calendar.filter(c => c.status !== 'skipped').map(c => c.ideaId));
+
+  // Show ideas with priority: unused & matching pillar first
+  let pool = ideas.filter(i => i.status !== 'posted');
+  if (search) {
+    pool = pool.filter(i =>
+      i.hook.toLowerCase().includes(search) ||
+      (i.notes || '').toLowerCase().includes(search)
+    );
+  }
+
+  pool.sort((a, b) => {
+    // Recommended pillar first
+    if (plan) {
+      if (a.pillar === plan.pillar && b.pillar !== plan.pillar) return -1;
+      if (b.pillar === plan.pillar && a.pillar !== plan.pillar) return 1;
+    }
+    // Unused first
+    if (a.status === 'unused' && b.status !== 'unused') return -1;
+    if (b.status === 'unused' && a.status !== 'unused') return 1;
+    return 0;
+  });
+
+  const list = document.getElementById('pickList');
+  const empty = document.getElementById('pickEmpty');
+
+  if (pool.length === 0) {
+    list.innerHTML = '';
+    empty.classList.remove('hidden');
+    return;
+  }
+  empty.classList.add('hidden');
+
+  list.innerHTML = pool.map(idea => {
+    const info = SmashApp.PILLAR_INFO[idea.pillar] || { emoji: '🎬', color: '#64748b' };
+    const used = usedIdeaIds.has(idea.id);
+    const recommended = plan && idea.pillar === plan.pillar;
+    return `
+      <div class="glass rounded-xl p-3 idea-pick-card" onclick="assignIdea(${idea.id})">
+        <div class="flex items-center gap-2 mb-1">
+          <span class="pillar-pill" style="background: ${info.color}">${info.emoji}</span>
+          <span class="text-xs text-gray-400">${escapeHtml(idea.format || '')}</span>
+          ${recommended ? '<span class="text-xs neon">⭐ Empfohlen</span>' : ''}
+          ${used ? '<span class="text-xs text-amber-400">↻ Schon im Plan</span>' : ''}
+        </div>
+        <p class="text-sm leading-snug">${escapeHtml(idea.hook)}</p>
+      </div>
+    `;
+  }).join('');
+}
+
+function assignIdea(ideaId) {
+  if (!pickContext) return;
+  const slot = {
+    id: Date.now(),
+    date: pickContext.date,
+    ideaId,
+    status: 'planned'
+  };
+  calendar.push(slot);
+  // Mark idea as 'using' if currently 'unused'
+  const idea = ideas.find(i => i.id === ideaId);
+  if (idea && idea.status === 'unused') {
+    idea.status = 'using';
+    SmashApp.setData('ideas', ideas);
+  }
+  SmashApp.setData('calendar', calendar);
+  closePickModal();
+  render();
+  showToast('📌 Idee eingeplant');
+}
+
+function closePickModal() {
+  document.getElementById('pickModal').classList.add('hidden');
+  pickContext = null;
+}
+
+// ============ MANAGE SLOT MODAL ============
+function openSlotModal(slotId) {
+  const slot = calendar.find(c => c.id === slotId);
+  if (!slot) return;
+  manageContext = { id: slotId };
+  const idea = ideas.find(i => i.id === slot.ideaId);
+  const info = idea ? SmashApp.PILLAR_INFO[idea.pillar] : null;
+  const date = new Date(slot.date);
+  const dateStr = date.toLocaleDateString('de-DE', { weekday: 'long', day: 'numeric', month: 'long' });
+
+  document.getElementById('slotInfo').innerHTML = `
+    <div class="text-xs text-gray-400 mb-1">${dateStr}</div>
+    ${info ? `<span class="pillar-pill" style="background: ${info.color}">${info.emoji} ${info.name}</span>` : ''}
+    <p class="text-sm mt-2">${idea ? escapeHtml(idea.hook) : '⚠️ Idee gelöscht'}</p>
+  `;
+  document.getElementById('slotModal').classList.remove('hidden');
+}
+
+function setSlotStatus(status) {
+  if (!manageContext) return;
+  const slot = calendar.find(c => c.id === manageContext.id);
+  if (!slot) return;
+  slot.status = status;
+  // Sync idea status
+  if (status === 'posted') {
+    const idea = ideas.find(i => i.id === slot.ideaId);
+    if (idea && idea.status !== 'posted') {
+      idea.status = 'posted';
+      SmashApp.setData('ideas', ideas);
+    }
+  }
+  SmashApp.setData('calendar', calendar);
+  closeSlotModal();
+  render();
+  const msg = status === 'posted' ? '✓ Gepostet markiert' : status === 'skipped' ? '⏭ Übersprungen' : '📌 Geplant';
+  showToast(msg);
+}
+
+function removeSlot() {
+  if (!manageContext) return;
+  if (!confirm('Diesen Slot wirklich entfernen?')) return;
+  calendar = calendar.filter(c => c.id !== manageContext.id);
+  SmashApp.setData('calendar', calendar);
+  closeSlotModal();
+  render();
+  showToast('🗑️ Slot entfernt');
+}
+
+function removeSlotById(id) {
+  if (!confirm('Slot mit gelöschter Idee entfernen?')) return;
+  calendar = calendar.filter(c => c.id !== id);
+  SmashApp.setData('calendar', calendar);
+  render();
+  showToast('🗑️ Entfernt');
+}
+
+function closeSlotModal() {
+  document.getElementById('slotModal').classList.add('hidden');
+  manageContext = null;
+}
+
+// ============ TOAST ============
+let toastTimer;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 1800);
+}
+
+// Modal-Backdrop close
+document.getElementById('pickModal').addEventListener('click', e => { if (e.target.id === 'pickModal') closePickModal(); });
+document.getElementById('slotModal').addEventListener('click', e => { if (e.target.id === 'slotModal') closeSlotModal(); });
+
+init();
+</script>
+
+</body>
+</html>

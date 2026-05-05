@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+<title>📈 Analytics - Smash IG Manager</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="../js/app.js"></script>
+<style>
+  body {
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    min-height: 100dvh;
+    color: white;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+  .glass {
+    background: rgba(30, 41, 59, 0.6);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+  .neon { color: #39FF14; }
+  .btn-primary {
+    background: linear-gradient(135deg, #39FF14, #2ecc71);
+    color: #0f172a;
+    font-weight: bold;
+    transition: all 0.2s;
+  }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(57, 255, 20, 0.3); }
+  .pillar-pill {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 700;
+    color: #0f172a;
+  }
+  .heatmap-cell {
+    aspect-ratio: 1;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 9px;
+    font-weight: 700;
+    color: #0f172a;
+    cursor: default;
+    transition: transform 0.1s;
+  }
+  .heatmap-cell:hover {
+    transform: scale(1.3);
+    z-index: 10;
+    position: relative;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  }
+  .toast {
+    position: fixed; bottom: 24px; left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    background: #39FF14; color: #0f172a;
+    padding: 12px 24px; border-radius: 999px; font-weight: bold;
+    box-shadow: 0 8px 24px rgba(57, 255, 20, 0.4);
+    transition: transform 0.3s ease; z-index: 100;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+  .trend-up { color: #34d399; }
+  .trend-down { color: #f87171; }
+  .trend-neutral { color: #94a3b8; }
+</style>
+</head>
+<body class="p-4 md:p-6 pb-12">
+
+<div class="max-w-5xl mx-auto">
+
+  <!-- Header -->
+  <div class="flex justify-between items-center mb-4">
+    <div>
+      <a href="../dashboard.html" class="text-xs text-gray-400 hover:text-white">← Dashboard</a>
+      <h1 class="text-2xl md:text-3xl font-bold mt-1">📈 Analytics</h1>
+      <p class="text-gray-400 text-sm" id="subtitle">Deep Insights aus deinen Reels</p>
+    </div>
+    <button onclick="SmashApp.logout()" class="text-sm text-gray-400 hover:text-white">🔒 Logout</button>
+  </div>
+
+  <!-- Empty State -->
+  <div id="emptyState" class="hidden glass rounded-3xl p-12 text-center">
+    <div class="text-6xl mb-4">📊</div>
+    <h2 class="text-xl font-bold mb-2">Noch keine Daten</h2>
+    <p class="text-gray-400 mb-6">Track erst ein paar Reels, dann gibt's hier Insights.</p>
+    <a href="tracker.html" class="btn-primary inline-block px-6 py-3 rounded-xl">📸 Zum Reel Tracker</a>
+  </div>
+
+  <!-- Content -->
+  <div id="content" class="hidden">
+
+    <!-- Hero ER -->
+    <div class="glass rounded-3xl p-6 mb-5 text-center" style="border: 1px solid rgba(57,255,20,0.2);">
+      <div class="text-xs text-gray-400 uppercase tracking-wider mb-1">Ø Engagement-Rate</div>
+      <div class="text-5xl md:text-6xl font-bold neon" id="heroER">0%</div>
+      <div class="text-sm mt-2" id="heroTrend">—</div>
+      <div class="text-xs text-gray-500 mt-1">vs. letzte Periode</div>
+    </div>
+
+    <!-- KPI Grid -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5">
+      <div class="glass rounded-2xl p-4">
+        <div class="text-xs text-gray-400">Total Reels</div>
+        <div class="text-2xl font-bold" id="kpiReels">0</div>
+      </div>
+      <div class="glass rounded-2xl p-4">
+        <div class="text-xs text-gray-400">Total Views</div>
+        <div class="text-2xl font-bold" id="kpiViews">0</div>
+      </div>
+      <div class="glass rounded-2xl p-4">
+        <div class="text-xs text-gray-400">Beste Säule</div>
+        <div class="text-2xl font-bold" id="kpiBestPillar">—</div>
+      </div>
+      <div class="glass rounded-2xl p-4">
+        <div class="text-xs text-gray-400">Beste Stunde</div>
+        <div class="text-2xl font-bold" id="kpiBestHour">—</div>
+      </div>
+    </div>
+
+    <!-- Pillar Performance -->
+    <div class="glass rounded-3xl p-5 mb-5">
+      <h2 class="text-lg font-bold mb-4">⚖️ Säulen-Performance</h2>
+      <p class="text-xs text-gray-400 mb-3">Welche Säule liefert die beste Engagement-Rate?</p>
+      <div style="position: relative; height: 280px;">
+        <canvas id="pillarChart"></canvas>
+      </div>
+    </div>
+
+    <!-- Heatmap -->
+    <div class="glass rounded-3xl p-5 mb-5">
+      <h2 class="text-lg font-bold mb-1">🔥 Beste Posting-Zeit</h2>
+      <p class="text-xs text-gray-400 mb-4">Tag × Stunde · dunkler = mehr Engagement-Rate. Hover für Details.</p>
+      <div id="heatmapWrapper" class="overflow-x-auto">
+        <div id="heatmap"></div>
+      </div>
+      <div class="flex items-center gap-2 mt-3 text-xs text-gray-500">
+        <span>weniger</span>
+        <div class="flex gap-0.5">
+          <div class="w-4 h-4 rounded" style="background: rgba(57,255,20,0.1)"></div>
+          <div class="w-4 h-4 rounded" style="background: rgba(57,255,20,0.3)"></div>
+          <div class="w-4 h-4 rounded" style="background: rgba(57,255,20,0.55)"></div>
+          <div class="w-4 h-4 rounded" style="background: rgba(57,255,20,0.8)"></div>
+          <div class="w-4 h-4 rounded" style="background: rgba(57,255,20,1)"></div>
+        </div>
+        <span>mehr</span>
+      </div>
+    </div>
+
+    <!-- Top Performers -->
+    <div class="glass rounded-3xl p-5 mb-5">
+      <h2 class="text-lg font-bold mb-1">🏆 Top 3 Performer</h2>
+      <p class="text-xs text-gray-400 mb-4">Deine stärksten Reels nach ER. Klick → speichere als neue Idee.</p>
+      <div id="topPerformers" class="space-y-3"></div>
+    </div>
+
+    <!-- Hour Distribution -->
+    <div class="glass rounded-3xl p-5 mb-5">
+      <h2 class="text-lg font-bold mb-4">⏰ Wann postest du am meisten?</h2>
+      <div style="position: relative; height: 220px;">
+        <canvas id="hourChart"></canvas>
+      </div>
+    </div>
+
+    <!-- Export -->
+    <div class="glass rounded-3xl p-5 mb-5">
+      <h2 class="text-lg font-bold mb-3">💾 Daten-Export</h2>
+      <p class="text-xs text-gray-400 mb-4">Backup oder Übergabe an Claude.ai für tiefere Analyse.</p>
+      <div class="flex gap-2 flex-wrap">
+        <button onclick="exportReels('json')" class="btn-primary px-4 py-2 rounded-xl text-sm">📥 Reels als JSON</button>
+        <button onclick="exportReels('csv')" class="btn-primary px-4 py-2 rounded-xl text-sm">📊 Reels als CSV</button>
+        <button onclick="exportAll()" class="px-4 py-2 rounded-xl text-sm bg-slate-500/20 text-slate-300 hover:bg-slate-500/30">🗄️ Alles (Reels + Ideas + Calendar)</button>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="text-center text-gray-500 text-xs mt-8">
+    📈 Built for vegetarianhulk · ER beats Vanity-Numbers
+  </div>
+</div>
+
+<div id="toast" class="toast">✓ OK</div>
+
+<script>
+SmashApp.requireAuth();
+
+const DAY_LABELS = ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'];
+
+// ============ INIT ============
+function init() {
+  const reels = SmashApp.getData('reels', []);
+
+  if (reels.length === 0) {
+    document.getElementById('emptyState').classList.remove('hidden');
+    document.getElementById('content').classList.add('hidden');
+    document.getElementById('subtitle').textContent = 'Track erst ein paar Reels.';
+    return;
+  }
+
+  document.getElementById('emptyState').classList.add('hidden');
+  document.getElementById('content').classList.remove('hidden');
+  document.getElementById('subtitle').textContent = `${reels.length} Reels analysiert`;
+
+  computeAndRender(reels);
+}
+
+// ============ METRICS ============
+function engagementRate(r) {
+  const denom = Number(r.reach) || Number(r.views) || 0;
+  if (denom === 0) return 0;
+  const eng = (Number(r.likes) || 0) + (Number(r.comments) || 0) + (Number(r.saves) || 0) + (Number(r.shares) || 0);
+  return (eng / denom) * 100;
+}
+
+function avg(arr) {
+  if (arr.length === 0) return 0;
+  return arr.reduce((a, b) => a + b, 0) / arr.length;
+}
+
+function dayOfWeek(dateStr) {
+  const d = new Date(dateStr);
+  // 0=So → wir wollen Mo=0
+  return (d.getDay() + 6) % 7;
+}
+
+// ============ COMPUTE & RENDER ============
+function computeAndRender(reels) {
+  // Hero ER + Trend
+  const allER = reels.map(engagementRate);
+  const heroER = avg(allER);
+  document.getElementById('heroER').textContent = heroER.toFixed(2) + '%';
+
+  // Sort by date for trend
+  const sorted = [...reels].sort((a, b) => new Date(a.date) - new Date(b.date));
+  const half = Math.floor(sorted.length / 2);
+  if (sorted.length >= 4) {
+    const olderHalf = avg(sorted.slice(0, half).map(engagementRate));
+    const newerHalf = avg(sorted.slice(half).map(engagementRate));
+    const delta = newerHalf - olderHalf;
+    const trendEl = document.getElementById('heroTrend');
+    if (Math.abs(delta) < 0.1) {
+      trendEl.innerHTML = '<span class="trend-neutral">→ stabil</span>';
+    } else if (delta > 0) {
+      trendEl.innerHTML = `<span class="trend-up">↑ +${delta.toFixed(2)} Pp</span>`;
+    } else {
+      trendEl.innerHTML = `<span class="trend-down">↓ ${delta.toFixed(2)} Pp</span>`;
+    }
+  } else {
+    document.getElementById('heroTrend').innerHTML = '<span class="trend-neutral">noch zu wenig Daten</span>';
+  }
+
+  // KPIs
+  document.getElementById('kpiReels').textContent = reels.length;
+  document.getElementById('kpiViews').textContent = SmashApp.formatNumber(reels.reduce((s, r) => s + (Number(r.views) || 0), 0));
+
+  // Pillar Stats
+  const pillarER = {};
+  Object.keys(SmashApp.PILLAR_INFO).forEach(p => pillarER[p] = []);
+  reels.forEach(r => {
+    if (pillarER[r.pillar]) pillarER[r.pillar].push(engagementRate(r));
+  });
+
+  let bestPillar = '—';
+  let bestPillarER = -1;
+  Object.entries(pillarER).forEach(([p, arr]) => {
+    if (arr.length === 0) return;
+    const a = avg(arr);
+    if (a > bestPillarER) {
+      bestPillarER = a;
+      bestPillar = p;
+    }
+  });
+  document.getElementById('kpiBestPillar').textContent = bestPillar !== '—'
+    ? `${SmashApp.PILLAR_INFO[bestPillar].emoji}`
+    : '—';
+  if (bestPillar !== '—') {
+    document.getElementById('kpiBestPillar').title = `${SmashApp.PILLAR_INFO[bestPillar].name}: ${bestPillarER.toFixed(2)}% ER`;
+  }
+
+  // Best hour
+  const hourER = {};
+  reels.forEach(r => {
+    const h = Number(r.hour) || 0;
+    if (!hourER[h]) hourER[h] = [];
+    hourER[h].push(engagementRate(r));
+  });
+  let bestHour = null, bestHourER = -1;
+  Object.entries(hourER).forEach(([h, arr]) => {
+    const a = avg(arr);
+    if (a > bestHourER) { bestHourER = a; bestHour = h; }
+  });
+  document.getElementById('kpiBestHour').textContent = bestHour !== null ? `${bestHour}h` : '—';
+
+  // Pillar Chart
+  renderPillarChart(pillarER);
+
+  // Heatmap
+  renderHeatmap(reels);
+
+  // Top Performers
+  renderTopPerformers(reels);
+
+  // Hour Distribution
+  renderHourChart(hourER, reels);
+}
+
+// ============ PILLAR CHART ============
+let pillarChartInst, hourChartInst;
+
+function renderPillarChart(pillarER) {
+  const labels = [], data = [], colors = [], counts = [];
+  Object.keys(SmashApp.PILLAR_INFO).forEach(p => {
+    const info = SmashApp.PILLAR_INFO[p];
+    labels.push(`${info.emoji} ${info.name}`);
+    data.push(avg(pillarER[p] || []).toFixed(2));
+    colors.push(info.color);
+    counts.push((pillarER[p] || []).length);
+  });
+
+  const ctx = document.getElementById('pillarChart').getContext('2d');
+  if (pillarChartInst) pillarChartInst.destroy();
+  pillarChartInst = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [{
+        label: 'Ø ER (%)',
+        data,
+        backgroundColor: colors.map(c => c + 'cc'),
+        borderColor: colors,
+        borderWidth: 2,
+        borderRadius: 8
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: (ctx) => `${ctx.parsed.y}% ER · ${counts[ctx.dataIndex]} Reels`
+          }
+        }
+      },
+      scales: {
+        y: {
+          beginAtZero: true,
+          ticks: { color: '#94a3b8', callback: v => v + '%' },
+          grid: { color: 'rgba(255,255,255,0.05)' }
+        },
+        x: {
+          ticks: { color: '#94a3b8' },
+          grid: { display: false }
+        }
+      }
+    }
+  });
+}
+
+// ============ HEATMAP ============
+function renderHeatmap(reels) {
+  // 7 days × 24 hours, average ER
+  const grid = Array.from({ length: 7 }, () => Array.from({ length: 24 }, () => []));
+  reels.forEach(r => {
+    if (!r.date) return;
+    const d = dayOfWeek(r.date);
+    const h = Number(r.hour) || 0;
+    grid[d][h].push(engagementRate(r));
+  });
+
+  // Find max
+  let maxER = 0;
+  grid.forEach(row => row.forEach(cell => {
+    if (cell.length > 0) {
+      const a = avg(cell);
+      if (a > maxER) maxER = a;
+    }
+  }));
+  if (maxER === 0) maxER = 1;
+
+  // Build HTML
+  let html = '<div style="display: grid; grid-template-columns: 28px repeat(24, minmax(18px, 1fr)); gap: 2px; min-width: 480px;">';
+  // Header row
+  html += '<div></div>';
+  for (let h = 0; h < 24; h++) {
+    html += `<div class="text-[9px] text-gray-500 text-center">${h}</div>`;
+  }
+  // Day rows
+  for (let d = 0; d < 7; d++) {
+    html += `<div class="text-[10px] text-gray-400 flex items-center font-bold">${DAY_LABELS[d]}</div>`;
+    for (let h = 0; h < 24; h++) {
+      const cell = grid[d][h];
+      if (cell.length === 0) {
+        html += `<div class="heatmap-cell" style="background: rgba(255,255,255,0.04);" title="${DAY_LABELS[d]} ${h}h: keine Daten"></div>`;
+      } else {
+        const a = avg(cell);
+        const intensity = Math.min(1, a / maxER);
+        const bg = `rgba(57,255,20,${0.1 + intensity * 0.9})`;
+        html += `<div class="heatmap-cell" style="background: ${bg};" title="${DAY_LABELS[d]} ${h}h: ${a.toFixed(2)}% ER · ${cell.length} Reels">${cell.length > 1 ? cell.length : ''}</div>`;
+      }
+    }
+  }
+  html += '</div>';
+  document.getElementById('heatmap').innerHTML = html;
+}
+
+// ============ TOP PERFORMERS ============
+function renderTopPerformers(reels) {
+  const ranked = [...reels]
+    .map(r => ({ ...r, er: engagementRate(r) }))
+    .sort((a, b) => b.er - a.er)
+    .slice(0, 3);
+
+  const html = ranked.map((r, idx) => {
+    const info = SmashApp.PILLAR_INFO[r.pillar] || { emoji: '🎬', name: '?', color: '#64748b' };
+    const medal = ['🥇', '🥈', '🥉'][idx];
+    return `
+      <div class="bg-slate-800/40 rounded-2xl p-4">
+        <div class="flex items-start gap-3 mb-2">
+          <div class="text-2xl">${medal}</div>
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center gap-2 mb-1 flex-wrap">
+              <span class="pillar-pill" style="background: ${info.color}">${info.emoji} ${info.name}</span>
+              <span class="text-xs text-gray-500">${SmashApp.formatDate(r.date)} · ${r.hour || '?'}h</span>
+            </div>
+            <p class="text-sm font-bold leading-snug mb-2">${escapeHtml(r.title || 'Untitled')}</p>
+            <div class="flex gap-3 text-xs text-gray-300">
+              <span>👁️ ${SmashApp.formatNumber(r.views)}</span>
+              <span class="neon font-bold">${r.er.toFixed(2)}% ER</span>
+              <span>❤️ ${r.likes || 0}</span>
+            </div>
+          </div>
+        </div>
+        <button onclick="reuseAsIdea(${r.id})" class="w-full mt-2 px-3 py-2 rounded-lg bg-green-500/20 text-green-300 hover:bg-green-500/30 text-xs font-bold">
+          ↻ Als neue Idee speichern
+        </button>
+      </div>
+    `;
+  }).join('');
+
+  document.getElementById('topPerformers').innerHTML = html || '<p class="text-gray-500 italic text-sm">Keine Reels.</p>';
+}
+
+function reuseAsIdea(reelId) {
+  const reels = SmashApp.getData('reels', []);
+  const reel = reels.find(r => r.id === reelId);
+  if (!reel) return;
+  const ideas = SmashApp.getData('ideas', []);
+  const newIdea = {
+    id: Date.now(),
+    pillar: reel.pillar,
+    format: reel.format || 'pov',
+    hook: reel.title || 'Untitled',
+    status: 'unused',
+    notes: `↻ Recyclet aus Top-Performer (${reel.er ? reel.er.toFixed(2) : '?'}% ER, ${reel.views || 0} Views)`
+  };
+  ideas.push(newIdea);
+  SmashApp.setData('ideas', ideas);
+  showToast('💡 Als Idee gespeichert');
+}
+
+// ============ HOUR CHART ============
+function renderHourChart(hourER, reels) {
+  const hours = Array.from({ length: 24 }, (_, i) => i);
+  const counts = hours.map(h => reels.filter(r => Number(r.hour) === h).length);
+
+  const ctx = document.getElementById('hourChart').getContext('2d');
+  if (hourChartInst) hourChartInst.destroy();
+  hourChartInst = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: hours.map(h => h + 'h'),
+      datasets: [{
+        label: 'Posts',
+        data: counts,
+        backgroundColor: 'rgba(57,255,20,0.7)',
+        borderRadius: 4
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        y: {
+          beginAtZero: true,
+          ticks: { color: '#94a3b8', stepSize: 1 },
+          grid: { color: 'rgba(255,255,255,0.05)' }
+        },
+        x: {
+          ticks: { color: '#94a3b8', font: { size: 9 } },
+          grid: { display: false }
+        }
+      }
+    }
+  });
+}
+
+// ============ EXPORT ============
+function exportReels(format) {
+  const reels = SmashApp.getData('reels', []);
+  if (reels.length === 0) { showToast('⚠️ Keine Reels zum Export'); return; }
+
+  if (format === 'json') {
+    SmashApp.exportJSON(reels, `smash-reels-${fmtDate()}.json`);
+    showToast('📥 JSON exportiert');
+    return;
+  }
+
+  // CSV
+  const cols = ['id', 'date', 'hour', 'pillar', 'title', 'views', 'reach', 'watchTime', 'length', 'likes', 'comments', 'saves', 'shares', 'followers', 'audio', 'notes'];
+  const csv = [cols.join(',')].concat(
+    reels.map(r => cols.map(c => csvEscape(r[c])).join(','))
+  ).join('\n');
+  downloadText(csv, `smash-reels-${fmtDate()}.csv`, 'text/csv');
+  showToast('📊 CSV exportiert');
+}
+
+function exportAll() {
+  const all = {
+    exported: new Date().toISOString(),
+    reels: SmashApp.getData('reels', []),
+    ideas: SmashApp.getData('ideas', []),
+    calendar: SmashApp.getData('calendar', []),
+    captionsCustom: SmashApp.getData('captionsCustom', [])
+  };
+  SmashApp.exportJSON(all, `smash-backup-${fmtDate()}.json`);
+  showToast('🗄️ Backup gespeichert');
+}
+
+function csvEscape(v) {
+  if (v === null || v === undefined) return '';
+  const s = String(v);
+  if (s.includes(',') || s.includes('"') || s.includes('\n')) {
+    return `"${s.replace(/"/g, '""')}"`;
+  }
+  return s;
+}
+
+function downloadText(text, filename, mime) {
+  const blob = new Blob([text], { type: mime });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename; a.click();
+  URL.revokeObjectURL(url);
+}
+
+function fmtDate() {
+  return new Date().toISOString().split('T')[0];
+}
+
+function escapeHtml(s) {
+  return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+// ============ TOAST ============
+let toastTimer;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 1800);
+}
+
+init();
+</script>
+
+</body>
+</html>

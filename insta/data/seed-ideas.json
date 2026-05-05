@@ -1,0 +1,242 @@
+[
+  {
+    "id": 1,
+    "pillar": "outdoor",
+    "format": "pov",
+    "hook": "POV: Du hast keine Lust auf Gym, aber 1.800 Höhenmeter rufen",
+    "status": "unused",
+    "notes": "Verbindet Outdoor + Discipline"
+  },
+  {
+    "id": 2,
+    "pillar": "outdoor",
+    "format": "list",
+    "hook": "3 Hikes in Bayern, die niemand auf Insta zeigt",
+    "status": "unused",
+    "notes": "Listen-Format = hohe Saves"
+  },
+  {
+    "id": 3,
+    "pillar": "outdoor",
+    "format": "story",
+    "hook": "She left. The mountains stayed.",
+    "status": "used",
+    "notes": "Erstes Reel — 465 Views, gute Share-Rate"
+  },
+  {
+    "id": 4,
+    "pillar": "outdoor",
+    "format": "pov",
+    "hook": "POV: Gym closed, mountains open",
+    "status": "unused",
+    "notes": "Crossover Outdoor + Gym"
+  },
+  {
+    "id": 5,
+    "pillar": "outdoor",
+    "format": "story",
+    "hook": "Things hiking taught me that therapy didn't",
+    "status": "unused",
+    "notes": "Deep, shareable, Mindset-Crossover"
+  },
+  {
+    "id": 6,
+    "pillar": "outdoor",
+    "format": "pov",
+    "hook": "Sonnenaufgang auf 2.000m hitten anders",
+    "status": "unused",
+    "notes": "Aesthetic-Vibe, gut für Saves"
+  },
+  {
+    "id": 7,
+    "pillar": "outdoor",
+    "format": "list",
+    "hook": "Was ich in einer 6h-Solo-Tour wirklich denke",
+    "status": "unused",
+    "notes": "Storytelling, intimate vibe"
+  },
+  {
+    "id": 8,
+    "pillar": "outdoor",
+    "format": "story",
+    "hook": "Plot Twist: Die beste Beziehung war die mit den Bergen",
+    "status": "unused",
+    "notes": "Polarisiert, viele Kommentare"
+  },
+  {
+    "id": 9,
+    "pillar": "gym",
+    "format": "pov",
+    "hook": "POV: 6 AM Pump before everyone's awake",
+    "status": "unused",
+    "notes": "Discipline + Aesthetic"
+  },
+  {
+    "id": 10,
+    "pillar": "gym",
+    "format": "list",
+    "hook": "3 Übungen die deine Schultern in 4 Wochen verändern",
+    "status": "unused",
+    "notes": "Save-Trigger durch Listen"
+  },
+  {
+    "id": 11,
+    "pillar": "gym",
+    "format": "story",
+    "hook": "Why I train alone — and you should too",
+    "status": "unused",
+    "notes": "Polarisiert, Mindset-Crossover"
+  },
+  {
+    "id": 12,
+    "pillar": "gym",
+    "format": "tutorial",
+    "hook": "Form Check: Bench Press in 30 sec",
+    "status": "unused",
+    "notes": "Educational, hohe Saves"
+  },
+  {
+    "id": 13,
+    "pillar": "gym",
+    "format": "story",
+    "hook": "My push day in 60 seconds",
+    "status": "unused",
+    "notes": "Day-in-Workout Format"
+  },
+  {
+    "id": 14,
+    "pillar": "gym",
+    "format": "list",
+    "hook": "5 Pump-Übungen die brutal funktionieren",
+    "status": "unused",
+    "notes": "Listen, Pump-Content"
+  },
+  {
+    "id": 15,
+    "pillar": "gym",
+    "format": "transformation",
+    "hook": "1 Jahr Training - das ist passiert",
+    "status": "unused",
+    "notes": "Before/After = viral-Potenzial"
+  },
+  {
+    "id": 16,
+    "pillar": "mindset",
+    "format": "quote",
+    "hook": "Stop chasing motivation. Build discipline.",
+    "status": "unused",
+    "notes": "Klassische Mindset-Quote"
+  },
+  {
+    "id": 17,
+    "pillar": "mindset",
+    "format": "comparison",
+    "hook": "5 AM vs 9 AM — which one builds the stronger man",
+    "status": "unused",
+    "notes": "Polarisiert, Engagement-Trigger"
+  },
+  {
+    "id": 18,
+    "pillar": "mindset",
+    "format": "story",
+    "hook": "Was ich mit 25 verstanden hab, das die meisten nie checken",
+    "status": "unused",
+    "notes": "Curiosity-Hook, deep"
+  },
+  {
+    "id": 19,
+    "pillar": "mindset",
+    "format": "list",
+    "hook": "3 Gewohnheiten die dein Leben in 90 Tagen ändern",
+    "status": "unused",
+    "notes": "Liste + Zeitrahmen = Saves"
+  },
+  {
+    "id": 20,
+    "pillar": "mindset",
+    "format": "quote",
+    "hook": "Manche Verluste sind Upgrades.",
+    "status": "used",
+    "notes": "Caption für She left Reel"
+  },
+  {
+    "id": 21,
+    "pillar": "mindset",
+    "format": "story",
+    "hook": "POV: Du wachst um 5 auf während andere noch träumen",
+    "status": "unused",
+    "notes": "Discipline-Vibe"
+  },
+  {
+    "id": 22,
+    "pillar": "plantbased",
+    "format": "transformation",
+    "hook": "Building muscle on plants — 1 year transformation",
+    "status": "unused",
+    "notes": "Before/After + Plant-Based USP"
+  },
+  {
+    "id": 23,
+    "pillar": "plantbased",
+    "format": "list",
+    "hook": "3 plant-based protein sources stronger than chicken",
+    "status": "unused",
+    "notes": "Kontroverses Thema = Diskussion"
+  },
+  {
+    "id": 24,
+    "pillar": "plantbased",
+    "format": "tutorial",
+    "hook": "My pre-workout meal that's NOT a protein shake",
+    "status": "unused",
+    "notes": "Curiosity-Hook"
+  },
+  {
+    "id": 25,
+    "pillar": "plantbased",
+    "format": "list",
+    "hook": "What I eat on a 6-hour hike — vegan edition",
+    "status": "unused",
+    "notes": "Crossover Plant-Based + Outdoor"
+  },
+  {
+    "id": 26,
+    "pillar": "plantbased",
+    "format": "myth",
+    "hook": "Mythos: Veganer können keinen Muskel aufbauen",
+    "status": "unused",
+    "notes": "Mythbusting + USP"
+  },
+  {
+    "id": 27,
+    "pillar": "outdoor",
+    "format": "list",
+    "hook": "10 Gipfel die mich 2025 verändert haben",
+    "status": "unused",
+    "notes": "Aktueller Carousel-Plan"
+  },
+  {
+    "id": 28,
+    "pillar": "outdoor",
+    "format": "comparison",
+    "hook": "Königssee oder Walchensee — welcher hits härter?",
+    "status": "unused",
+    "notes": "Engagement durch Vote"
+  },
+  {
+    "id": 29,
+    "pillar": "mindset",
+    "format": "story",
+    "hook": "Warum ich Sonntag abends nicht mehr scrolle",
+    "status": "unused",
+    "notes": "Relatable + Mindset"
+  },
+  {
+    "id": 30,
+    "pillar": "gym",
+    "format": "myth",
+    "hook": "Du brauchst keine 2h im Gym - hier ist warum",
+    "status": "unused",
+    "notes": "Mythbusting + Time-Saver"
+  }
+]
