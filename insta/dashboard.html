@@ -6,6 +6,8 @@
 <title>⛰️ Dashboard — PEAKING</title>
 <link rel="icon" href="assets/logo.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="assets/logo.svg">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#FFA94D">
 <link rel="stylesheet" href="assets/effects.css">
 <script src="https://cdn.tailwindcss.com"></script>
 <style>
@@ -264,15 +266,11 @@ document.getElementById('todayDate').textContent = today.toLocaleDateString('de-
   weekday: 'long', day: 'numeric', month: 'long' 
 });
 
-// Next Post Logic
+// Next Post Logic — account-aware Posting-Plan
 const day = today.getDay(); // 0=So, 1=Mo, 2=Di, 3=Mi, 4=Do, 5=Fr, 6=Sa
-const postingPlan = {
-  1: { emoji: '💪', name: 'Gym-Reel', pillar: 'gym' },
-  3: { emoji: '🏔️', name: 'Outdoor-Reel', pillar: 'outdoor' },
-  5: { emoji: '🧠', name: 'Mindset-Reel', pillar: 'mindset' },
-  0: { emoji: '🌿', name: 'Plant-Based oder Outdoor', pillar: 'rotating' }
-};
-const todayPost = postingPlan[day];
+const DAY_KEYS = { 0: 'So', 1: 'Mo', 2: 'Di', 3: 'Mi', 4: 'Do', 5: 'Fr', 6: 'Sa' };
+const planByDayKey = SmashApp.getPostingPlan(); // {Mo: {...}, Mi: {...}} oder {Di: {...}, Do: {...}}
+const todayPost = planByDayKey[DAY_KEYS[day]];
 if (todayPost) {
   document.getElementById('nextPost').textContent = `Heute: ${todayPost.emoji} ${todayPost.name}`;
 } else {

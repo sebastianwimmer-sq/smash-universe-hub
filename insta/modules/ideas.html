@@ -6,6 +6,8 @@
 <title>💡 Idea Bank — PEAKING</title>
 <link rel="icon" href="../assets/logo.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="../assets/logo.svg">
+<link rel="manifest" href="../manifest.json">
+<meta name="theme-color" content="#FFA94D">
 <link rel="stylesheet" href="../assets/effects.css">
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="../js/app.js"></script>
@@ -152,12 +154,8 @@
 
   <!-- Filter Chips -->
   <div class="mb-2 text-xs text-gray-500 font-bold uppercase tracking-wider">Säule</div>
-  <div class="filter-scroll flex gap-2 mb-3 overflow-x-auto pb-1">
-    <button class="chip active" data-filter="pillar" data-value="all">Alle</button>
-    <button class="chip" data-filter="pillar" data-value="outdoor">🏔️ Outdoor</button>
-    <button class="chip" data-filter="pillar" data-value="gym">💪 Gym</button>
-    <button class="chip" data-filter="pillar" data-value="mindset">🧠 Mindset</button>
-    <button class="chip" data-filter="pillar" data-value="plantbased">🌿 Plant</button>
+  <div class="filter-scroll flex gap-2 mb-3 overflow-x-auto pb-1" data-chip-group="pillar">
+    <!-- gefüllt via JS, account-aware -->
   </div>
 
   <div class="mb-2 text-xs text-gray-500 font-bold uppercase tracking-wider">Format</div>
@@ -217,10 +215,7 @@
         <div>
           <label class="block text-xs text-gray-400 mb-1">Säule</label>
           <select id="ideaPillar" class="w-full p-3 rounded-xl text-sm">
-            <option value="outdoor">🏔️ Outdoor</option>
-            <option value="gym">💪 Gym</option>
-            <option value="mindset">🧠 Mindset</option>
-            <option value="plantbased">🌿 Plant-Based</option>
+            <!-- gefüllt via JS, account-aware -->
           </select>
         </div>
         <div>
@@ -263,22 +258,43 @@ const filters = { pillar: 'all', format: 'all', status: 'all' };
 async function init() {
   ideas = SmashApp.getData('ideas', null);
   if (!ideas) {
-    // First-time: seed from JSON
-    try {
-      const res = await fetch('../data/seed-ideas.json');
-      ideas = await res.json();
-      // Normalize status: "used" → "posted" for consistency
-      ideas = ideas.map(i => ({
-        ...i,
-        status: i.status === 'used' ? 'posted' : (i.status || 'unused')
-      }));
-      SmashApp.setData('ideas', ideas);
-    } catch (e) {
-      ideas = [];
+    // Seed nur für vegetarianhulk (Outdoor/Gym/Mindset/Plant-Pillars). Andere Accounts starten leer.
+    if (SmashApp.getCurrentAccount() === 'vegetarianhulk') {
+      try {
+        const res = await fetch('../data/seed-ideas.json');
+        ideas = await res.json();
+        ideas = ideas.map(i => ({
+          ...i,
+          status: i.status === 'used' ? 'posted' : (i.status || 'unused')
+        }));
+      } catch (e) {
+        ideas = [];
+      }
+    } else {
+      ideas = []; // peakingworld: empty, Sebi addet eigene
     }
+    SmashApp.setData('ideas', ideas);
   }
   bindFilters();
+  renderPillarChips();
+  renderFormatChips();
   render();
+}
+
+// Render pillar/format chips dynamically based on current account
+function renderPillarChips() {
+  const container = document.querySelector('[data-chip-group="pillar"]');
+  if (!container) return;
+  const PILLAR_INFO = SmashApp.PILLAR_INFO;
+  let html = '<button class="chip active" data-filter="pillar" data-value="all">Alle</button>';
+  Object.entries(PILLAR_INFO).forEach(([key, info]) => {
+    html += `<button class="chip" data-filter="pillar" data-value="${key}">${info.emoji} ${info.name.split('/')[0]}</button>`;
+  });
+  container.innerHTML = html;
+}
+
+function renderFormatChips() {
+  // Format-Chips bleiben universal (POV/Liste/Story/etc.) — sind nicht pillar-spezifisch
 }
 
 // ============ FILTERS ============
@@ -393,11 +409,21 @@ function setStatus(id, status) {
   showToast(msg);
 }
 
+function fillPillarSelect() {
+  const sel = document.getElementById('ideaPillar');
+  const PILLAR_INFO = SmashApp.PILLAR_INFO;
+  sel.innerHTML = Object.entries(PILLAR_INFO).map(([key, info]) =>
+    `<option value="${key}">${info.emoji} ${info.name}</option>`
+  ).join('');
+}
+
 function openAddModal() {
   editingId = null;
+  fillPillarSelect();
+  const firstPillar = Object.keys(SmashApp.PILLAR_INFO)[0];
   document.getElementById('modalTitle').textContent = '💡 Neue Idee';
   document.getElementById('ideaHook').value = '';
-  document.getElementById('ideaPillar').value = 'outdoor';
+  document.getElementById('ideaPillar').value = firstPillar;
   document.getElementById('ideaFormat').value = 'pov';
   document.getElementById('ideaNotes').value = '';
   document.getElementById('deleteBtn').classList.add('hidden');
@@ -408,9 +434,10 @@ function openEditModal(id) {
   const idea = ideas.find(i => i.id === id);
   if (!idea) return;
   editingId = id;
+  fillPillarSelect();
   document.getElementById('modalTitle').textContent = '✏️ Idee bearbeiten';
   document.getElementById('ideaHook').value = idea.hook || '';
-  document.getElementById('ideaPillar').value = idea.pillar || 'outdoor';
+  document.getElementById('ideaPillar').value = idea.pillar || Object.keys(SmashApp.PILLAR_INFO)[0];
   document.getElementById('ideaFormat').value = idea.format || 'pov';
   document.getElementById('ideaNotes').value = idea.notes || '';
   document.getElementById('deleteBtn').classList.remove('hidden');

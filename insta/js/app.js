@@ -162,14 +162,49 @@ const SmashApp = (function() {
     }
   }
 
-  // ============ HELPERS ============
-  
-  const PILLAR_INFO = {
-    outdoor: { emoji: '🏔️', name: 'Outdoor', color: '#10b981', target: 40 },
-    gym: { emoji: '💪', name: 'Gym/Fitness', color: '#f59e0b', target: 25 },
-    mindset: { emoji: '🧠', name: 'Mindset', color: '#8b5cf6', target: 20 },
-    plantbased: { emoji: '🌿', name: 'Plant-Based', color: '#84cc16', target: 15 }
+  // ============ PILLARS (Account-Aware) ============
+  // PILLAR_INFO ist ein dynamischer Getter (returns pillars for currently active account)
+  // SmashApp.PILLAR_INFO[r.pillar] returns immer die richtige Account-spezifische Definition
+
+  const PILLARS_BY_ACCOUNT = {
+    vegetarianhulk: {
+      outdoor:    { emoji: '🏔️', name: 'Outdoor',     color: '#10b981', target: 40 },
+      gym:        { emoji: '💪', name: 'Gym/Fitness', color: '#f59e0b', target: 25 },
+      mindset:    { emoji: '🧠', name: 'Mindset',     color: '#8b5cf6', target: 20 },
+      plantbased: { emoji: '🌿', name: 'Plant-Based', color: '#84cc16', target: 15 }
+    },
+    peakingworld: {
+      tools:     { emoji: '🛠️', name: 'Tools',             color: '#FFA94D', target: 35 },
+      bip:       { emoji: '📊', name: 'Building-in-Public', color: '#FF6B6B', target: 30 },
+      marketing: { emoji: '🧠', name: 'Marketing',          color: '#FFD43B', target: 25 },
+      bts:       { emoji: '🚀', name: 'Behind-the-Scenes',  color: '#a78bfa', target: 10 }
+    }
   };
+
+  function getPillarInfo() {
+    return PILLARS_BY_ACCOUNT[getCurrentAccount()] || PILLARS_BY_ACCOUNT.vegetarianhulk;
+  }
+
+  // ============ POSTING PLANS (Account-Aware) ============
+  const POSTING_PLANS_BY_ACCOUNT = {
+    vegetarianhulk: {
+      Mo: { emoji: '💪', name: 'Gym-Reel',              pillar: 'gym' },
+      Mi: { emoji: '🏔️', name: 'Outdoor-Reel',          pillar: 'outdoor' },
+      Fr: { emoji: '🧠', name: 'Mindset-Reel',          pillar: 'mindset' },
+      So: { emoji: '🌿', name: 'Plant-Based / Outdoor', pillar: 'plantbased' }
+    },
+    peakingworld: {
+      Di: { emoji: '🛠️', name: 'Tools-Reel',     pillar: 'tools' },
+      Do: { emoji: '📊', name: 'BIP-Reel',       pillar: 'bip' },
+      Sa: { emoji: '🧠', name: 'Marketing-Reel', pillar: 'marketing' }
+    }
+  };
+
+  function getPostingPlan() {
+    return POSTING_PLANS_BY_ACCOUNT[getCurrentAccount()] || POSTING_PLANS_BY_ACCOUNT.vegetarianhulk;
+  }
+
+  // ============ HELPERS ============
 
   function formatNumber(n) {
     if (n === null || n === undefined) return '0';
@@ -221,6 +256,7 @@ const SmashApp = (function() {
   
   function getPillarStats(reels) {
     const stats = {};
+    const PILLAR_INFO = getPillarInfo();
     Object.keys(PILLAR_INFO).forEach(p => {
       stats[p] = { count: 0, views: 0, avgViews: 0, percentage: 0 };
     });
@@ -295,8 +331,12 @@ const SmashApp = (function() {
     switchAccount,
     getAccount,
 
-    // Helpers
-    PILLAR_INFO,
+    // Helpers (PILLAR_INFO is a dynamic getter — returns pillars for current account)
+    get PILLAR_INFO() { return getPillarInfo(); },
+    PILLARS_BY_ACCOUNT,
+    getPillarInfo,
+    POSTING_PLANS_BY_ACCOUNT,
+    getPostingPlan,
     formatNumber,
     formatDate,
     getDayOfWeek,

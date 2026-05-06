@@ -6,6 +6,8 @@
 <title>📊 Reel Tracker — PEAKING</title>
 <link rel="icon" href="../assets/logo.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="../assets/logo.svg">
+<link rel="manifest" href="../manifest.json">
+<meta name="theme-color" content="#FFA94D">
 <link rel="stylesheet" href="../assets/effects.css">
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -153,10 +155,7 @@
       <div>
         <label class="block text-sm text-gray-400 mb-1">Content-Säule</label>
         <select id="pillar" class="w-full p-3 rounded-xl">
-          <option value="outdoor">🏔️ Outdoor (40%)</option>
-          <option value="gym">💪 Gym/Fitness (25%)</option>
-          <option value="mindset">🧠 Mindset (20%)</option>
-          <option value="plantbased">🌿 Plant-Based (15%)</option>
+          <!-- gefüllt via JS, account-aware -->
         </select>
       </div>
 
@@ -631,6 +630,17 @@ function preloadFirstReel() {
     document.getElementById('notes').value = 'Hook zu subtil, Watch-Time niedrig, gute Share-Rate';
   }
 }
+
+// Account-aware Pillar-Dropdown füllen
+function fillPillarSelect() {
+  const sel = document.getElementById('pillar');
+  if (!sel) return;
+  const PILLAR_INFO = SmashApp.PILLAR_INFO;
+  sel.innerHTML = Object.entries(PILLAR_INFO).map(([key, info]) =>
+    `<option value="${key}">${info.emoji} ${info.name} (${info.target}%)</option>`
+  ).join('');
+}
+fillPillarSelect();
 
 // Initialize
 loadData().then(() => {

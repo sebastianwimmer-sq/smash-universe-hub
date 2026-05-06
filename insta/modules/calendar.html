@@ -6,6 +6,8 @@
 <title>📅 Calendar — PEAKING</title>
 <link rel="icon" href="../assets/logo.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="../assets/logo.svg">
+<link rel="manifest" href="../manifest.json">
+<meta name="theme-color" content="#FFA94D">
 <link rel="stylesheet" href="../assets/effects.css">
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="../js/app.js"></script>
@@ -184,12 +186,8 @@ SmashApp.requireAuth();
 
 // ============ STATE ============
 const DAY_NAMES = ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'];
-const POSTING_PLAN = {
-  Mo: { emoji: '💪', name: 'Gym-Reel', pillar: 'gym' },
-  Mi: { emoji: '🏔️', name: 'Outdoor-Reel', pillar: 'outdoor' },
-  Fr: { emoji: '🧠', name: 'Mindset-Reel', pillar: 'mindset' },
-  So: { emoji: '🌿', name: 'Plant-Based / Outdoor', pillar: 'plantbased' }
-};
+// Posting-Plan kommt jetzt account-aware aus SmashApp (vegetarianhulk vs. peakingworld haben verschiedene Pläne)
+const POSTING_PLAN = SmashApp.getPostingPlan();
 
 let currentWeekStart = getMonday(new Date());
 let calendar = []; // [{id, date: "YYYY-MM-DD", ideaId, status: "planned"|"posted"|"skipped"}]

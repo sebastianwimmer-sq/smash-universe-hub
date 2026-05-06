@@ -6,6 +6,8 @@
 <title>🎨 Captions — PEAKING</title>
 <link rel="icon" href="../assets/logo.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="../assets/logo.svg">
+<link rel="manifest" href="../manifest.json">
+<meta name="theme-color" content="#FFA94D">
 <link rel="stylesheet" href="../assets/effects.css">
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="../js/app.js"></script>
@@ -155,12 +157,8 @@
   <!-- TAB: Templates -->
   <div id="tab-templates">
     <div class="mb-2 text-xs text-gray-500 font-bold uppercase tracking-wider">Säule</div>
-    <div class="filter-scroll flex gap-2 mb-3 overflow-x-auto pb-1">
-      <button class="chip active" data-filter="pillar" data-value="all">Alle</button>
-      <button class="chip" data-filter="pillar" data-value="outdoor">🏔️ Outdoor</button>
-      <button class="chip" data-filter="pillar" data-value="gym">💪 Gym</button>
-      <button class="chip" data-filter="pillar" data-value="mindset">🧠 Mindset</button>
-      <button class="chip" data-filter="pillar" data-value="plantbased">🌿 Plant</button>
+    <div class="filter-scroll flex gap-2 mb-3 overflow-x-auto pb-1" data-chip-group="pillar">
+      <!-- gefüllt via JS, account-aware -->
     </div>
 
     <div class="mb-2 text-xs text-gray-500 font-bold uppercase tracking-wider">Funktion</div>
@@ -232,10 +230,7 @@
         <div>
           <label class="block text-xs text-gray-400 mb-1">Säule</label>
           <select id="tplPillar" class="w-full p-3 rounded-xl text-sm">
-            <option value="outdoor">🏔️ Outdoor</option>
-            <option value="gym">💪 Gym</option>
-            <option value="mindset">🧠 Mindset</option>
-            <option value="plantbased">🌿 Plant-Based</option>
+            <!-- gefüllt via JS, account-aware -->
           </select>
         </div>
         <div>
@@ -288,16 +283,54 @@ const SEED_TEMPLATES = [
   { id: 1032, pillar: 'plantbased', func: 'story', text: "[MEAL] vor dem Workout.\n\n[PROTEIN]g Eiweiß · [KCAL] kcal · 100% pflanzlich.\n\nKein Shake nötig." },
   { id: 1033, pillar: 'plantbased', func: 'cta', text: "Speicher dieses Rezept — mach's diese Woche statt deines Standard-Meals.\n\n[NACHSATZ]" },
   { id: 1034, pillar: 'plantbased', func: 'question', text: "Frage: Was ist dein Go-To-Plant-Based-Meal an Trainingstagen?\n\nIch sammle Ideen. 🌿" },
-  { id: 1035, pillar: 'plantbased', func: 'quote', text: "Strong on plants. Built different. 🌿💪" }
+  { id: 1035, pillar: 'plantbased', func: 'quote', text: "Strong on plants. Built different. 🌿💪" },
+
+  // ============ PEAKINGWORLD TEMPLATES ============
+  // TOOLS
+  { id: 2001, pillar: 'tools', func: 'hook', text: "[TOOL] hat mir [STUNDEN]h pro Woche gespart.\n\nHier ist mein 60-Sek-Setup:" },
+  { id: 2002, pillar: 'tools', func: 'story', text: "Vor [TOOL] hab ich [ALTES_VERHALTEN].\nNach [TOOL]: [NEUES_VERHALTEN].\n\nBig Unlock: [INSIGHT]." },
+  { id: 2003, pillar: 'tools', func: 'cta', text: "Free + worth it: [TOOL] (Link in Bio).\nSpeicher dieses Reel — du wirst's brauchen." },
+  { id: 2004, pillar: 'tools', func: 'question', text: "Frage: Welches AI-Tool nutzt du täglich?\n\nIch sammle die besten — drop's in die Comments." },
+  { id: 2005, pillar: 'tools', func: 'quote', text: "Real tools. Real tests. Real stats. Always peaking. 🛠️" },
+
+  // BIP (Building-in-Public)
+  { id: 2011, pillar: 'bip', func: 'hook', text: "Plot Twist: Ich bau [PROJEKT] in Public.\n\nTag [N]: [METRIC]. Public progress. Honest stats." },
+  { id: 2012, pillar: 'bip', func: 'story', text: "[ZEITRAUM] zurück: [STARTPUNKT].\nHeute: [STAND].\n\nWas hat sich geändert? [LERNUNG]." },
+  { id: 2013, pillar: 'bip', func: 'cta', text: "Follow für die ganze Reise von 2k → 1M.\nNo agency. No bullshit. Just work." },
+  { id: 2014, pillar: 'bip', func: 'question', text: "Frage: Was ist dein größtes Build-in-Public-Learning?\n\nDrop's, ich lerne mit." },
+  { id: 2015, pillar: 'bip', func: 'quote', text: "Solo built. Public stats. Always peaking. ⛰️" },
+
+  // MARKETING
+  { id: 2021, pillar: 'marketing', func: 'hook', text: "Diese Hook-Formel hat meine Watch-Time von [VORHER] auf [NACHHER] gepushed:\n\n[FORMEL]" },
+  { id: 2022, pillar: 'marketing', func: 'story', text: "[STRATEGIE] hab ich [WOCHEN] Wochen getestet.\n\nResult: [METRIC].\n\nWas funktioniert hat: [INSIGHT]." },
+  { id: 2023, pillar: 'marketing', func: 'cta', text: "Speicher diese Formel — wende sie diese Woche bei deinem nächsten Post an.\nSag mir Sonntag wie's lief." },
+  { id: 2024, pillar: 'marketing', func: 'question', text: "Frage: Was ist deine beste Hook der letzten 30 Tage?\n\nLet's reverse-engineer was funktioniert." },
+  { id: 2025, pillar: 'marketing', func: 'quote', text: "Engagement-Rate beats Vanity-Numbers. Always." },
+
+  // BTS (Behind-the-Scenes)
+  { id: 2031, pillar: 'bts', func: 'hook', text: "Mein Setup mit dem ich [PROJEKT] in [ZEIT] gebaut hab:\n\n[SETUP]" },
+  { id: 2032, pillar: 'bts', func: 'story', text: "Heute: [TÄTIGKEIT].\nGedanken: [INSIGHT].\nNext-Step: [NEXT]." },
+  { id: 2033, pillar: 'bts', func: 'cta', text: "Such mein full Stack? Link in Bio.\n[TOOL_1] · [TOOL_2] · [TOOL_3] — alles was ich nutze." },
+  { id: 2034, pillar: 'bts', func: 'question', text: "Frage: Was ist deine #1-Daily-Routine als Solo-Creator?\n\nIch übernehme die besten." },
+  { id: 2035, pillar: 'bts', func: 'quote', text: "Built solo. Done daily. ⛰️" }
 ];
 
-// ============ HASHTAG SETS ============
-const HASHTAG_SETS = {
-  outdoor: ['#hiking', '#mountains', '#outdoors', '#naturelovers', '#wanderlust', '#bergliebe', '#alpen', '#solohike', '#adventure', '#mountainlife'],
-  gym: ['#gym', '#fitness', '#workout', '#discipline', '#nopainnogain', '#gymlife', '#pump', '#strongnotskinny', '#motivation', '#gymmotivation'],
-  mindset: ['#mindset', '#stoicism', '#discipline', '#mentalhealth', '#growthmindset', '#selfimprovement', '#grindset', '#personaldevelopment', '#morningroutine', '#mindsetmatters'],
-  plantbased: ['#plantbased', '#vegan', '#plantprotein', '#veganfitness', '#plantbaseddiet', '#vegangains', '#plantpower', '#vegetarian', '#cleaneating', '#healthylifestyle']
+// ============ HASHTAG SETS (Account-Aware) ============
+const HASHTAG_SETS_BY_ACCOUNT = {
+  vegetarianhulk: {
+    outdoor:    ['#hiking', '#mountains', '#outdoors', '#naturelovers', '#wanderlust', '#bergliebe', '#alpen', '#solohike', '#adventure', '#mountainlife'],
+    gym:        ['#gym', '#fitness', '#workout', '#discipline', '#nopainnogain', '#gymlife', '#pump', '#strongnotskinny', '#motivation', '#gymmotivation'],
+    mindset:    ['#mindset', '#stoicism', '#discipline', '#mentalhealth', '#growthmindset', '#selfimprovement', '#grindset', '#personaldevelopment', '#morningroutine', '#mindsetmatters'],
+    plantbased: ['#plantbased', '#vegan', '#plantprotein', '#veganfitness', '#plantbaseddiet', '#vegangains', '#plantpower', '#vegetarian', '#cleaneating', '#healthylifestyle']
+  },
+  peakingworld: {
+    tools:     ['#aitools', '#creatortools', '#producthunt', '#indiehackers', '#buildinpublic', '#nocode', '#startup', '#saas', '#tech', '#innovation'],
+    bip:       ['#buildinpublic', '#indiehacker', '#solofounder', '#startupjourney', '#bootstrapped', '#sidehustle', '#makers', '#100daysofcode', '#shipit', '#founderlife'],
+    marketing: ['#marketingstrategy', '#contentmarketing', '#growthhacking', '#instagrammarketing', '#influencermarketing', '#socialmediastrategy', '#marketingtips', '#digitalmarketing', '#creatoreconomy', '#marketingmindset'],
+    bts:       ['#behindthescenes', '#workspace', '#workfromhome', '#desksetup', '#productivity', '#creatorlife', '#dayinmylife', '#workflow', '#creatorworkspace', '#solopreneur']
+  }
 };
+const HASHTAG_SETS = HASHTAG_SETS_BY_ACCOUNT[SmashApp.getCurrentAccount()] || HASHTAG_SETS_BY_ACCOUNT.vegetarianhulk;
 
 const FUNC_LABELS = {
   hook: '🎯 Hook',
@@ -315,10 +348,34 @@ const filters = { pillar: 'all', func: 'all' };
 // ============ INIT ============
 function init() {
   const customs = SmashApp.getData('captionsCustom', []);
-  templates = [...SEED_TEMPLATES, ...customs];
+  // Filter Templates: nur die, deren Pillar im aktuellen Account existiert
+  const currentPillars = Object.keys(SmashApp.PILLAR_INFO);
+  templates = [...SEED_TEMPLATES, ...customs].filter(t =>
+    currentPillars.includes(t.pillar) || t.custom
+  );
+  renderPillarChips();
+  fillPillarSelect();
   bindFilters();
   render();
   renderHashtags();
+}
+
+function renderPillarChips() {
+  const container = document.querySelector('[data-chip-group="pillar"]');
+  if (!container) return;
+  let html = '<button class="chip active" data-filter="pillar" data-value="all">Alle</button>';
+  Object.entries(SmashApp.PILLAR_INFO).forEach(([key, info]) => {
+    html += `<button class="chip" data-filter="pillar" data-value="${key}">${info.emoji} ${info.name.split('/')[0].split('-')[0]}</button>`;
+  });
+  container.innerHTML = html;
+}
+
+function fillPillarSelect() {
+  const sel = document.getElementById('tplPillar');
+  if (!sel) return;
+  sel.innerHTML = Object.entries(SmashApp.PILLAR_INFO).map(([key, info]) =>
+    `<option value="${key}">${info.emoji} ${info.name}</option>`
+  ).join('');
 }
 
 function bindFilters() {
