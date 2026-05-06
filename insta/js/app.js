@@ -15,6 +15,74 @@ const SmashApp = (function() {
   const SESSION_DURATION_MS = 24 * 60 * 60 * 1000; // 24h
   const STORAGE_PREFIX = 'smash:';
 
+  // ============ MULTI-ACCOUNT ============
+  // Sebi pflegt 2 Insta-Accounts: vegetarianhulk (Hauptaccount) + peakingworld (PEAKING-Tool-Brand)
+  // Daten werden pro Account separat in localStorage gehalten via Prefix smash:<account>:<key>
+
+  const ACCOUNTS = {
+    vegetarianhulk: {
+      key: 'vegetarianhulk',
+      handle: '@vegetarianhulk',
+      emoji: '🏔️',
+      label: 'Outdoor + Plant-Based',
+      color: '#10b981'
+    },
+    peakingworld: {
+      key: 'peakingworld',
+      handle: '@peakingworld',
+      emoji: '🚀',
+      label: 'AI + Creator Tools (BIP)',
+      color: '#FFA94D'
+    }
+  };
+
+  // Keys die NICHT account-spezifisch sind (global)
+  const GLOBAL_KEYS = ['auth', 'currentAccount'];
+
+  function getCurrentAccount() {
+    const stored = localStorage.getItem(STORAGE_PREFIX + 'currentAccount');
+    return ACCOUNTS[stored] ? stored : 'vegetarianhulk';
+  }
+
+  function switchAccount(accountKey) {
+    if (!ACCOUNTS[accountKey]) return false;
+    localStorage.setItem(STORAGE_PREFIX + 'currentAccount', accountKey);
+    return true;
+  }
+
+  function getAccount(accountKey) {
+    return ACCOUNTS[accountKey || getCurrentAccount()];
+  }
+
+  function _storageKey(rawKey) {
+    if (GLOBAL_KEYS.includes(rawKey)) return STORAGE_PREFIX + rawKey;
+    return STORAGE_PREFIX + getCurrentAccount() + ':' + rawKey;
+  }
+
+  // Migration: existing pre-Multi-Account data (smash:reels etc.) → smash:vegetarianhulk:reels
+  function _migrateLegacyData() {
+    const migrationDoneFlag = STORAGE_PREFIX + 'migrationV2Done';
+    if (localStorage.getItem(migrationDoneFlag)) return;
+
+    const legacyKeys = ['reels', 'ideas', 'calendar', 'captionsCustom', 'settings'];
+    const targetAccount = 'vegetarianhulk'; // Default-Account fuer Legacy-Daten
+
+    legacyKeys.forEach(key => {
+      const oldKey = STORAGE_PREFIX + key;
+      const newKey = STORAGE_PREFIX + targetAccount + ':' + key;
+      const oldData = localStorage.getItem(oldKey);
+      // Migrate only if old exists and new doesn't yet
+      if (oldData !== null && localStorage.getItem(newKey) === null) {
+        localStorage.setItem(newKey, oldData);
+        // Keep old data for 1 release as safety-fallback (no removal)
+      }
+    });
+
+    localStorage.setItem(migrationDoneFlag, '1');
+  }
+  // Run migration immediately
+  try { _migrateLegacyData(); } catch (e) { console.error('Migration error:', e); }
+
   // ============ AUTH ============
   
   async function sha256(text) {
@@ -56,11 +124,11 @@ const SmashApp = (function() {
     }
   }
 
-  // ============ STORAGE ============
-  
+  // ============ STORAGE (Account-aware) ============
+
   function getData(key, fallback = null) {
     try {
-      const data = localStorage.getItem(STORAGE_PREFIX + key);
+      const data = localStorage.getItem(_storageKey(key));
       return data ? JSON.parse(data) : fallback;
     } catch (e) {
       console.error('Storage read error:', e);
@@ -70,7 +138,7 @@ const SmashApp = (function() {
 
   function setData(key, value) {
     try {
-      localStorage.setItem(STORAGE_PREFIX + key, JSON.stringify(value));
+      localStorage.setItem(_storageKey(key), JSON.stringify(value));
       return true;
     } catch (e) {
       console.error('Storage write error:', e);
@@ -79,7 +147,19 @@ const SmashApp = (function() {
   }
 
   function removeData(key) {
-    localStorage.removeItem(STORAGE_PREFIX + key);
+    localStorage.removeItem(_storageKey(key));
+  }
+
+  // Read data from a SPECIFIC account (for cross-account dashboards)
+  function getDataForAccount(accountKey, key, fallback = null) {
+    if (!ACCOUNTS[accountKey]) return fallback;
+    if (GLOBAL_KEYS.includes(key)) return getData(key, fallback);
+    try {
+      const data = localStorage.getItem(STORAGE_PREFIX + accountKey + ':' + key);
+      return data ? JSON.parse(data) : fallback;
+    } catch (e) {
+      return fallback;
+    }
   }
 
   // ============ HELPERS ============
@@ -202,12 +282,19 @@ const SmashApp = (function() {
     logout,
     isAuthenticated,
     requireAuth,
-    
+
     // Storage
     getData,
     setData,
     removeData,
-    
+    getDataForAccount,
+
+    // Multi-Account
+    ACCOUNTS,
+    getCurrentAccount,
+    switchAccount,
+    getAccount,
+
     // Helpers
     PILLAR_INFO,
     formatNumber,
@@ -215,7 +302,7 @@ const SmashApp = (function() {
     getDayOfWeek,
     exportJSON,
     importJSON,
-    
+
     // Analytics
     getPillarStats,
     getStreak,
