@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, viewport-fit=cover">
+<title>🎥 Recorder — PEAKING</title>
+<link rel="icon" href="../assets/logo.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../assets/logo.svg">
+<link rel="manifest" href="../manifest.json">
+<meta name="theme-color" content="#0f172a">
+<link rel="stylesheet" href="../assets/effects.css">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="../js/app.js"></script>
+<style>
+  body {
+    background: #050505;
+    min-height: 100dvh;
+    color: white;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    overflow: hidden;
+  }
+  .glass {
+    background: rgba(15, 23, 42, 0.7);
+    backdrop-filter: blur(14px);
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+  .neon { color: #FFA94D; }
+
+  /* Layout: Camera fills the viewport, controls overlay */
+  .stage {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #000;
+  }
+  #preview, #playback {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    background: #000;
+  }
+  #playback { display: none; }
+
+  /* Aspect-ratio overlay (vertical safe-zone for Reel 9:16) */
+  .ar-overlay {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .ar-frame {
+    border: 1px solid rgba(255, 169, 77, 0.4);
+    box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.45);
+    border-radius: 6px;
+    transition: all 0.3s ease;
+  }
+  .ar-9-16 { aspect-ratio: 9/16; height: 92vh; max-width: 92vw; }
+  .ar-1-1 { aspect-ratio: 1/1; width: min(92vh, 92vw); }
+  .ar-4-5 { aspect-ratio: 4/5; height: 88vh; max-width: 92vw; }
+  .ar-full { width: 100vw; height: 100vh; border: none; box-shadow: none; }
+
+  /* Top bar */
+  .top-bar {
+    position: fixed;
+    top: env(safe-area-inset-top, 12px);
+    left: 0; right: 0;
+    padding: 14px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    z-index: 30;
+    pointer-events: none;
+  }
+  .top-bar > * { pointer-events: auto; }
+  .top-pill {
+    background: rgba(0, 0, 0, 0.55);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 999px;
+    padding: 8px 14px;
+    font-size: 12px;
+    font-weight: 700;
+    color: white;
+    display: flex; align-items: center; gap: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .top-pill:hover, .top-pill:active {
+    border-color: rgba(255, 169, 77, 0.6);
+    background: rgba(255, 169, 77, 0.15);
+  }
+  .top-pill.recording {
+    background: rgba(239, 68, 68, 0.2);
+    border-color: #ef4444;
+    color: #fca5a5;
+  }
+  .rec-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: #ef4444;
+    animation: rec-pulse 1.2s ease-in-out infinite;
+  }
+  @keyframes rec-pulse { 50% { opacity: 0.3; } }
+
+  /* Bottom controls */
+  .bottom-bar {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    padding: 20px 20px calc(env(safe-area-inset-bottom, 12px) + 20px);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    z-index: 30;
+    pointer-events: none;
+    background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);
+  }
+  .bottom-bar > * { pointer-events: auto; }
+  .side-btn {
+    width: 52px; height: 52px;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.55);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.15);
+    color: white;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .side-btn:hover, .side-btn:active {
+    border-color: rgba(255, 169, 77, 0.6);
+    transform: scale(1.05);
+  }
+  .record-btn {
+    width: 84px; height: 84px;
+    border-radius: 50%;
+    background: white;
+    border: 5px solid rgba(255,255,255,0.4);
+    cursor: pointer;
+    transition: all 0.15s;
+    position: relative;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+  }
+  .record-btn::after {
+    content: '';
+    position: absolute;
+    inset: 6px;
+    background: #ef4444;
+    border-radius: 50%;
+    transition: all 0.2s ease;
+  }
+  .record-btn.recording::after {
+    border-radius: 8px;
+    inset: 22px;
+  }
+  .record-btn:active { transform: scale(0.94); }
+
+  /* Audio meter */
+  .audio-meter {
+    position: fixed;
+    right: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 6px;
+    height: 200px;
+    background: rgba(0,0,0,0.5);
+    border-radius: 999px;
+    overflow: hidden;
+    z-index: 30;
+    border: 1px solid rgba(255,255,255,0.15);
+  }
+  .audio-meter-fill {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    background: linear-gradient(to top, #10b981, #FFD43B, #ef4444);
+    border-radius: 999px;
+    transition: height 0.05s linear;
+    height: 0%;
+  }
+
+  /* Settings sheet */
+  .sheet {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    background: rgba(15, 23, 42, 0.95);
+    backdrop-filter: blur(20px);
+    border-top: 1px solid rgba(255, 169, 77, 0.3);
+    border-radius: 20px 20px 0 0;
+    padding: 20px;
+    transform: translateY(100%);
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    z-index: 50;
+    max-height: 70vh;
+    overflow-y: auto;
+  }
+  .sheet.open { transform: translateY(0); }
+  .sheet-handle {
+    width: 40px; height: 4px;
+    background: rgba(255,255,255,0.2);
+    border-radius: 999px;
+    margin: 0 auto 16px;
+  }
+  .opt-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+  }
+  .opt-btn {
+    padding: 8px 14px;
+    border-radius: 999px;
+    background: rgba(15, 23, 42, 0.6);
+    border: 1px solid rgba(255,255,255,0.15);
+    color: white;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .opt-btn.active {
+    background: linear-gradient(135deg, #FFA94D, #FF6B6B);
+    color: #0f172a;
+    border-color: #FFA94D;
+  }
+
+  /* Hook countdown */
+  .countdown {
+    position: fixed;
+    inset: 0;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 40;
+    background: rgba(0,0,0,0.4);
+    pointer-events: none;
+  }
+  .countdown.show { display: flex; }
+  .countdown-num {
+    font-size: 200px;
+    font-weight: 900;
+    color: white;
+    text-shadow: 0 0 40px rgba(255, 169, 77, 0.8);
+    animation: cd-pop 1s ease-out;
+  }
+  @keyframes cd-pop {
+    0% { transform: scale(0.5); opacity: 0; }
+    20% { transform: scale(1.1); opacity: 1; }
+    100% { transform: scale(1); opacity: 1; }
+  }
+
+  /* Recording timer */
+  .timer {
+    background: rgba(239, 68, 68, 0.9);
+    backdrop-filter: blur(10px);
+    border-radius: 999px;
+    padding: 6px 14px;
+    font-size: 13px;
+    font-weight: 700;
+    color: white;
+    display: flex; align-items: center; gap: 6px;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Hook hint overlay */
+  .hook-hint {
+    position: fixed;
+    top: 25%;
+    left: 50%;
+    transform: translateX(-50%);
+    max-width: 80%;
+    background: rgba(0,0,0,0.6);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 169, 77, 0.4);
+    border-radius: 14px;
+    padding: 12px 16px;
+    text-align: center;
+    z-index: 30;
+    display: none;
+  }
+  .hook-hint.show { display: block; }
+
+  /* Result overlay (after stop) */
+  .result {
+    position: fixed;
+    inset: 0;
+    background: rgba(5, 5, 5, 0.95);
+    backdrop-filter: blur(8px);
+    z-index: 60;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .result.show { display: flex; }
+  .result video {
+    max-width: 100%;
+    max-height: 60vh;
+    border-radius: 14px;
+    box-shadow: 0 16px 48px rgba(255, 169, 77, 0.3);
+  }
+  .result-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 20px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .res-btn {
+    padding: 12px 24px;
+    border-radius: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: none;
+  }
+  .res-btn.primary {
+    background: linear-gradient(135deg, #FFA94D, #FF6B6B);
+    color: #0f172a;
+  }
+  .res-btn.secondary {
+    background: rgba(255,255,255,0.1);
+    color: white;
+    border: 1px solid rgba(255,255,255,0.2);
+  }
+  .res-btn:hover { transform: translateY(-2px); }
+
+  /* Toast */
+  .toast {
+    position: fixed; bottom: 130px; left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    opacity: 0;
+    background: rgba(0,0,0,0.85);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 999px;
+    font-weight: 600;
+    z-index: 100;
+    transition: all 0.3s;
+    border: 1px solid rgba(255, 169, 77, 0.4);
+    font-size: 13px;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+</style>
+</head>
+<body>
+
+<!-- Camera Stage -->
+<div class="stage">
+  <video id="preview" autoplay playsinline muted></video>
+  <video id="playback" controls playsinline></video>
+  <div class="ar-overlay">
+    <div class="ar-frame ar-9-16" id="arFrame"></div>
+  </div>
+</div>
+
+<!-- Hook hint (shown if hook-text set) -->
+<div class="hook-hint" id="hookHint"></div>
+
+<!-- Countdown -->
+<div class="countdown" id="countdown">
+  <div class="countdown-num" id="countdownNum">3</div>
+</div>
+
+<!-- Top Bar -->
+<div class="top-bar">
+  <a href="../dashboard.html" class="top-pill">← Dashboard</a>
+  <div class="flex flex-col gap-2 items-end">
+    <div class="top-pill" id="arBadge">📐 9:16 Reel</div>
+    <div class="top-pill recording hidden" id="recTimer">
+      <span class="rec-dot"></span>
+      <span id="timerText">00:00</span>
+    </div>
+  </div>
+</div>
+
+<!-- Audio Meter -->
+<div class="audio-meter">
+  <div class="audio-meter-fill" id="audioFill"></div>
+</div>
+
+<!-- Bottom Controls -->
+<div class="bottom-bar">
+  <button class="side-btn" onclick="openSheet()" title="Settings">⚙️</button>
+  <button class="record-btn" id="recordBtn" onclick="toggleRecord()" title="Record"></button>
+  <button class="side-btn" onclick="switchCamera()" title="Camera switch">🔄</button>
+</div>
+
+<!-- Settings Sheet -->
+<div class="sheet" id="sheet">
+  <div class="sheet-handle"></div>
+  <h2 class="text-lg font-bold mb-4 neon">⚙️ Aufnahme-Einstellungen</h2>
+
+  <div class="text-xs uppercase tracking-wider text-gray-500 mb-2 font-bold">Format</div>
+  <div class="opt-row">
+    <button class="opt-btn active" data-ar="9-16" onclick="setAR('9-16', this)">📱 9:16 Reel</button>
+    <button class="opt-btn" data-ar="1-1" onclick="setAR('1-1', this)">⬜ 1:1 Square</button>
+    <button class="opt-btn" data-ar="4-5" onclick="setAR('4-5', this)">📷 4:5 Carousel</button>
+    <button class="opt-btn" data-ar="full" onclick="setAR('full', this)">🖼️ Full</button>
+  </div>
+
+  <div class="text-xs uppercase tracking-wider text-gray-500 mb-2 font-bold">Auflösung</div>
+  <div class="opt-row" id="resOptions">
+    <button class="opt-btn" data-res="720" onclick="setRes(720, this)">720p</button>
+    <button class="opt-btn active" data-res="1080" onclick="setRes(1080, this)">1080p HD</button>
+    <button class="opt-btn" data-res="1440" onclick="setRes(1440, this)">1440p</button>
+  </div>
+
+  <div class="text-xs uppercase tracking-wider text-gray-500 mb-2 font-bold">Hook-Countdown</div>
+  <div class="opt-row">
+    <button class="opt-btn" data-cd="0" onclick="setCountdown(0, this)">Aus</button>
+    <button class="opt-btn active" data-cd="3" onclick="setCountdown(3, this)">3 Sek</button>
+    <button class="opt-btn" data-cd="5" onclick="setCountdown(5, this)">5 Sek</button>
+  </div>
+
+  <div class="text-xs uppercase tracking-wider text-gray-500 mb-2 font-bold">Hook-Hinweis (optional)</div>
+  <input type="text" id="hookText" placeholder="z.B. 'Plot Twist: Mein 2. Insta-Account.'" class="w-full p-3 rounded-xl bg-slate-900 border border-white/15 text-white text-sm mb-3" oninput="updateHookHint()">
+  <p class="text-xs text-gray-500 mb-4">Wird während der Aufnahme oben eingeblendet (nur du siehst's, ist nicht im Video)</p>
+
+  <button onclick="closeSheet()" class="w-full p-3 rounded-xl bg-white/10 border border-white/20 font-bold">Fertig</button>
+</div>
+
+<!-- Result Overlay -->
+<div class="result" id="result">
+  <div class="text-xs uppercase tracking-wider text-gray-500 mb-3 font-bold">Aufnahme fertig 🎬</div>
+  <video id="resultVideo" controls></video>
+  <div class="result-actions">
+    <button class="res-btn primary" onclick="downloadRecording()">📥 Download</button>
+    <button class="res-btn secondary" onclick="retake()">🔄 Nochmal</button>
+    <button class="res-btn secondary" onclick="closeResult()">← Zurück</button>
+  </div>
+  <p class="text-xs text-gray-500 mt-4 text-center max-w-md">Tipp: iOS speichert MP4/MOV. Dann via AirDrop oder Fotos in Insta-App importieren.</p>
+</div>
+
+<div id="toast" class="toast">✓</div>
+
+<script>
+SmashApp.requireAuth();
+
+let stream = null;
+let recorder = null;
+let chunks = [];
+let recordedBlob = null;
+let recordingStartTime = 0;
+let timerInterval = null;
+let audioCtx = null;
+let analyser = null;
+let audioRAF = null;
+
+let currentFacing = 'environment'; // 'user' = front, 'environment' = back
+let currentRes = 1080;
+let currentAR = '9-16';
+let countdownSec = 3;
+
+// ============ INIT ============
+async function initCamera() {
+  try {
+    if (stream) stream.getTracks().forEach(t => t.stop());
+
+    const constraints = {
+      video: {
+        facingMode: currentFacing,
+        width: { ideal: currentRes === 720 ? 1280 : currentRes === 1080 ? 1920 : 2560 },
+        height: { ideal: currentRes === 720 ? 720 : currentRes === 1080 ? 1080 : 1440 },
+        frameRate: { ideal: 30 }
+      },
+      audio: {
+        echoCancellation: true,
+        noiseSuppression: true,
+        autoGainControl: false // pro-style: don't auto-gain
+      }
+    };
+
+    stream = await navigator.mediaDevices.getUserMedia(constraints);
+    document.getElementById('preview').srcObject = stream;
+    setupAudioMeter();
+    showToast('📷 Kamera bereit');
+  } catch (e) {
+    console.error(e);
+    showToast('⚠️ Kamera-Zugriff fehlgeschlagen');
+    document.getElementById('preview').outerHTML =
+      '<div style="color: white; text-align: center; padding: 40px;">' +
+      '<div style="font-size: 48px;">🎥</div>' +
+      '<h2 style="margin-top: 16px; font-weight: bold;">Kamera-Zugriff benötigt</h2>' +
+      '<p style="color: #94a3b8; margin-top: 8px;">Browser-Settings → Kamera + Mikrofon erlauben für diese URL.</p>' +
+      '<p style="color: #FFA94D; margin-top: 12px; font-size: 13px;">' + (e.message || 'Unbekannter Fehler') + '</p>' +
+      '</div>';
+  }
+}
+
+// ============ AUDIO LEVEL ============
+function setupAudioMeter() {
+  if (audioRAF) cancelAnimationFrame(audioRAF);
+  if (audioCtx) audioCtx.close();
+
+  const audioTrack = stream.getAudioTracks()[0];
+  if (!audioTrack) return;
+
+  audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  const source = audioCtx.createMediaStreamSource(stream);
+  analyser = audioCtx.createAnalyser();
+  analyser.fftSize = 256;
+  source.connect(analyser);
+
+  const data = new Uint8Array(analyser.frequencyBinCount);
+  const fill = document.getElementById('audioFill');
+
+  function draw() {
+    analyser.getByteFrequencyData(data);
+    const avg = data.reduce((a, b) => a + b, 0) / data.length;
+    const pct = Math.min(100, (avg / 255) * 200); // amplified
+    fill.style.height = pct + '%';
+    audioRAF = requestAnimationFrame(draw);
+  }
+  draw();
+}
+
+// ============ RECORDING ============
+async function toggleRecord() {
+  if (recorder && recorder.state === 'recording') {
+    stopRecording();
+  } else {
+    if (countdownSec > 0) {
+      await runCountdown(countdownSec);
+    }
+    startRecording();
+  }
+}
+
+function runCountdown(seconds) {
+  return new Promise(resolve => {
+    const cd = document.getElementById('countdown');
+    const num = document.getElementById('countdownNum');
+    cd.classList.add('show');
+    let n = seconds;
+    num.textContent = n;
+    num.style.animation = 'none';
+    void num.offsetWidth;
+    num.style.animation = '';
+
+    const tick = setInterval(() => {
+      n--;
+      if (n > 0) {
+        num.textContent = n;
+        num.style.animation = 'none';
+        void num.offsetWidth;
+        num.style.animation = '';
+      } else {
+        clearInterval(tick);
+        cd.classList.remove('show');
+        resolve();
+      }
+    }, 1000);
+  });
+}
+
+function startRecording() {
+  if (!stream) return showToast('⚠️ Keine Kamera');
+
+  chunks = [];
+  // Try MP4 first (iOS-friendly), fallback WebM
+  const mimeOptions = [
+    'video/mp4;codecs=h264,aac',
+    'video/mp4',
+    'video/webm;codecs=vp9,opus',
+    'video/webm;codecs=vp8,opus',
+    'video/webm'
+  ];
+  const mime = mimeOptions.find(m => MediaRecorder.isTypeSupported(m)) || '';
+
+  try {
+    recorder = new MediaRecorder(stream, mime ? { mimeType: mime } : undefined);
+  } catch (e) {
+    return showToast('⚠️ Recorder-Init failed: ' + e.message);
+  }
+
+  recorder.ondataavailable = e => { if (e.data.size > 0) chunks.push(e.data); };
+  recorder.onstop = () => {
+    const blob = new Blob(chunks, { type: chunks[0]?.type || 'video/mp4' });
+    recordedBlob = blob;
+    showResult(blob);
+  };
+
+  recorder.start(1000); // 1s timeslices
+  recordingStartTime = Date.now();
+  document.getElementById('recordBtn').classList.add('recording');
+  document.getElementById('recTimer').classList.remove('hidden');
+  timerInterval = setInterval(updateTimer, 100);
+  showToast('🔴 Recording…');
+}
+
+function stopRecording() {
+  if (!recorder || recorder.state !== 'recording') return;
+  recorder.stop();
+  clearInterval(timerInterval);
+  document.getElementById('recordBtn').classList.remove('recording');
+  document.getElementById('recTimer').classList.add('hidden');
+}
+
+function updateTimer() {
+  const elapsed = Math.floor((Date.now() - recordingStartTime) / 1000);
+  const m = String(Math.floor(elapsed / 60)).padStart(2, '0');
+  const s = String(elapsed % 60).padStart(2, '0');
+  document.getElementById('timerText').textContent = `${m}:${s}`;
+}
+
+// ============ RESULT ============
+function showResult(blob) {
+  const url = URL.createObjectURL(blob);
+  document.getElementById('resultVideo').src = url;
+  document.getElementById('result').classList.add('show');
+}
+
+function downloadRecording() {
+  if (!recordedBlob) return;
+  const ext = recordedBlob.type.includes('mp4') ? 'mp4' : 'webm';
+  const ts = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(recordedBlob);
+  a.download = `peaking-${ts}.${ext}`;
+  a.click();
+  URL.revokeObjectURL(a.href);
+  showToast('📥 Downloaded');
+}
+
+function retake() {
+  document.getElementById('result').classList.remove('show');
+  recordedBlob = null;
+}
+
+function closeResult() {
+  document.getElementById('result').classList.remove('show');
+}
+
+// ============ CONTROLS ============
+async function switchCamera() {
+  currentFacing = currentFacing === 'environment' ? 'user' : 'environment';
+  await initCamera();
+  showToast(currentFacing === 'user' ? '🤳 Front-Kamera' : '🎥 Back-Kamera');
+}
+
+function setAR(ar, btn) {
+  currentAR = ar;
+  document.querySelectorAll('[data-ar]').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const frame = document.getElementById('arFrame');
+  frame.className = 'ar-frame ar-' + ar;
+  const labels = { '9-16': '📱 9:16 Reel', '1-1': '⬜ 1:1', '4-5': '📷 4:5', 'full': '🖼️ Full' };
+  document.getElementById('arBadge').textContent = labels[ar];
+}
+
+async function setRes(res, btn) {
+  currentRes = res;
+  document.querySelectorAll('[data-res]').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  await initCamera();
+}
+
+function setCountdown(sec, btn) {
+  countdownSec = sec;
+  document.querySelectorAll('[data-cd]').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function updateHookHint() {
+  const txt = document.getElementById('hookText').value.trim();
+  const hint = document.getElementById('hookHint');
+  if (txt) {
+    hint.textContent = txt;
+    hint.classList.add('show');
+  } else {
+    hint.classList.remove('show');
+  }
+}
+
+function openSheet() { document.getElementById('sheet').classList.add('open'); }
+function closeSheet() { document.getElementById('sheet').classList.remove('open'); }
+
+// Toast
+let toastTimer;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 1500);
+}
+
+// Close sheet on swipe-down or backdrop click
+document.getElementById('sheet').addEventListener('click', (e) => {
+  if (e.target.id === 'sheet') closeSheet();
+});
+
+// Init
+initCamera();
+</script>
+
+</body>
+</html>
