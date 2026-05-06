@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+<title>📊 BIP Daily-Log — PEAKING</title>
+<link rel="icon" href="../assets/logo.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../assets/logo.svg">
+<link rel="manifest" href="../manifest.json">
+<meta name="theme-color" content="#FFA94D">
+<link rel="stylesheet" href="../assets/effects.css">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="../js/app.js"></script>
+<style>
+  body {
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    min-height: 100dvh;
+    color: white;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+  .glass {
+    background: rgba(30, 41, 59, 0.6);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+  .neon { color: #FFA94D; }
+  .btn-primary {
+    background: linear-gradient(135deg, #FFA94D, #FF6B6B);
+    color: #0f172a;
+    font-weight: bold;
+    transition: all 0.2s;
+  }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(255, 169, 77, 0.4); }
+  input, select, textarea {
+    background: rgba(15, 23, 42, 0.6);
+    border: 1px solid rgba(255,255,255,0.15);
+    color: white;
+  }
+  input:focus, select:focus, textarea:focus {
+    outline: none;
+    border-color: #FFA94D;
+  }
+  .log-card {
+    background: rgba(15, 23, 42, 0.5);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 16px;
+    padding: 16px;
+    transition: all 0.2s;
+  }
+  .log-card:hover { border-color: rgba(255, 169, 77, 0.3); }
+  .energy-slider {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 8px;
+    border-radius: 999px;
+    background: linear-gradient(to right, #ef4444, #f59e0b, #FFA94D, #10b981);
+    outline: none;
+  }
+  .energy-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 24px; height: 24px;
+    border-radius: 50%;
+    background: white;
+    border: 3px solid #FFA94D;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  }
+  .energy-slider::-moz-range-thumb {
+    width: 24px; height: 24px;
+    border-radius: 50%;
+    background: white;
+    border: 3px solid #FFA94D;
+    cursor: pointer;
+  }
+  .stat-mini {
+    background: rgba(15, 23, 42, 0.4);
+    border-radius: 12px;
+    padding: 10px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .stat-mini .lbl { font-size: 10px; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 700; }
+  .stat-mini .val { font-size: 20px; font-weight: 800; }
+  .toast {
+    position: fixed; bottom: 24px; left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    background: #FFA94D; color: #0f172a;
+    padding: 12px 24px; border-radius: 999px; font-weight: bold;
+    box-shadow: 0 8px 24px rgba(255, 169, 77, 0.4);
+    transition: transform 0.3s ease; z-index: 100;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+  .modal-bg { background: rgba(0,0,0,0.7); backdrop-filter: blur(4px); }
+  .pill-energy {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 700;
+    color: #0f172a;
+  }
+  .quick-prompt {
+    padding: 8px 12px;
+    border-radius: 10px;
+    background: rgba(255, 169, 77, 0.08);
+    border: 1px solid rgba(255, 169, 77, 0.2);
+    color: #FFA94D;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .quick-prompt:hover { background: rgba(255, 169, 77, 0.15); }
+</style>
+</head>
+<body class="p-4 md:p-6 pb-24 bg-depth">
+
+<div class="max-w-4xl mx-auto">
+
+  <!-- Header -->
+  <div class="flex justify-between items-center mb-4">
+    <div>
+      <a href="../dashboard.html" class="text-xs text-gray-400 hover:text-white">← Dashboard</a>
+      <h1 class="text-2xl md:text-3xl font-bold mt-1">📊 <span class="text-sunrise">BIP Daily-Log</span></h1>
+      <p class="text-gray-400 text-sm">Building in Public — täglich kurz festhalten was passiert</p>
+    </div>
+    <button onclick="SmashApp.logout()" class="text-sm text-gray-400 hover:text-white">🔒</button>
+  </div>
+
+  <!-- Stats Grid -->
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5 stagger">
+    <div class="stat-mini lift-glow"><div class="lbl">Streak</div><div class="val neon" id="statStreak">0🔥</div></div>
+    <div class="stat-mini lift-glow"><div class="lbl">Total Logs</div><div class="val" id="statTotal">0</div></div>
+    <div class="stat-mini lift-glow"><div class="lbl">Diese Woche</div><div class="val" id="statWeek">0/7</div></div>
+    <div class="stat-mini lift-glow"><div class="lbl">Ø Energy</div><div class="val" id="statEnergy">—</div></div>
+  </div>
+
+  <!-- Today's Log Form -->
+  <div class="glass gradient-flow rounded-3xl p-5 mb-5 float-in">
+    <div class="flex items-baseline justify-between mb-4">
+      <h2 class="text-lg font-bold">✍️ Heute (<span id="todayLabel">…</span>)</h2>
+      <span id="todayStatus" class="text-xs text-gray-400">Noch nicht geloggt</span>
+    </div>
+
+    <!-- Quick prompts -->
+    <div class="text-xs text-gray-500 uppercase tracking-wider font-bold mb-2">Quick-Prompts</div>
+    <div class="flex gap-2 flex-wrap mb-4">
+      <button class="quick-prompt" onclick="addPrompt('Today I shipped: ')">🚀 Shipped</button>
+      <button class="quick-prompt" onclick="addPrompt('Reel posted: ')">📱 Reel</button>
+      <button class="quick-prompt" onclick="addPrompt('Lesson learned: ')">💡 Lesson</button>
+      <button class="quick-prompt" onclick="addPrompt('Stat: ')">📊 Stat</button>
+      <button class="quick-prompt" onclick="addPrompt('Win: ')">🏆 Win</button>
+      <button class="quick-prompt" onclick="addPrompt('Stuck on: ')">🧗 Stuck</button>
+    </div>
+
+    <textarea id="logText" rows="4" class="w-full p-3 rounded-xl text-sm mb-3" placeholder="Was war heute? In 1-3 Sätzen. Material für nächste BIP-Reels."></textarea>
+
+    <div class="grid grid-cols-2 gap-3 mb-3">
+      <div>
+        <label class="block text-xs text-gray-400 mb-1">Follower (optional)</label>
+        <input type="number" id="logFollowers" placeholder="2080" class="w-full p-2 rounded-xl text-sm">
+      </div>
+      <div>
+        <label class="block text-xs text-gray-400 mb-1">Reels heute</label>
+        <input type="number" id="logReels" placeholder="0" min="0" max="10" class="w-full p-2 rounded-xl text-sm">
+      </div>
+    </div>
+
+    <div class="mb-4">
+      <div class="flex justify-between items-baseline mb-2">
+        <label class="text-xs text-gray-400">Energy-Level</label>
+        <span class="text-sm font-bold neon" id="energyVal">7/10</span>
+      </div>
+      <input type="range" min="1" max="10" value="7" id="logEnergy" class="energy-slider" oninput="document.getElementById('energyVal').textContent = this.value + '/10'">
+    </div>
+
+    <button onclick="saveTodayLog()" class="btn-primary w-full p-3 rounded-xl">💾 Heute speichern</button>
+  </div>
+
+  <!-- Past Logs -->
+  <div class="glass rounded-3xl p-5 mb-5">
+    <div class="flex items-baseline justify-between mb-4">
+      <h2 class="text-lg font-bold">📅 Letzte Tage</h2>
+      <button onclick="exportLogs()" class="text-xs neon hover:underline">📥 Export JSON</button>
+    </div>
+    <div id="logsList" class="space-y-3"></div>
+    <div id="logsEmpty" class="hidden text-center py-12 text-gray-500">
+      <div class="text-5xl mb-3">📝</div>
+      <p>Noch keine Logs. Beginne heute — auch ein 1-Satz-Log zählt.</p>
+    </div>
+  </div>
+
+  <!-- Energy Trend Chart (when 5+ logs exist) -->
+  <div class="glass rounded-3xl p-5 mb-5 hidden" id="trendCard">
+    <h2 class="text-lg font-bold mb-1">📈 Energy-Trend</h2>
+    <p class="text-xs text-gray-400 mb-4">Wie sich dein Building-Vibe über Zeit entwickelt.</p>
+    <div style="position: relative; height: 200px;">
+      <canvas id="energyChart"></canvas>
+    </div>
+  </div>
+
+  <div class="text-center text-gray-500 text-xs mt-12">
+    📊 PEAKING · BIP-Log · Solo built. Public stats.
+  </div>
+</div>
+
+<!-- Edit Modal -->
+<div id="editModal" class="hidden fixed inset-0 modal-bg z-50 flex items-center justify-center p-4">
+  <div class="glass rounded-3xl p-6 w-full max-w-md max-h-[90vh] overflow-y-auto">
+    <div class="flex justify-between items-center mb-4">
+      <h2 class="text-xl font-bold">✏️ Log bearbeiten</h2>
+      <button onclick="closeEditModal()" class="text-gray-400 hover:text-white text-2xl">×</button>
+    </div>
+    <div class="space-y-3">
+      <div>
+        <label class="block text-xs text-gray-400 mb-1">Datum</label>
+        <input type="date" id="editDate" class="w-full p-3 rounded-xl text-sm" disabled>
+      </div>
+      <div>
+        <label class="block text-xs text-gray-400 mb-1">Text</label>
+        <textarea id="editText" rows="4" class="w-full p-3 rounded-xl text-sm"></textarea>
+      </div>
+      <div class="grid grid-cols-2 gap-3">
+        <div>
+          <label class="block text-xs text-gray-400 mb-1">Follower</label>
+          <input type="number" id="editFollowers" class="w-full p-2 rounded-xl text-sm">
+        </div>
+        <div>
+          <label class="block text-xs text-gray-400 mb-1">Reels</label>
+          <input type="number" id="editReels" class="w-full p-2 rounded-xl text-sm">
+        </div>
+      </div>
+      <div>
+        <label class="block text-xs text-gray-400 mb-1">Energy: <span id="editEnergyVal">7</span>/10</label>
+        <input type="range" min="1" max="10" id="editEnergy" class="energy-slider" oninput="document.getElementById('editEnergyVal').textContent = this.value">
+      </div>
+      <button onclick="saveEdit()" class="btn-primary w-full p-3 rounded-xl">💾 Speichern</button>
+      <button onclick="deleteLog()" class="w-full p-2 text-sm text-red-400 hover:text-red-300">🗑️ Log löschen</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast" class="toast">✓</div>
+
+<script>
+SmashApp.requireAuth();
+
+let logs = [];
+let editingDate = null;
+let chartInst = null;
+
+// ============ INIT ============
+function init() {
+  logs = SmashApp.getData('bipLogs', []);
+  document.getElementById('todayLabel').textContent = todayLabel();
+  prefillTodayIfExists();
+  renderLogs();
+  renderStats();
+  renderTrendChart();
+}
+
+function todayKey() {
+  return new Date().toISOString().split('T')[0];
+}
+
+function todayLabel() {
+  return new Date().toLocaleDateString('de-DE', { weekday: 'long', day: 'numeric', month: 'long' });
+}
+
+function prefillTodayIfExists() {
+  const today = logs.find(l => l.date === todayKey());
+  if (today) {
+    document.getElementById('logText').value = today.text || '';
+    document.getElementById('logFollowers').value = today.followers || '';
+    document.getElementById('logReels').value = today.reels || '';
+    document.getElementById('logEnergy').value = today.energy || 7;
+    document.getElementById('energyVal').textContent = (today.energy || 7) + '/10';
+    document.getElementById('todayStatus').textContent = '✓ Heute geloggt — du kannst noch updaten';
+    document.getElementById('todayStatus').classList.add('neon');
+  }
+}
+
+// ============ ACTIONS ============
+function addPrompt(text) {
+  const ta = document.getElementById('logText');
+  if (ta.value && !ta.value.endsWith('\n') && !ta.value.endsWith(' ')) {
+    ta.value += '\n';
+  }
+  ta.value += text;
+  ta.focus();
+  ta.setSelectionRange(ta.value.length, ta.value.length);
+}
+
+function saveTodayLog() {
+  const text = document.getElementById('logText').value.trim();
+  if (!text) { showToast('⚠️ Schreib was rein'); return; }
+
+  const data = {
+    date: todayKey(),
+    text,
+    followers: parseInt(document.getElementById('logFollowers').value) || null,
+    reels: parseInt(document.getElementById('logReels').value) || 0,
+    energy: parseInt(document.getElementById('logEnergy').value) || 7,
+    timestamp: Date.now()
+  };
+
+  // Replace if exists, else add
+  const idx = logs.findIndex(l => l.date === data.date);
+  if (idx >= 0) logs[idx] = data;
+  else logs.push(data);
+
+  SmashApp.setData('bipLogs', logs);
+  renderLogs();
+  renderStats();
+  renderTrendChart();
+  document.getElementById('todayStatus').textContent = '✓ Heute geloggt — du kannst noch updaten';
+  document.getElementById('todayStatus').classList.add('neon');
+  showToast('💾 Gespeichert · Solid');
+}
+
+// ============ RENDER ============
+function renderLogs() {
+  const list = document.getElementById('logsList');
+  const empty = document.getElementById('logsEmpty');
+  const past = logs.filter(l => l.date !== todayKey()).sort((a, b) => b.date.localeCompare(a.date));
+
+  if (past.length === 0) {
+    list.innerHTML = '';
+    empty.classList.remove('hidden');
+    return;
+  }
+  empty.classList.add('hidden');
+
+  list.innerHTML = past.slice(0, 30).map(l => renderLogCard(l)).join('');
+}
+
+function renderLogCard(l) {
+  const d = new Date(l.date);
+  const label = d.toLocaleDateString('de-DE', { weekday: 'short', day: 'numeric', month: 'short' });
+  const energy = l.energy || 7;
+  const energyColor = energy >= 8 ? '#10b981' : energy >= 5 ? '#FFA94D' : '#f59e0b';
+
+  return `
+    <div class="log-card" onclick="openEditModal('${l.date}')">
+      <div class="flex justify-between items-baseline mb-2 flex-wrap gap-2">
+        <div class="font-bold text-sm">${label}</div>
+        <div class="flex gap-2 items-center">
+          <span class="pill-energy" style="background: ${energyColor}">⚡ ${energy}</span>
+          ${l.followers ? `<span class="text-xs text-gray-400">👥 ${SmashApp.formatNumber(l.followers)}</span>` : ''}
+          ${l.reels > 0 ? `<span class="text-xs text-gray-400">📱 ${l.reels}</span>` : ''}
+        </div>
+      </div>
+      <p class="text-sm leading-relaxed text-gray-200 whitespace-pre-line">${escapeHtml(l.text)}</p>
+    </div>
+  `;
+}
+
+function escapeHtml(s) {
+  return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+function renderStats() {
+  document.getElementById('statTotal').textContent = logs.length;
+
+  // Streak: consecutive days back from today
+  const dates = new Set(logs.map(l => l.date));
+  let streak = 0;
+  let cursor = new Date();
+  while (dates.has(cursor.toISOString().split('T')[0])) {
+    streak++;
+    cursor.setDate(cursor.getDate() - 1);
+  }
+  document.getElementById('statStreak').textContent = streak + '🔥';
+
+  // This week
+  const weekStart = new Date();
+  weekStart.setDate(weekStart.getDate() - weekStart.getDay() + (weekStart.getDay() === 0 ? -6 : 1));
+  weekStart.setHours(0, 0, 0, 0);
+  const weekLogs = logs.filter(l => new Date(l.date) >= weekStart);
+  document.getElementById('statWeek').textContent = `${weekLogs.length}/7`;
+
+  // Avg energy (last 14 days)
+  const recent = logs.filter(l => {
+    const diff = (Date.now() - new Date(l.date).getTime()) / (1000 * 60 * 60 * 24);
+    return diff <= 14;
+  });
+  const avgE = recent.length > 0 ? (recent.reduce((s, l) => s + (l.energy || 7), 0) / recent.length).toFixed(1) : '—';
+  document.getElementById('statEnergy').textContent = avgE;
+}
+
+function renderTrendChart() {
+  if (logs.length < 5) {
+    document.getElementById('trendCard').classList.add('hidden');
+    return;
+  }
+  document.getElementById('trendCard').classList.remove('hidden');
+
+  const sorted = [...logs].sort((a, b) => a.date.localeCompare(b.date)).slice(-30);
+  const labels = sorted.map(l => {
+    const d = new Date(l.date);
+    return d.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit' });
+  });
+  const data = sorted.map(l => l.energy || 7);
+
+  const ctx = document.getElementById('energyChart').getContext('2d');
+  if (chartInst) chartInst.destroy();
+  chartInst = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [{
+        label: 'Energy',
+        data,
+        borderColor: '#FFA94D',
+        backgroundColor: 'rgba(255, 169, 77, 0.15)',
+        fill: true,
+        tension: 0.3,
+        borderWidth: 2,
+        pointRadius: 3,
+        pointBackgroundColor: '#FFA94D'
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        y: { min: 1, max: 10, ticks: { color: '#94a3b8', stepSize: 2 }, grid: { color: 'rgba(255,255,255,0.05)' } },
+        x: { ticks: { color: '#94a3b8', font: { size: 10 } }, grid: { display: false } }
+      }
+    }
+  });
+}
+
+// ============ EDIT MODAL ============
+function openEditModal(date) {
+  const log = logs.find(l => l.date === date);
+  if (!log) return;
+  editingDate = date;
+  document.getElementById('editDate').value = date;
+  document.getElementById('editText').value = log.text;
+  document.getElementById('editFollowers').value = log.followers || '';
+  document.getElementById('editReels').value = log.reels || 0;
+  document.getElementById('editEnergy').value = log.energy || 7;
+  document.getElementById('editEnergyVal').textContent = log.energy || 7;
+  document.getElementById('editModal').classList.remove('hidden');
+}
+
+function closeEditModal() {
+  document.getElementById('editModal').classList.add('hidden');
+  editingDate = null;
+}
+
+function saveEdit() {
+  if (!editingDate) return;
+  const log = logs.find(l => l.date === editingDate);
+  if (!log) return;
+  log.text = document.getElementById('editText').value.trim();
+  log.followers = parseInt(document.getElementById('editFollowers').value) || null;
+  log.reels = parseInt(document.getElementById('editReels').value) || 0;
+  log.energy = parseInt(document.getElementById('editEnergy').value) || 7;
+  SmashApp.setData('bipLogs', logs);
+  renderLogs();
+  renderStats();
+  renderTrendChart();
+  closeEditModal();
+  showToast('💾 Aktualisiert');
+}
+
+function deleteLog() {
+  if (!editingDate) return;
+  if (!confirm('Diesen Log löschen?')) return;
+  logs = logs.filter(l => l.date !== editingDate);
+  SmashApp.setData('bipLogs', logs);
+  renderLogs();
+  renderStats();
+  renderTrendChart();
+  closeEditModal();
+  if (editingDate === todayKey()) {
+    document.getElementById('logText').value = '';
+    document.getElementById('logFollowers').value = '';
+    document.getElementById('logReels').value = '';
+    document.getElementById('logEnergy').value = 7;
+    document.getElementById('energyVal').textContent = '7/10';
+    document.getElementById('todayStatus').textContent = 'Noch nicht geloggt';
+    document.getElementById('todayStatus').classList.remove('neon');
+  }
+  showToast('🗑️ Gelöscht');
+}
+
+// ============ EXPORT ============
+function exportLogs() {
+  if (logs.length === 0) { showToast('⚠️ Nix zu exportieren'); return; }
+  const data = {
+    exported: new Date().toISOString(),
+    account: SmashApp.getCurrentAccount(),
+    logs: logs.sort((a, b) => a.date.localeCompare(b.date))
+  };
+  SmashApp.exportJSON(data, `peaking-bip-${SmashApp.getCurrentAccount()}-${new Date().toISOString().split('T')[0]}.json`);
+  showToast('📥 Exported');
+}
+
+// ============ TOAST ============
+let toastTimer;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 1500);
+}
+
+// Modal-Backdrop close
+document.getElementById('editModal').addEventListener('click', e => {
+  if (e.target.id === 'editModal') closeEditModal();
+});
+
+init();
+</script>
+
+</body>
+</html>

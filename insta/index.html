@@ -87,6 +87,11 @@
 
 <script src="js/app.js"></script>
 <script>
+// Service-Worker für Offline-Capability registrieren
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js').catch(err => console.warn('SW reg failed:', err));
+}
+
 async function tryLogin() {
   const input = document.getElementById('passwordInput').value;
   const errorMsg = document.getElementById('errorMsg');
