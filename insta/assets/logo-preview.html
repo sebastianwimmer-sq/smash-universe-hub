@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PEAKING — Logo Preview</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  body {
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    min-height: 100vh;
+    color: white;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+  .glass {
+    background: rgba(30, 41, 59, 0.6);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+  .neon { color: #39FF14; }
+  .grid-bg {
+    background-image:
+      linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px);
+    background-size: 24px 24px;
+  }
+</style>
+</head>
+<body class="p-6">
+<div class="max-w-5xl mx-auto">
+
+  <h1 class="text-3xl font-bold mb-2">⛰️ PEAKING — Logo Preview</h1>
+  <p class="text-gray-400 mb-8">All sizes, dark + light bg, mockups</p>
+
+  <!-- Multi-size showcase -->
+  <div class="glass rounded-3xl p-6 mb-6 grid-bg">
+    <h2 class="text-sm font-bold neon mb-4 uppercase tracking-wider">Multi-Size</h2>
+    <div class="flex items-end gap-6 flex-wrap">
+      <div class="text-center">
+        <img src="logo.svg" class="w-4 h-4">
+        <div class="text-xs text-gray-500 mt-1">16px (favicon)</div>
+      </div>
+      <div class="text-center">
+        <img src="logo.svg" class="w-8 h-8">
+        <div class="text-xs text-gray-500 mt-1">32px</div>
+      </div>
+      <div class="text-center">
+        <img src="logo.svg" class="w-12 h-12">
+        <div class="text-xs text-gray-500 mt-1">48px</div>
+      </div>
+      <div class="text-center">
+        <img src="logo.svg" class="w-16 h-16">
+        <div class="text-xs text-gray-500 mt-1">64px</div>
+      </div>
+      <div class="text-center">
+        <img src="logo.svg" class="w-24 h-24">
+        <div class="text-xs text-gray-500 mt-1">96px</div>
+      </div>
+      <div class="text-center">
+        <img src="logo.svg" class="w-32 h-32">
+        <div class="text-xs text-gray-500 mt-1">128px</div>
+      </div>
+      <div class="text-center">
+        <img src="logo.svg" class="w-48 h-48">
+        <div class="text-xs text-gray-500 mt-1">192px</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- On dark bg with wordmark -->
+  <div class="glass rounded-3xl p-8 mb-6">
+    <h2 class="text-sm font-bold neon mb-6 uppercase tracking-wider">On Dark · with Wordmark</h2>
+    <div class="flex items-center gap-4 mb-4">
+      <img src="logo.svg" class="w-16 h-16">
+      <div>
+        <div class="text-4xl font-bold tracking-tight">PEAKING</div>
+        <div class="neon text-sm font-bold tracking-wide">Always peaking.</div>
+      </div>
+    </div>
+    <hr class="border-white/10 my-6">
+    <div class="flex items-center gap-3">
+      <img src="logo.svg" class="w-10 h-10">
+      <div>
+        <div class="text-2xl font-bold tracking-tight">peaking</div>
+        <div class="neon text-xs font-bold tracking-wide">Always peaking.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- On light bg -->
+  <div class="rounded-3xl p-8 mb-6 bg-white text-slate-900">
+    <h2 class="text-sm font-bold mb-6 uppercase tracking-wider" style="color: #2ecc71;">On Light</h2>
+    <div class="flex items-center gap-4">
+      <img src="logo.svg" class="w-16 h-16">
+      <div>
+        <div class="text-4xl font-bold tracking-tight">PEAKING</div>
+        <div class="text-sm font-bold tracking-wide" style="color: #2ecc71;">Always peaking.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- App-Icon Mockup (rounded square iOS-style) -->
+  <div class="glass rounded-3xl p-8 mb-6">
+    <h2 class="text-sm font-bold neon mb-6 uppercase tracking-wider">App-Icon Mockup (iOS-Homescreen-Style)</h2>
+    <div class="flex items-center gap-8 flex-wrap">
+      <div class="text-center">
+        <div class="rounded-3xl p-4" style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); width: 120px; height: 120px; display: flex; align-items: center; justify-content: center; box-shadow: 0 12px 24px rgba(0,0,0,0.4);">
+          <img src="logo.svg" class="w-20 h-20">
+        </div>
+        <div class="text-xs text-gray-400 mt-2">Dark Variant</div>
+      </div>
+      <div class="text-center">
+        <div class="rounded-3xl p-4" style="background: linear-gradient(135deg, #39FF14, #2ecc71); width: 120px; height: 120px; display: flex; align-items: center; justify-content: center; box-shadow: 0 12px 24px rgba(57,255,20,0.3);">
+          <img src="logo.svg" class="w-20 h-20" style="filter: brightness(0) invert(0);">
+        </div>
+        <div class="text-xs text-gray-400 mt-2">Neon Variant (inverted)</div>
+      </div>
+      <div class="text-center">
+        <div class="rounded-3xl p-4" style="background: white; width: 120px; height: 120px; display: flex; align-items: center; justify-content: center; box-shadow: 0 12px 24px rgba(0,0,0,0.2);">
+          <img src="logo.svg" class="w-20 h-20">
+        </div>
+        <div class="text-xs text-gray-400 mt-2">Light Variant</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Insta-PB Mockup -->
+  <div class="glass rounded-3xl p-8">
+    <h2 class="text-sm font-bold neon mb-6 uppercase tracking-wider">Instagram PB Mockup</h2>
+    <div class="flex items-start gap-6 flex-wrap">
+      <div class="text-center">
+        <div class="rounded-full p-4" style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); width: 96px; height: 96px; display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 24px rgba(0,0,0,0.4); border: 3px solid #39FF14;">
+          <img src="logo.svg" class="w-16 h-16">
+        </div>
+        <div class="text-sm font-bold mt-2">@peakingworld</div>
+        <div class="text-xs text-gray-400">Always peaking.</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <title>PEAKING — The climb is the peak.</title>
+  <path d="M 6 54 L 32 12 L 58 54 Z" fill="rgba(57, 255, 20, 0.06)"/>
+  <path d="M 6 54 L 32 12 L 58 54"
+        stroke="#39FF14"
+        stroke-width="2.5"
+        stroke-linejoin="round"
+        stroke-linecap="round"/>
+  <path d="M 25 26 L 32 12 L 39 26 Z" fill="#39FF14"/>
+  <path d="M 14 50 L 21 42 L 27 32 L 32 16"
+        stroke="#39FF14"
+        stroke-width="2"
+        stroke-dasharray="2.5 2.5"
+        stroke-linecap="round"
+        opacity="0.7"/>
+</svg>
