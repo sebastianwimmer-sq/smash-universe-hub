@@ -6,6 +6,7 @@
 <title>⛰️ PEAKING — Always peaking.</title>
 <link rel="icon" href="assets/logo.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="assets/logo.svg">
+<link rel="stylesheet" href="assets/effects.css">
 <script src="https://cdn.tailwindcss.com"></script>
 <style>
   body { 
@@ -48,11 +49,11 @@
   }
 </style>
 </head>
-<body>
+<body class="bg-depth">
 
-<div class="glass rounded-3xl p-8 w-full max-w-md">
+<div class="glass rounded-3xl p-8 w-full max-w-md scale-in">
   <div class="text-center mb-8">
-    <img src="assets/logo.svg" alt="PEAKING" class="w-24 h-24 mx-auto mb-3">
+    <img src="assets/logo.svg" alt="PEAKING" class="w-24 h-24 mx-auto mb-3 peaking-pulse logo-glow-strong">
     <h1 class="text-3xl font-bold mb-1 tracking-tight">PEAKING</h1>
     <p class="neon text-sm font-bold tracking-wide">Always peaking.</p>
     <p class="text-gray-500 text-xs mt-1">vegetarianhulk's command center</p>
@@ -71,7 +72,7 @@
       ❌ Falsches Passwort. Versuch's nochmal!
     </div>
 
-    <button onclick="tryLogin()" class="btn-primary w-full p-4 rounded-xl text-lg">
+    <button onclick="tryLogin()" class="btn-primary btn-shimmer btn-glow-strong press-feedback w-full p-4 rounded-xl text-lg">
       🔓 Login
     </button>
   </div>

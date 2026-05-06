@@ -6,6 +6,7 @@
 <title>⛰️ Dashboard — PEAKING</title>
 <link rel="icon" href="assets/logo.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="assets/logo.svg">
+<link rel="stylesheet" href="assets/effects.css">
 <script src="https://cdn.tailwindcss.com"></script>
 <style>
   body { 
@@ -37,14 +38,14 @@
   }
 </style>
 </head>
-<body class="p-4 md:p-6">
+<body class="p-4 md:p-6 bg-depth">
 
 <div class="max-w-6xl mx-auto">
   
   <!-- Header -->
   <div class="flex justify-between items-center mb-6">
     <div>
-      <h1 class="text-2xl md:text-4xl font-bold flex items-center gap-2"><img src="assets/logo.svg" alt="" class="w-8 h-8 md:w-10 md:h-10"> PEAKING</h1>
+      <h1 class="text-2xl md:text-4xl font-bold flex items-center gap-2"><img src="assets/logo.svg" alt="" class="w-8 h-8 md:w-10 md:h-10 logo-glow"> <span class="text-sunrise">PEAKING</span></h1>
       <p class="text-gray-400 text-sm"><span class="neon font-bold">Always peaking.</span> · <span id="todayDate"></span></p>
     </div>
     <button onclick="SmashApp.logout()" class="text-sm text-gray-400 hover:text-white">
@@ -53,27 +54,27 @@
   </div>
 
   <!-- Quick Stats -->
-  <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
-    <div class="glass rounded-2xl p-4 stat-card">
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6 stagger">
+    <div class="glass rounded-2xl p-4 stat-card lift-glow">
       <div class="text-gray-400 text-xs">Follower</div>
       <div class="text-2xl md:text-3xl font-bold neon" id="followerCount">2.080</div>
     </div>
-    <div class="glass rounded-2xl p-4 stat-card">
+    <div class="glass rounded-2xl p-4 stat-card lift-glow">
       <div class="text-gray-400 text-xs">Diese Woche</div>
       <div class="text-2xl md:text-3xl font-bold" id="weekCount">0/4</div>
     </div>
-    <div class="glass rounded-2xl p-4 stat-card">
+    <div class="glass rounded-2xl p-4 stat-card lift-glow">
       <div class="text-gray-400 text-xs">Streak</div>
       <div class="text-2xl md:text-3xl font-bold" id="streakCount">0🔥</div>
     </div>
-    <div class="glass rounded-2xl p-4 stat-card">
+    <div class="glass rounded-2xl p-4 stat-card lift-glow">
       <div class="text-gray-400 text-xs">Total Reels</div>
       <div class="text-2xl md:text-3xl font-bold" id="totalReels">0</div>
     </div>
   </div>
 
   <!-- Today/Next Action -->
-  <div class="glass rounded-3xl p-5 mb-6 border-l-4" style="border-left-color: #FFA94D;">
+  <div class="glass gradient-flow rounded-3xl p-5 mb-6 border-l-4 float-in" style="border-left-color: #FFA94D;">
     <div class="text-xs text-gray-400 mb-1">🎯 NÄCHSTER POST</div>
     <div class="text-lg md:text-xl font-bold mb-1" id="nextPost">Heute: 💪 Gym-Reel</div>
     <div class="text-sm text-gray-400" id="nextPostTime">Empfohlene Zeit: 19:00 Uhr</div>
@@ -81,39 +82,39 @@
 
   <!-- Module Grid -->
   <h2 class="text-lg font-bold mb-3">⚡ Quick Actions</h2>
-  <div class="grid grid-cols-2 md:grid-cols-3 gap-3 mb-6">
+  <div class="grid grid-cols-2 md:grid-cols-3 gap-3 mb-6 stagger">
     
-    <a href="modules/tracker.html" class="glass module-card rounded-2xl p-5">
+    <a href="modules/tracker.html" class="glass module-card lift-glow press-feedback rounded-2xl p-5">
       <div class="text-3xl mb-2">📊</div>
       <div class="font-bold mb-1">Reel Tracker</div>
       <div class="text-xs text-gray-400">Performance tracken</div>
     </a>
     
-    <a href="modules/builder.html" class="glass module-card rounded-2xl p-5">
+    <a href="modules/builder.html" class="glass module-card lift-glow press-feedback rounded-2xl p-5">
       <div class="text-3xl mb-2">🖼️</div>
       <div class="font-bold mb-1">Carousel Builder</div>
       <div class="text-xs text-gray-400">Slides erstellen</div>
     </a>
     
-    <a href="modules/ideas.html" class="glass module-card rounded-2xl p-5">
+    <a href="modules/ideas.html" class="glass module-card lift-glow press-feedback rounded-2xl p-5">
       <div class="text-3xl mb-2">💡</div>
       <div class="font-bold mb-1">Idea Bank</div>
       <div class="text-xs text-gray-400">Reel-Ideen</div>
     </a>
     
-    <a href="modules/calendar.html" class="glass module-card rounded-2xl p-5">
+    <a href="modules/calendar.html" class="glass module-card lift-glow press-feedback rounded-2xl p-5">
       <div class="text-3xl mb-2">📅</div>
       <div class="font-bold mb-1">Calendar</div>
       <div class="text-xs text-gray-400">Wochenplan</div>
     </a>
     
-    <a href="modules/captions.html" class="glass module-card rounded-2xl p-5">
+    <a href="modules/captions.html" class="glass module-card lift-glow press-feedback rounded-2xl p-5">
       <div class="text-3xl mb-2">🎨</div>
       <div class="font-bold mb-1">Captions</div>
       <div class="text-xs text-gray-400">Templates</div>
     </a>
     
-    <a href="modules/analytics.html" class="glass module-card rounded-2xl p-5">
+    <a href="modules/analytics.html" class="glass module-card lift-glow press-feedback rounded-2xl p-5">
       <div class="text-3xl mb-2">📈</div>
       <div class="font-bold mb-1">Analytics</div>
       <div class="text-xs text-gray-400">Trends & Insights</div>
