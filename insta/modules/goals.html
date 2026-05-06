@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+<title>🏔️ Goals — PEAKING</title>
+<link rel="icon" href="../assets/logo.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../assets/logo.svg">
+<link rel="manifest" href="../manifest.json">
+<meta name="theme-color" content="#FFA94D">
+<link rel="stylesheet" href="../assets/effects.css">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="../js/app.js"></script>
+<style>
+  body {
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    min-height: 100dvh;
+    color: white;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+  .glass {
+    background: rgba(30, 41, 59, 0.6);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+  .neon { color: #FFA94D; }
+  .btn-primary {
+    background: linear-gradient(135deg, #FFA94D, #FF6B6B);
+    color: #0f172a;
+    font-weight: bold;
+    transition: all 0.2s;
+  }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(255, 169, 77, 0.4); }
+  input { background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(255,255,255,0.15); color: white; }
+  input:focus { outline: none; border-color: #FFA94D; }
+  .toast {
+    position: fixed; bottom: 24px; left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    background: #FFA94D; color: #0f172a;
+    padding: 12px 24px; border-radius: 999px; font-weight: bold;
+    box-shadow: 0 8px 24px rgba(255, 169, 77, 0.4);
+    transition: transform 0.3s ease; z-index: 100;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+
+  /* Hero progress */
+  .hero {
+    background: linear-gradient(135deg, rgba(255, 107, 107, 0.12), rgba(255, 212, 59, 0.12));
+    border: 1px solid rgba(255, 169, 77, 0.3);
+    border-radius: 24px;
+    padding: 28px 24px;
+    text-align: center;
+    margin-bottom: 16px;
+  }
+  .hero-current {
+    font-size: 56px;
+    font-weight: 900;
+    background: linear-gradient(135deg, #FF6B6B, #FFA94D, #FFD43B);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+    line-height: 1;
+  }
+  .hero-label {
+    font-size: 12px;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .progress-bar {
+    height: 14px;
+    background: rgba(15, 23, 42, 0.6);
+    border-radius: 999px;
+    overflow: hidden;
+    margin: 16px 0 8px;
+    position: relative;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #FF6B6B, #FFA94D, #FFD43B);
+    border-radius: 999px;
+    transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 0 16px rgba(255, 169, 77, 0.5);
+  }
+
+  /* Milestones */
+  .mile {
+    display: grid;
+    grid-template-columns: 56px 1fr auto;
+    gap: 12px;
+    align-items: center;
+    padding: 14px 16px;
+    border-radius: 14px;
+    background: rgba(15, 23, 42, 0.5);
+    border: 1px solid rgba(255,255,255,0.08);
+    margin-bottom: 8px;
+    transition: all 0.2s;
+  }
+  .mile.done {
+    background: rgba(255, 169, 77, 0.08);
+    border-color: rgba(255, 169, 77, 0.4);
+  }
+  .mile.next {
+    background: rgba(255, 107, 107, 0.08);
+    border-color: rgba(255, 107, 107, 0.4);
+  }
+  .mile-icon {
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    background: rgba(15, 23, 42, 0.7);
+    border: 2px solid rgba(255,255,255,0.15);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    font-weight: 900;
+  }
+  .mile.done .mile-icon {
+    background: linear-gradient(135deg, #FFA94D, #FF6B6B);
+    color: #0f172a;
+    border-color: #FFA94D;
+    box-shadow: 0 4px 12px rgba(255, 169, 77, 0.4);
+  }
+  .mile.next .mile-icon {
+    border-color: #FF6B6B;
+    color: #FF6B6B;
+  }
+  .mile-info { min-width: 0; }
+  .mile-num {
+    font-size: 20px;
+    font-weight: 900;
+    line-height: 1;
+  }
+  .mile-sub {
+    font-size: 11px;
+    color: #94a3b8;
+    margin-top: 4px;
+  }
+  .mile.done .mile-num { color: #FFA94D; }
+  .mile-status {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 999px;
+  }
+  .mile-status.done { background: rgba(255, 169, 77, 0.2); color: #FFA94D; }
+  .mile-status.next { background: rgba(255, 107, 107, 0.2); color: #FF6B6B; }
+  .mile-status.pending { background: rgba(100, 116, 139, 0.2); color: #94a3b8; }
+
+  .modal-bg { background: rgba(0,0,0,0.7); backdrop-filter: blur(4px); }
+</style>
+</head>
+<body class="p-4 md:p-6 pb-12 bg-depth">
+
+<div class="max-w-3xl mx-auto">
+
+  <!-- Header -->
+  <div class="flex justify-between items-center mb-4">
+    <div>
+      <a href="../dashboard.html" class="text-xs text-gray-400 hover:text-white">← Dashboard</a>
+      <h1 class="text-2xl md:text-3xl font-bold mt-1">🏔️ <span class="text-sunrise">Goals</span></h1>
+      <p class="text-gray-400 text-sm">From climb to peak — your journey 2k → 1M</p>
+    </div>
+    <button onclick="SmashApp.logout()" class="text-sm text-gray-400 hover:text-white">🔒</button>
+  </div>
+
+  <!-- Hero Progress -->
+  <div class="hero scale-in">
+    <div class="hero-label">Aktuelle Follower (<span id="accountLabel">vegetarianhulk</span>)</div>
+    <div class="hero-current" id="currentCount">2.080</div>
+    <div class="text-xs text-gray-400 mt-1">
+      <span id="nextLabel">Nächster Peak: 2.500 (~420 to go)</span>
+    </div>
+    <div class="progress-bar">
+      <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+    </div>
+    <div class="text-xs text-gray-500 mt-2">
+      <span id="progressPct">0%</span> zur nächsten Mile · <span id="lifetimePct">0%</span> zum 1M-Peak
+    </div>
+
+    <button onclick="updateCount()" class="btn-primary mt-5 px-6 py-2.5 rounded-xl">
+      📊 Follower-Stand updaten
+    </button>
+  </div>
+
+  <!-- Milestones -->
+  <div class="glass rounded-3xl p-5 mb-5">
+    <div class="flex items-baseline justify-between mb-4">
+      <h2 class="text-lg font-bold">🎯 Milestones</h2>
+      <span class="text-xs text-gray-400" id="milestoneStats">0/11 erreicht</span>
+    </div>
+    <div id="milestoneList" class="stagger"></div>
+  </div>
+
+  <!-- Custom Goals -->
+  <div class="glass rounded-3xl p-5 mb-5">
+    <div class="flex items-baseline justify-between mb-3">
+      <h2 class="text-lg font-bold">🎨 Eigene Goals</h2>
+      <button onclick="openCustomModal()" class="text-xs neon hover:underline">+ Custom-Goal</button>
+    </div>
+    <p class="text-xs text-gray-400 mb-4">Z.B. „5.000 bis Ende August" oder „Erstes 10k-Reel" — was du dir konkret vornimmst.</p>
+    <div id="customList" class="space-y-2"></div>
+    <div id="customEmpty" class="hidden text-center py-6 text-gray-500 text-sm italic">
+      Noch keine Custom-Goals. Tap +
+    </div>
+  </div>
+
+  <!-- History -->
+  <div class="glass rounded-3xl p-5 mb-5">
+    <h2 class="text-lg font-bold mb-1">📈 Follower-History</h2>
+    <p class="text-xs text-gray-400 mb-3">Jeder Update wird hier festgehalten. Zeigt deine Climb-Bewegung.</p>
+    <div id="historyList" class="space-y-1.5 text-sm"></div>
+    <div id="historyEmpty" class="hidden text-center py-6 text-gray-500 text-sm italic">
+      Noch keine History — first Update macht den Anfang.
+    </div>
+  </div>
+
+  <div class="text-center text-gray-500 text-xs mt-8">
+    🏔️ PEAKING · The climb is the peak.
+  </div>
+</div>
+
+<!-- Update Count Modal -->
+<div id="updateModal" class="hidden fixed inset-0 modal-bg z-50 flex items-center justify-center p-4">
+  <div class="glass rounded-3xl p-6 w-full max-w-sm">
+    <div class="flex justify-between items-center mb-4">
+      <h2 class="text-xl font-bold">📊 Follower-Update</h2>
+      <button onclick="closeUpdateModal()" class="text-gray-400 hover:text-white text-2xl">×</button>
+    </div>
+    <div class="space-y-3">
+      <div>
+        <label class="block text-xs text-gray-400 mb-1">Aktuelle Follower-Zahl</label>
+        <input type="number" id="newCount" class="w-full p-3 rounded-xl text-lg font-bold text-center" placeholder="z.B. 2150">
+      </div>
+      <div class="text-xs text-gray-500">Klassisch: 1× pro Woche updaten reicht (z.B. Sonntag-Reflexion).</div>
+      <button onclick="saveCount()" class="btn-primary w-full p-3 rounded-xl">💾 Speichern</button>
+    </div>
+  </div>
+</div>
+
+<!-- Custom Goal Modal -->
+<div id="customModal" class="hidden fixed inset-0 modal-bg z-50 flex items-center justify-center p-4">
+  <div class="glass rounded-3xl p-6 w-full max-w-md">
+    <div class="flex justify-between items-center mb-4">
+      <h2 class="text-xl font-bold" id="customTitle">+ Custom-Goal</h2>
+      <button onclick="closeCustomModal()" class="text-gray-400 hover:text-white text-2xl">×</button>
+    </div>
+    <div class="space-y-3">
+      <div>
+        <label class="block text-xs text-gray-400 mb-1">Goal-Name *</label>
+        <input type="text" id="customName" class="w-full p-3 rounded-xl text-sm" placeholder="z.B. 5k bis Ende August">
+      </div>
+      <div>
+        <label class="block text-xs text-gray-400 mb-1">Ziel-Wert (optional Number)</label>
+        <input type="number" id="customTarget" class="w-full p-3 rounded-xl text-sm" placeholder="5000">
+      </div>
+      <div>
+        <label class="block text-xs text-gray-400 mb-1">Deadline (optional)</label>
+        <input type="date" id="customDeadline" class="w-full p-3 rounded-xl text-sm">
+      </div>
+      <button onclick="saveCustom()" class="btn-primary w-full p-3 rounded-xl">💾 Speichern</button>
+      <button id="customDeleteBtn" onclick="deleteCustom()" class="hidden w-full p-2 text-sm text-red-400 hover:text-red-300">🗑️ Löschen</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast" class="toast">✓</div>
+
+<script>
+SmashApp.requireAuth();
+
+// ============ MILESTONES ============
+const MILESTONES = [
+  { count: 100,    label: 'First 100',           sub: 'Real-User Validation' },
+  { count: 500,    label: 'Half-K',              sub: 'Niche-Audience steht' },
+  { count: 1000,   label: '1k Club',             sub: 'Algorithm spürt dich' },
+  { count: 2500,   label: '2.5k',                sub: 'Brand-Deal-Threshold (Micro)' },
+  { count: 5000,   label: '5k',                  sub: 'Pro-Account-Insights vollständig' },
+  { count: 10000,  label: '10k Swipe-Up',        sub: 'Story-Link-Sticker freigeschaltet' },
+  { count: 25000,  label: '25k',                 sub: 'Mid-Tier-Influencer' },
+  { count: 50000,  label: '50k',                 sub: 'Brand-Pitches kommen aktiv' },
+  { count: 100000, label: '100k Verified-Worthy', sub: 'Macro-Influencer-Tier' },
+  { count: 500000, label: '500k',                sub: 'Top-1%-DACH-Creator' },
+  { count: 1000000,label: '1M Peak',             sub: 'The destination' }
+];
+
+let state = { current: 2080, history: [], customGoals: [] };
+let editingCustomId = null;
+
+function init() {
+  state = SmashApp.getData('goals', null) || {
+    current: SmashApp.getCurrentAccount() === 'vegetarianhulk' ? 2080 : 1,
+    history: [],
+    customGoals: []
+  };
+  document.getElementById('accountLabel').textContent = SmashApp.getAccount().handle;
+  renderHero();
+  renderMilestones();
+  renderCustom();
+  renderHistory();
+}
+
+function renderHero() {
+  document.getElementById('currentCount').textContent = SmashApp.formatNumber(state.current);
+
+  const next = MILESTONES.find(m => m.count > state.current);
+  const prev = [...MILESTONES].reverse().find(m => m.count <= state.current);
+  const prevCount = prev ? prev.count : 0;
+
+  if (next) {
+    const togo = next.count - state.current;
+    const span = next.count - prevCount;
+    const pct = span > 0 ? Math.min(100, ((state.current - prevCount) / span) * 100) : 100;
+    document.getElementById('nextLabel').textContent =
+      `Nächster Peak: ${SmashApp.formatNumber(next.count)} · ${SmashApp.formatNumber(togo)} to go`;
+    document.getElementById('progressFill').style.width = pct + '%';
+    document.getElementById('progressPct').textContent = pct.toFixed(1) + '%';
+  } else {
+    document.getElementById('nextLabel').textContent = '🏔️ Peak erreicht. Du bist am Gipfel.';
+    document.getElementById('progressFill').style.width = '100%';
+    document.getElementById('progressPct').textContent = '100%';
+  }
+
+  const lifetimePct = (state.current / 1000000) * 100;
+  document.getElementById('lifetimePct').textContent = lifetimePct.toFixed(2) + '%';
+}
+
+function renderMilestones() {
+  const list = document.getElementById('milestoneList');
+  const next = MILESTONES.find(m => m.count > state.current);
+
+  list.innerHTML = MILESTONES.map(m => {
+    const done = m.count <= state.current;
+    const isNext = next && m.count === next.count;
+    const cls = done ? 'done' : isNext ? 'next' : '';
+    const icon = done ? '✓' : isNext ? '→' : '·';
+    const status = done ? 'done' : isNext ? 'next' : 'pending';
+    const statusLabel = done ? 'erreicht' : isNext ? 'nächster' : 'pending';
+    const achievedDate = done ? findAchievedDate(m.count) : '';
+
+    return `
+      <div class="mile ${cls}">
+        <div class="mile-icon">${icon}</div>
+        <div class="mile-info">
+          <div class="mile-num">${SmashApp.formatNumber(m.count)}</div>
+          <div class="mile-sub">${m.label} · ${m.sub}${achievedDate ? ' · 🗓️ ' + achievedDate : ''}</div>
+        </div>
+        <span class="mile-status ${status}">${statusLabel}</span>
+      </div>
+    `;
+  }).join('');
+
+  const doneCount = MILESTONES.filter(m => m.count <= state.current).length;
+  document.getElementById('milestoneStats').textContent = `${doneCount}/${MILESTONES.length} erreicht`;
+}
+
+function findAchievedDate(count) {
+  const sorted = [...state.history].sort((a, b) => a.timestamp - b.timestamp);
+  const first = sorted.find(h => h.count >= count);
+  if (!first) return '';
+  return new Date(first.timestamp).toLocaleDateString('de-DE', { day: '2-digit', month: 'short', year: 'numeric' });
+}
+
+function renderHistory() {
+  const list = document.getElementById('historyList');
+  const empty = document.getElementById('historyEmpty');
+
+  if (state.history.length === 0) {
+    list.innerHTML = '';
+    empty.classList.remove('hidden');
+    return;
+  }
+  empty.classList.add('hidden');
+
+  const sorted = [...state.history].sort((a, b) => b.timestamp - a.timestamp).slice(0, 30);
+  list.innerHTML = sorted.map((h, i) => {
+    const prev = sorted[i + 1];
+    const delta = prev ? h.count - prev.count : 0;
+    const deltaStr = delta === 0 ? '' : delta > 0 ? `<span class="text-green-400">+${SmashApp.formatNumber(delta)}</span>` : `<span class="text-red-400">${SmashApp.formatNumber(delta)}</span>`;
+    return `
+      <div class="flex justify-between items-baseline py-2 border-b border-white/5">
+        <span class="text-gray-400 text-xs">${new Date(h.timestamp).toLocaleDateString('de-DE', { day: '2-digit', month: 'short', year: 'numeric' })}</span>
+        <span class="font-bold">${SmashApp.formatNumber(h.count)} ${deltaStr}</span>
+      </div>
+    `;
+  }).join('');
+}
+
+// ============ UPDATE COUNT ============
+function updateCount() {
+  document.getElementById('newCount').value = state.current;
+  document.getElementById('updateModal').classList.remove('hidden');
+  setTimeout(() => document.getElementById('newCount').focus(), 100);
+}
+
+function closeUpdateModal() { document.getElementById('updateModal').classList.add('hidden'); }
+
+function saveCount() {
+  const n = parseInt(document.getElementById('newCount').value);
+  if (isNaN(n) || n < 0) { showToast('⚠️ Ungültige Zahl'); return; }
+
+  const oldNext = MILESTONES.find(m => m.count > state.current);
+  state.history.push({ count: n, timestamp: Date.now() });
+  state.current = n;
+  SmashApp.setData('goals', state);
+
+  closeUpdateModal();
+  renderHero();
+  renderMilestones();
+  renderHistory();
+
+  // Celebrate if hit milestone
+  if (oldNext && n >= oldNext.count) {
+    showToast(`🏔️ MILESTONE: ${SmashApp.formatNumber(oldNext.count)} erreicht!`);
+  } else {
+    showToast('💾 Update gespeichert');
+  }
+}
+
+// ============ CUSTOM GOALS ============
+function openCustomModal() {
+  editingCustomId = null;
+  document.getElementById('customTitle').textContent = '+ Custom-Goal';
+  document.getElementById('customName').value = '';
+  document.getElementById('customTarget').value = '';
+  document.getElementById('customDeadline').value = '';
+  document.getElementById('customDeleteBtn').classList.add('hidden');
+  document.getElementById('customModal').classList.remove('hidden');
+}
+
+function openCustomEdit(id) {
+  const g = state.customGoals.find(x => x.id === id);
+  if (!g) return;
+  editingCustomId = id;
+  document.getElementById('customTitle').textContent = '✏️ Custom-Goal';
+  document.getElementById('customName').value = g.name;
+  document.getElementById('customTarget').value = g.target || '';
+  document.getElementById('customDeadline').value = g.deadline || '';
+  document.getElementById('customDeleteBtn').classList.remove('hidden');
+  document.getElementById('customModal').classList.remove('hidden');
+}
+
+function closeCustomModal() { document.getElementById('customModal').classList.add('hidden'); editingCustomId = null; }
+
+function saveCustom() {
+  const name = document.getElementById('customName').value.trim();
+  if (!name) { showToast('⚠️ Name fehlt'); return; }
+  const data = {
+    name,
+    target: parseInt(document.getElementById('customTarget').value) || null,
+    deadline: document.getElementById('customDeadline').value || null
+  };
+  if (editingCustomId) {
+    const g = state.customGoals.find(x => x.id === editingCustomId);
+    Object.assign(g, data);
+  } else {
+    state.customGoals.push({ id: Date.now(), createdAt: Date.now(), ...data });
+  }
+  SmashApp.setData('goals', state);
+  closeCustomModal();
+  renderCustom();
+  showToast('💾 Gespeichert');
+}
+
+function deleteCustom() {
+  if (!editingCustomId) return;
+  if (!confirm('Custom-Goal wirklich löschen?')) return;
+  state.customGoals = state.customGoals.filter(x => x.id !== editingCustomId);
+  SmashApp.setData('goals', state);
+  closeCustomModal();
+  renderCustom();
+  showToast('🗑️ Gelöscht');
+}
+
+function renderCustom() {
+  const list = document.getElementById('customList');
+  const empty = document.getElementById('customEmpty');
+
+  if (state.customGoals.length === 0) {
+    list.innerHTML = '';
+    empty.classList.remove('hidden');
+    return;
+  }
+  empty.classList.add('hidden');
+
+  list.innerHTML = state.customGoals.map(g => {
+    const pct = g.target ? Math.min(100, (state.current / g.target) * 100) : null;
+    const daysLeft = g.deadline ? Math.ceil((new Date(g.deadline) - Date.now()) / (1000 * 60 * 60 * 24)) : null;
+    const deadlineStr = g.deadline
+      ? (daysLeft >= 0 ? `🗓️ ${daysLeft}d to go` : `⚠️ ${Math.abs(daysLeft)}d overdue`)
+      : '';
+    return `
+      <div class="rounded-xl p-3 bg-slate-800/40 cursor-pointer hover:bg-slate-700/40" onclick="openCustomEdit(${g.id})">
+        <div class="flex justify-between items-baseline mb-1 gap-2 flex-wrap">
+          <span class="font-bold text-sm">${escapeHtml(g.name)}</span>
+          <span class="text-xs text-gray-400">${deadlineStr}</span>
+        </div>
+        ${pct !== null ? `
+          <div class="flex justify-between text-xs text-gray-400 mb-1">
+            <span>${SmashApp.formatNumber(state.current)} / ${SmashApp.formatNumber(g.target)}</span>
+            <span class="neon font-bold">${pct.toFixed(0)}%</span>
+          </div>
+          <div class="h-1.5 bg-slate-900/60 rounded-full overflow-hidden">
+            <div class="h-full" style="width: ${pct}%; background: linear-gradient(90deg, #FFA94D, #FF6B6B);"></div>
+          </div>
+        ` : ''}
+      </div>
+    `;
+  }).join('');
+}
+
+function escapeHtml(s) {
+  return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+// ============ TOAST ============
+let toastTimer;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2000);
+}
+
+document.getElementById('updateModal').addEventListener('click', e => { if (e.target.id === 'updateModal') closeUpdateModal(); });
+document.getElementById('customModal').addEventListener('click', e => { if (e.target.id === 'customModal') closeCustomModal(); });
+
+init();
+</script>
+
+</body>
+</html>

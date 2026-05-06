@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+<title>💬 Replies — PEAKING</title>
+<link rel="icon" href="../assets/logo.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../assets/logo.svg">
+<link rel="manifest" href="../manifest.json">
+<meta name="theme-color" content="#FFA94D">
+<link rel="stylesheet" href="../assets/effects.css">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="../js/app.js"></script>
+<style>
+  body {
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    min-height: 100dvh;
+    color: white;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+  .glass {
+    background: rgba(30, 41, 59, 0.6);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+  .neon { color: #FFA94D; }
+  .btn-primary {
+    background: linear-gradient(135deg, #FFA94D, #FF6B6B);
+    color: #0f172a;
+    font-weight: bold;
+    transition: all 0.2s;
+  }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(255, 169, 77, 0.4); }
+  input, textarea, select { background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(255,255,255,0.15); color: white; }
+  input:focus, textarea:focus, select:focus { outline: none; border-color: #FFA94D; }
+  .modal-bg { background: rgba(0,0,0,0.7); backdrop-filter: blur(4px); }
+  .toast {
+    position: fixed; bottom: 24px; left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    background: #FFA94D; color: #0f172a;
+    padding: 12px 24px; border-radius: 999px; font-weight: bold;
+    box-shadow: 0 8px 24px rgba(255, 169, 77, 0.4);
+    transition: transform 0.3s ease; z-index: 100;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+  .tab-btn {
+    flex: 1;
+    padding: 10px 12px;
+    text-align: center;
+    font-weight: 700;
+    color: #94a3b8;
+    border-bottom: 3px solid transparent;
+    cursor: pointer;
+    transition: all 0.15s;
+    font-size: 13px;
+  }
+  .tab-btn.active { color: #FFA94D; border-bottom-color: #FFA94D; }
+  .reply-card {
+    background: rgba(15, 23, 42, 0.4);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 14px;
+    padding: 14px;
+    transition: all 0.2s;
+  }
+  .reply-card:hover { border-color: rgba(255, 169, 77, 0.3); }
+  .reply-text {
+    font-size: 14px;
+    line-height: 1.6;
+    white-space: pre-wrap;
+    color: #e2e8f0;
+  }
+  .var-highlight {
+    background: rgba(255, 169, 77, 0.15);
+    color: #FFA94D;
+    padding: 1px 4px;
+    border-radius: 4px;
+    font-weight: 700;
+  }
+  .ctx-pill {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    background: rgba(255, 169, 77, 0.15);
+    color: #FFA94D;
+  }
+  .fab {
+    position: fixed; bottom: 20px; right: 20px;
+    width: 56px; height: 56px; border-radius: 999px;
+    background: linear-gradient(135deg, #FFA94D, #FF6B6B);
+    color: #0f172a; font-size: 28px; font-weight: bold;
+    box-shadow: 0 8px 24px rgba(255, 169, 77, 0.4);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; z-index: 50; border: none;
+  }
+  .preview-box {
+    background: rgba(15, 23, 42, 0.8);
+    border: 1px solid rgba(255, 169, 77, 0.2);
+    border-radius: 12px;
+    padding: 14px;
+    white-space: pre-wrap;
+    font-size: 14px;
+    line-height: 1.6;
+    min-height: 60px;
+  }
+</style>
+</head>
+<body class="p-4 md:p-6 pb-24 bg-depth">
+
+<div class="max-w-4xl mx-auto">
+
+  <!-- Header -->
+  <div class="flex justify-between items-center mb-4">
+    <div>
+      <a href="../dashboard.html" class="text-xs text-gray-400 hover:text-white">← Dashboard</a>
+      <h1 class="text-2xl md:text-3xl font-bold mt-1">💬 <span class="text-sunrise">Quick Replies</span></h1>
+      <p class="text-gray-400 text-sm" id="stats">0 Templates</p>
+    </div>
+    <button onclick="SmashApp.logout()" class="text-sm text-gray-400 hover:text-white">🔒</button>
+  </div>
+
+  <!-- Tabs -->
+  <div class="glass rounded-2xl mb-5 flex overflow-hidden">
+    <div class="tab-btn active" data-tab="dm" onclick="switchTab('dm')">📥 DM</div>
+    <div class="tab-btn" data-tab="comment" onclick="switchTab('comment')">💬 Comment</div>
+    <div class="tab-btn" data-tab="story" onclick="switchTab('story')">⚡ Story-Reply</div>
+  </div>
+
+  <!-- Reply List -->
+  <div id="replyList" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
+  <div id="emptyState" class="hidden text-center py-12 text-gray-500">
+    <div class="text-5xl mb-3">💬</div>
+    <p>Keine Templates in dieser Kategorie. Tap rechts unten +</p>
+  </div>
+
+  <div class="text-center text-gray-500 text-xs mt-12">
+    💬 PEAKING · Quick-Replies · Sebi-Style: ehrlich + kraftvoll + kein corporate-Bullshit
+  </div>
+</div>
+
+<!-- FAB -->
+<button class="fab" onclick="openAddModal()" title="Neues Template">+</button>
+
+<!-- Use Modal (with variables) -->
+<div id="useModal" class="hidden fixed inset-0 modal-bg z-50 flex items-center justify-center p-4">
+  <div class="glass rounded-3xl p-6 w-full max-w-lg max-h-[90vh] overflow-y-auto">
+    <div class="flex justify-between items-center mb-4">
+      <h2 class="text-xl font-bold">💬 Reply anpassen</h2>
+      <button onclick="closeUseModal()" class="text-gray-400 hover:text-white text-2xl">×</button>
+    </div>
+    <div id="useVars" class="space-y-2 mb-4"></div>
+    <div class="text-xs text-gray-500 mb-2 font-bold uppercase tracking-wider">Live-Preview</div>
+    <div id="previewBox" class="preview-box mb-4"></div>
+    <button onclick="copyPreview()" class="btn-primary w-full p-3 rounded-xl">📋 Reply kopieren</button>
+  </div>
+</div>
+
+<!-- Add/Edit Modal -->
+<div id="editModal" class="hidden fixed inset-0 modal-bg z-50 flex items-center justify-center p-4">
+  <div class="glass rounded-3xl p-6 w-full max-w-md max-h-[90vh] overflow-y-auto">
+    <div class="flex justify-between items-center mb-4">
+      <h2 class="text-xl font-bold" id="editTitle">+ Neues Template</h2>
+      <button onclick="closeEditModal()" class="text-gray-400 hover:text-white text-2xl">×</button>
+    </div>
+    <div class="space-y-3">
+      <div>
+        <label class="block text-xs text-gray-400 mb-1">Context (kurze Beschreibung)</label>
+        <input type="text" id="editCtx" class="w-full p-3 rounded-xl text-sm" placeholder="z.B. Brand-Pitch / Newbie-Frage / Compliment">
+      </div>
+      <div>
+        <label class="block text-xs text-gray-400 mb-1">Reply-Text * <span class="text-gray-500">(Variablen mit [GROSSBUCHSTABEN])</span></label>
+        <textarea id="editText" rows="6" class="w-full p-3 rounded-xl text-sm" placeholder="z.B. Hey [NAME] danke für die Frage! …"></textarea>
+      </div>
+      <div>
+        <label class="block text-xs text-gray-400 mb-1">Kategorie</label>
+        <select id="editTab" class="w-full p-3 rounded-xl text-sm">
+          <option value="dm">📥 DM</option>
+          <option value="comment">💬 Comment</option>
+          <option value="story">⚡ Story-Reply</option>
+        </select>
+      </div>
+      <button onclick="saveTemplate()" class="btn-primary w-full p-3 rounded-xl">💾 Speichern</button>
+      <button id="deleteBtn" onclick="deleteTemplate()" class="hidden w-full p-2 text-sm text-red-400 hover:text-red-300">🗑️ Löschen</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast" class="toast">✓</div>
+
+<script>
+SmashApp.requireAuth();
+
+// ============ SEED TEMPLATES ============
+const SEED = [
+  // DM
+  { id: 5001, tab: 'dm', ctx: 'Brand-Pitch / Collab-Anfrage', text: "Hey [NAME], danke für deine Nachricht!\n\nIch schaue mir [BRAND] gerne an. Schick mir bitte:\n• Was schwebt dir konkret vor?\n• Compensation-Range\n• Timeline\n\nDann antworte ich dir innerhalb 48h ehrlich ob's matched.\n\nLG, Sebi" },
+  { id: 5002, tab: 'dm', ctx: 'Newbie-Tool-Frage', text: "Hey [NAME] — danke für die Frage!\n\nKurzer Tipp: [TIPP].\n\nFalls du mehr willst: ich bau gerade alles Public auf @peakingworld — da kommt jeden Tag neuer Insight.\n\nKeep climbing. ⛰️" },
+  { id: 5003, tab: 'dm', ctx: 'Press / Investor', text: "Hi [NAME], danke für dein Interesse.\n\nFür Press + Pitch-Deck: smashtheapp.de/links#press\nFür Direkt-Call: hello@smashuniverse.info\n\nFreue mich auf Austausch.\n\nSebi · Founder, SMASH + PEAKING" },
+  { id: 5004, tab: 'dm', ctx: 'Spam / 'investiere für dich'', text: "Danke, aber kein Interesse — ich invest mich selbst." },
+  { id: 5005, tab: 'dm', ctx: 'Compliment ehrlich beantworten', text: "Danke [NAME], freut mich richtig. 🙏\n\nWas hat dich am meisten überzeugt? Würde mir helfen die nächsten Reels zu schärfen." },
+
+  // COMMENT
+  { id: 5101, tab: 'comment', ctx: 'Generic Compliment', text: "Danke [NAME] 🙌" },
+  { id: 5102, tab: 'comment', ctx: 'Frage öffentlich beantworten + DM einladen', text: "Gute Frage — kurz: [ANTWORT].\nFür mehr: schreib mir gerne in die DMs. ⛰️" },
+  { id: 5103, tab: 'comment', ctx: 'Mention beantworten (Cross-Promo)', text: "Stark gemerkt 💪 Mehr davon auf @peakingworld — da bau ich's Public." },
+  { id: 5104, tab: 'comment', ctx: 'Provokation/Hate (kurz, ehrlich)', text: "Hörst du nicht hin oder willst du nicht hören? Beides ok. Bin trotzdem hier." },
+  { id: 5105, tab: 'comment', ctx: 'Freund / Real-Connection', text: "Bro 🙏" },
+
+  // STORY REPLY
+  { id: 5201, tab: 'story', ctx: 'Sticker-Antwort beantworten (Frage)', text: "[ANTWORT-INHALT].\nDanke fürs Mitdenken. ⛰️" },
+  { id: 5202, tab: 'story', ctx: 'Story-Compliment (Outdoor/Reel-Reaction)', text: "Real recognise real. Danke [NAME]. 🌅" },
+  { id: 5203, tab: 'story', ctx: 'Story-Frage von Friend', text: "Hey [NAME] — kurz: [ANTWORT]. Schreib gleich nochmal wenn's tiefer gehen soll." }
+];
+
+let templates = [];
+let currentTab = 'dm';
+let editingId = null;
+let usingTemplate = null;
+
+// ============ INIT ============
+function init() {
+  const customs = SmashApp.getData('replies', []);
+  templates = [...SEED, ...customs];
+  render();
+}
+
+function switchTab(tab) {
+  currentTab = tab;
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
+  render();
+}
+
+// ============ RENDER ============
+function render() {
+  const filtered = templates.filter(t => t.tab === currentTab);
+  document.getElementById('stats').textContent =
+    `${templates.length} Templates · ${templates.filter(t => t.custom).length} eigene`;
+
+  const list = document.getElementById('replyList');
+  const empty = document.getElementById('emptyState');
+  if (filtered.length === 0) {
+    list.innerHTML = '';
+    empty.classList.remove('hidden');
+    return;
+  }
+  empty.classList.add('hidden');
+
+  list.innerHTML = filtered.map(t => {
+    const highlighted = escapeHtml(t.text).replace(/\[([A-ZÄÖÜ_-]+)\]/g, '<span class="var-highlight">[$1]</span>');
+    return `
+      <div class="reply-card">
+        <div class="flex items-center justify-between mb-2 gap-2">
+          <span class="ctx-pill">${escapeHtml(t.ctx)}</span>
+          ${t.custom ? '<span class="text-xs neon">⭐</span>' : ''}
+        </div>
+        <p class="reply-text mb-3">${highlighted}</p>
+        <div class="flex gap-2">
+          <button onclick="useTemplate(${t.id})" class="btn-primary text-xs px-3 py-2 rounded-lg flex-1">▶ Verwenden</button>
+          <button onclick="quickCopy(${t.id})" class="text-xs px-3 py-2 rounded-lg bg-slate-700/40 hover:bg-slate-600/40">📋</button>
+          ${t.custom ? `<button onclick="openEdit(${t.id})" class="text-xs px-3 py-2 rounded-lg bg-slate-700/40 hover:bg-slate-600/40">✏️</button>` : ''}
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function escapeHtml(s) {
+  return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+// ============ USE TEMPLATE (with vars) ============
+function extractVars(text) {
+  const matches = text.match(/\[([A-ZÄÖÜ_-]+)\]/g) || [];
+  return [...new Set(matches.map(m => m.slice(1, -1)))];
+}
+
+function useTemplate(id) {
+  const t = templates.find(x => x.id === id);
+  if (!t) return;
+  usingTemplate = t;
+  const vars = extractVars(t.text);
+  const inputs = document.getElementById('useVars');
+  if (vars.length === 0) {
+    inputs.innerHTML = '<p class="text-xs text-gray-500 italic">Keine Variablen — direkt kopierbar.</p>';
+  } else {
+    inputs.innerHTML = '<div class="text-xs text-gray-500 font-bold uppercase tracking-wider mb-2">Variablen ausfüllen</div>' +
+      vars.map(v => `
+        <div>
+          <label class="block text-xs text-gray-400 mb-1">[${v}]</label>
+          <input type="text" data-var="${v}" placeholder="…" class="w-full p-2 rounded-lg text-sm" oninput="updatePreview()">
+        </div>
+      `).join('');
+  }
+  updatePreview();
+  document.getElementById('useModal').classList.remove('hidden');
+}
+
+function updatePreview() {
+  if (!usingTemplate) return;
+  let result = usingTemplate.text;
+  document.querySelectorAll('#useVars input[data-var]').forEach(input => {
+    const v = input.dataset.var;
+    const val = input.value || `[${v}]`;
+    result = result.replaceAll(`[${v}]`, val);
+  });
+  document.getElementById('previewBox').textContent = result;
+}
+
+async function copyPreview() {
+  const text = document.getElementById('previewBox').textContent;
+  try {
+    await navigator.clipboard.writeText(text);
+    showToast('✓ Reply kopiert');
+    closeUseModal();
+  } catch (e) { showToast('⚠️ Copy failed'); }
+}
+
+function closeUseModal() {
+  document.getElementById('useModal').classList.add('hidden');
+  usingTemplate = null;
+}
+
+async function quickCopy(id) {
+  const t = templates.find(x => x.id === id);
+  if (!t) return;
+  try {
+    await navigator.clipboard.writeText(t.text);
+    showToast('✓ Template kopiert');
+  } catch (e) { showToast('⚠️ Copy failed'); }
+}
+
+// ============ ADD/EDIT ============
+function openAddModal() {
+  editingId = null;
+  document.getElementById('editTitle').textContent = '+ Neues Template';
+  document.getElementById('editCtx').value = '';
+  document.getElementById('editText').value = '';
+  document.getElementById('editTab').value = currentTab;
+  document.getElementById('deleteBtn').classList.add('hidden');
+  document.getElementById('editModal').classList.remove('hidden');
+}
+
+function openEdit(id) {
+  const t = templates.find(x => x.id === id);
+  if (!t || !t.custom) return;
+  editingId = id;
+  document.getElementById('editTitle').textContent = '✏️ Bearbeiten';
+  document.getElementById('editCtx').value = t.ctx;
+  document.getElementById('editText').value = t.text;
+  document.getElementById('editTab').value = t.tab;
+  document.getElementById('deleteBtn').classList.remove('hidden');
+  document.getElementById('editModal').classList.remove('hidden');
+}
+
+function closeEditModal() { document.getElementById('editModal').classList.add('hidden'); editingId = null; }
+
+function saveTemplate() {
+  const text = document.getElementById('editText').value.trim();
+  if (!text) { showToast('⚠️ Text fehlt'); return; }
+  const data = {
+    text,
+    ctx: document.getElementById('editCtx').value.trim() || 'Custom',
+    tab: document.getElementById('editTab').value,
+    custom: true
+  };
+
+  const customs = SmashApp.getData('replies', []);
+  if (editingId) {
+    const idx = customs.findIndex(c => c.id === editingId);
+    if (idx >= 0) customs[idx] = { ...customs[idx], ...data };
+    showToast('💾 Aktualisiert');
+  } else {
+    customs.push({ id: Date.now(), ...data });
+    showToast('💾 Gespeichert');
+  }
+
+  SmashApp.setData('replies', customs);
+  templates = [...SEED, ...customs];
+  closeEditModal();
+  render();
+}
+
+function deleteTemplate() {
+  if (!editingId) return;
+  if (!confirm('Eigenes Template wirklich löschen?')) return;
+  let customs = SmashApp.getData('replies', []);
+  customs = customs.filter(c => c.id !== editingId);
+  SmashApp.setData('replies', customs);
+  templates = [...SEED, ...customs];
+  closeEditModal();
+  render();
+  showToast('🗑️ Gelöscht');
+}
+
+// ============ TOAST ============
+let toastTimer;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 1500);
+}
+
+document.getElementById('useModal').addEventListener('click', e => { if (e.target.id === 'useModal') closeUseModal(); });
+document.getElementById('editModal').addEventListener('click', e => { if (e.target.id === 'editModal') closeEditModal(); });
+
+init();
+</script>
+
+</body>
+</html>
