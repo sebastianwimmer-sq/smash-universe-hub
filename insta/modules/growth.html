@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+<title>🚀 Growth Center — PEAKING</title>
+<link rel="icon" href="../assets/logo.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../assets/logo.svg">
+<link rel="stylesheet" href="../assets/effects.css">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="../js/app.js"></script>
+<style>
+  body {
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    min-height: 100dvh;
+    color: white;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+  .glass {
+    background: rgba(30, 41, 59, 0.6);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+  .neon { color: #FFA94D; }
+  .btn-primary {
+    background: linear-gradient(135deg, #FFA94D, #FF6B6B);
+    color: #0f172a;
+    font-weight: bold;
+    transition: all 0.2s;
+  }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(255, 169, 77, 0.4); }
+  .checklist-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 14px;
+    border-radius: 12px;
+    background: rgba(15, 23, 42, 0.4);
+    border: 1px solid rgba(255,255,255,0.05);
+    margin-bottom: 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .checklist-item:hover { border-color: rgba(255, 169, 77, 0.3); }
+  .checklist-item.done {
+    background: rgba(255, 169, 77, 0.08);
+    border-color: rgba(255, 169, 77, 0.4);
+  }
+  .checklist-item.done .ck-title { text-decoration: line-through; opacity: 0.6; }
+  .ck-box {
+    width: 22px; height: 22px; border-radius: 6px;
+    border: 2px solid rgba(255,255,255,0.3);
+    flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: bold;
+    transition: all 0.2s;
+  }
+  .checklist-item.done .ck-box {
+    background: linear-gradient(135deg, #FFA94D, #FF6B6B);
+    border-color: #FFA94D;
+    color: #0f172a;
+  }
+  .copy-block {
+    background: rgba(15, 23, 42, 0.8);
+    border: 1px solid rgba(255, 169, 77, 0.2);
+    border-radius: 12px;
+    padding: 14px;
+    font-family: monospace;
+    font-size: 13px;
+    line-height: 1.6;
+    white-space: pre-wrap;
+    position: relative;
+    margin-top: 10px;
+  }
+  .copy-btn {
+    position: absolute;
+    top: 8px; right: 8px;
+    padding: 4px 10px;
+    background: #FFA94D;
+    color: #0f172a;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: bold;
+    cursor: pointer;
+    border: none;
+  }
+  .pillar-tag {
+    display: inline-block;
+    padding: 3px 8px;
+    border-radius: 6px;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .pillar-tools { background: rgba(255, 169, 77, 0.2); color: #FFA94D; }
+  .pillar-bip { background: rgba(255, 107, 107, 0.2); color: #FF6B6B; }
+  .pillar-marketing { background: rgba(255, 212, 59, 0.2); color: #FFD43B; }
+  .pillar-bts { background: rgba(139, 92, 246, 0.2); color: #a78bfa; }
+  .reel-card {
+    background: rgba(15, 23, 42, 0.4);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 14px;
+    padding: 14px;
+    transition: all 0.2s;
+  }
+  .reel-card:hover {
+    border-color: rgba(255, 169, 77, 0.3);
+    transform: translateY(-2px);
+  }
+  .day-row {
+    display: grid;
+    grid-template-columns: 60px 1fr;
+    gap: 12px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    background: rgba(15, 23, 42, 0.4);
+    margin-bottom: 6px;
+    align-items: center;
+  }
+  .day-row.posting { border-left: 3px solid #FFA94D; }
+  .toast {
+    position: fixed; bottom: 24px; left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    background: #FFA94D; color: #0f172a;
+    padding: 12px 24px; border-radius: 999px; font-weight: bold;
+    box-shadow: 0 8px 24px rgba(255, 169, 77, 0.4);
+    transition: transform 0.3s ease; z-index: 100;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+  .pb-preview {
+    width: 200px; height: 200px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #0f172a, #1e293b);
+    border: 4px solid #FFA94D;
+    display: flex; align-items: center; justify-content: center;
+    margin: 16px auto;
+    box-shadow: 0 0 32px rgba(255, 169, 77, 0.3);
+  }
+</style>
+</head>
+<body class="p-4 md:p-6 pb-12 bg-depth">
+
+<div class="max-w-4xl mx-auto">
+
+  <!-- Header -->
+  <div class="flex justify-between items-center mb-4">
+    <div>
+      <a href="../dashboard.html" class="text-xs text-gray-400 hover:text-white">← Dashboard</a>
+      <h1 class="text-2xl md:text-3xl font-bold mt-1 flex items-center gap-2">
+        🚀 <span class="text-sunrise">Growth Center</span>
+      </h1>
+      <p class="text-gray-400 text-sm">Bootstrap & Skalierungs-Hub für <span class="neon font-bold">@peakingworld</span></p>
+    </div>
+    <button onclick="SmashApp.logout()" class="text-sm text-gray-400 hover:text-white">🔒</button>
+  </div>
+
+  <!-- 1. PROFIL-SETUP CHECKLIST -->
+  <div class="glass rounded-3xl p-5 mb-5 float-in">
+    <h2 class="text-lg font-bold mb-1">✅ Profil-Setup-Checklist</h2>
+    <p class="text-xs text-gray-400 mb-4">Insta zeigt dir „0/4 abgeschlossen". Lass uns das fixen — pro Item Copy-Paste-ready.</p>
+
+    <div id="checklist">
+      <div class="checklist-item" onclick="toggleCheck('name')">
+        <div class="ck-box" id="ck-name">✓</div>
+        <div class="flex-1">
+          <div class="ck-title font-bold">1. Display-Name hinzufügen</div>
+          <div class="text-xs text-gray-400 mt-1">Insta erlaubt 30 Zeichen. Vorschlag:</div>
+          <div class="copy-block" id="copy-name">PEAKING — Always peaking. ⛰️<button class="copy-btn" onclick="event.stopPropagation(); copyText('PEAKING — Always peaking. ⛰️', this)">Copy</button></div>
+        </div>
+      </div>
+
+      <div class="checklist-item" onclick="toggleCheck('pb')">
+        <div class="ck-box" id="ck-pb">✓</div>
+        <div class="flex-1">
+          <div class="ck-title font-bold">2. Profilbild hinzufügen</div>
+          <div class="text-xs text-gray-400 mt-1">PEAKING-Logo auf Dark-BG. Generator unten — Screenshot vom Browser machen.</div>
+          <a href="instagram-pb.html" target="_blank" class="inline-block mt-2 text-xs neon underline">→ Profilbild-Generator öffnen</a>
+        </div>
+      </div>
+
+      <div class="checklist-item" onclick="toggleCheck('bio')">
+        <div class="ck-box" id="ck-bio">✓</div>
+        <div class="flex-1">
+          <div class="ck-title font-bold">3. Bio schreiben (max 150 Zeichen)</div>
+          <div class="text-xs text-gray-400 mt-1">Vorschlag mit AI+BIP-Vibe (Master-Overview-Inspired):</div>
+          <div class="copy-block" id="copy-bio">🤖 AI + Creator Tools
+🚀 Building Influence in Public
+📊 Real Tests · Real Stats · Real Tools
+🌅 Always peaking.
+👇 Latest Build<button class="copy-btn" onclick="event.stopPropagation(); copyText(document.querySelector('#copy-bio').firstChild.textContent, this)">Copy</button></div>
+        </div>
+      </div>
+
+      <div class="checklist-item" onclick="toggleCheck('link')">
+        <div class="ck-box" id="ck-link">✓</div>
+        <div class="flex-1">
+          <div class="ck-title font-bold">4. Website-Link setzen</div>
+          <div class="text-xs text-gray-400 mt-1">Sobald DNS propagiert — solange Backup-URL:</div>
+          <div class="copy-block" id="copy-link">peaking.world<button class="copy-btn" onclick="event.stopPropagation(); copyText('peaking.world', this)">Copy</button></div>
+          <div class="text-xs text-gray-500 mt-2">Alternative bis DNS live: <span class="neon">smashuniverse.info</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. CONTENT-PILLARS für peakingworld -->
+  <div class="glass rounded-3xl p-5 mb-5 float-in">
+    <h2 class="text-lg font-bold mb-1">🏛️ Deine 4 Content-Säulen für @peakingworld</h2>
+    <p class="text-xs text-gray-400 mb-4">Anders als @vegetarianhulk (Outdoor/Gym/Mindset/Plant) — hier geht's um AI + Creator-Tools + Building.</p>
+
+    <div class="space-y-2">
+      <div class="day-row" style="grid-template-columns: 80px 1fr 60px;">
+        <span class="pillar-tag pillar-tools">🛠️ Tools</span>
+        <span class="text-sm">Tool-Reviews, Tutorials, AI-Hacks</span>
+        <span class="text-sm font-bold neon">35%</span>
+      </div>
+      <div class="day-row" style="grid-template-columns: 80px 1fr 60px;">
+        <span class="pillar-tag pillar-bip">📊 BIP</span>
+        <span class="text-sm">Building-in-Public · Sebi's Founder-Journey</span>
+        <span class="text-sm font-bold neon">30%</span>
+      </div>
+      <div class="day-row" style="grid-template-columns: 80px 1fr 60px;">
+        <span class="pillar-tag pillar-marketing">🧠 Mktg</span>
+        <span class="text-sm">Marketing-Insights, Strategy, Growth-Hacks</span>
+        <span class="text-sm font-bold neon">25%</span>
+      </div>
+      <div class="day-row" style="grid-template-columns: 80px 1fr 60px;">
+        <span class="pillar-tag pillar-bts">🚀 BTS</span>
+        <span class="text-sm">Behind-the-Scenes, Workspace, Setup</span>
+        <span class="text-sm font-bold neon">10%</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. FIRST-REEL BRIEFING -->
+  <div class="glass gradient-flow rounded-3xl p-5 mb-5 float-in">
+    <h2 class="text-lg font-bold mb-1">🎬 Erstes Reel — der Bootstrap-Move</h2>
+    <p class="text-xs text-gray-400 mb-4">Strategy-Claude empfiehlt: „Plot Twist: 2. Insta Account..." — perfekt für BIP-Audience.</p>
+
+    <div class="space-y-3">
+      <div>
+        <div class="text-xs font-bold uppercase tracking-wider neon mb-2">Hook (Sek 0-3)</div>
+        <div class="copy-block">Plot Twist: Mein 2. Insta-Account.
+
+Ich poste hier, weil ich was anderes baue —
+und ihr sollt mir beim Skalieren zuschauen.<button class="copy-btn" onclick="copyText(this.previousSibling.textContent, this)">Copy</button></div>
+      </div>
+
+      <div>
+        <div class="text-xs font-bold uppercase tracking-wider neon mb-2">Caption-Vorschlag</div>
+        <div class="copy-block">Build #1 von vielen.
+
+Ich starte heute @peakingworld — meinen Solo-Influencer-Tracking-Stack.
+Kein Buffer-Abo. Keine Agentur. Nur ich + Claude + dieses Tool.
+
+Ziel: From 2k → 1M. Public. Honest.
+Falls du auch Solo-Creator bist:
+follow für die ganze Reise. ⛰️
+
+Built today: peaking.world (mein eigenes Tool).
+Latest stat: 0 Follower. Genau der Anfang.
+
+#buildinpublic #soloinfluencer #creatortools #ai #indie<button class="copy-btn" onclick="copyText(this.previousSibling.textContent, this)">Copy</button></div>
+      </div>
+
+      <div>
+        <div class="text-xs font-bold uppercase tracking-wider neon mb-2">Visual</div>
+        <div class="text-sm text-gray-300">Screen-Recording deines PEAKING-Tools (Login → Dashboard → Idea-Bank → Calendar) mit Voice-Over: „Das hier hab ich gebaut. Solo. In 1 Tag."</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. 10 REEL-IDEAS BANK -->
+  <div class="glass rounded-3xl p-5 mb-5 float-in">
+    <h2 class="text-lg font-bold mb-1">💡 10 Reel-Ideen für @peakingworld</h2>
+    <p class="text-xs text-gray-400 mb-4">Sortiert nach Säulen. Klick → Caption + Hook copy-bar.</p>
+
+    <div class="space-y-3 stagger" id="reelIdeasList"></div>
+  </div>
+
+  <!-- 5. POSTING-PLAN (4 Wochen) -->
+  <div class="glass rounded-3xl p-5 mb-5 float-in">
+    <h2 class="text-lg font-bold mb-1">📅 4-Wochen-Posting-Plan (3 Reels/Woche)</h2>
+    <p class="text-xs text-gray-400 mb-4">Konsistenz schlägt Volumen. Post Di/Do/Sa um 19:00 (matcht @vegetarianhulk Mo/Mi/Fr/So Plan = nichts überlappt).</p>
+
+    <div id="postingPlan"></div>
+  </div>
+
+  <!-- 6. CROSS-PROMO mit @vegetarianhulk -->
+  <div class="glass rounded-3xl p-5 mb-5 float-in">
+    <h2 class="text-lg font-bold mb-1">🔁 Cross-Promo mit @vegetarianhulk</h2>
+    <p class="text-xs text-gray-400 mb-4">Subtle. Nicht spammig. 1× pro Woche pro Account.</p>
+
+    <div class="space-y-3">
+      <div class="reel-card">
+        <div class="text-xs font-bold uppercase tracking-wider mb-2 neon">Bei @vegetarianhulk → @peakingworld</div>
+        <p class="text-sm">Story-Sticker: <i>„Btw — ich bau parallel ein Solo-Creator-Tool. Sneak Peek →"</i> Link auf @peakingworld-Profil. **1× pro Woche reicht.**</p>
+      </div>
+      <div class="reel-card">
+        <div class="text-xs font-bold uppercase tracking-wider mb-2 neon">Bei @peakingworld → @vegetarianhulk</div>
+        <p class="text-sm">Bio-Subtle: „💻 Powered by Claude + smashtheapp.de" — keine direkte vegetarianhulk-Verlinkung im Bio (zwei Brands sauber getrennt). Im BTS-Content: mal den Mountain-Account zeigen als „Real Life off Tools".</p>
+      </div>
+      <div class="reel-card" style="border-left: 3px solid #FFA94D;">
+        <div class="text-xs font-bold uppercase tracking-wider mb-2 neon">⚠️ Strategy-Claude-Korrektur</div>
+        <p class="text-sm">Strategy-Claude denkt noch <code>@peakinginfluence</code> aus alten Notes. <b>Bei nächstem SMASH-Chat update him:</b> „Account ist @peakingworld, Domain peaking.world."</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="text-center text-gray-500 text-xs mt-8">
+    🚀 PEAKING · Always peaking. · Growth Center für @peakingworld
+  </div>
+</div>
+
+<div id="toast" class="toast">✓ OK</div>
+
+<script>
+SmashApp.requireAuth();
+
+// ============ CHECKLIST PERSISTENCE ============
+const CHECKLIST_KEY = 'growthChecklist';
+let checklist = SmashApp.getData(CHECKLIST_KEY, {});
+
+function toggleCheck(item) {
+  checklist[item] = !checklist[item];
+  SmashApp.setData(CHECKLIST_KEY, checklist);
+  renderChecklist();
+}
+
+function renderChecklist() {
+  ['name', 'pb', 'bio', 'link'].forEach(item => {
+    const box = document.getElementById('ck-' + item);
+    const card = box.closest('.checklist-item');
+    if (checklist[item]) {
+      card.classList.add('done');
+    } else {
+      card.classList.remove('done');
+    }
+  });
+}
+renderChecklist();
+
+// ============ COPY ============
+async function copyText(text, btn) {
+  try {
+    await navigator.clipboard.writeText(text.trim());
+    if (btn) {
+      const original = btn.textContent;
+      btn.textContent = '✓';
+      setTimeout(() => btn.textContent = original, 1200);
+    }
+    showToast('✓ Kopiert');
+  } catch (e) {
+    showToast('⚠️ Copy failed');
+  }
+}
+
+// ============ REEL IDEAS ============
+const REEL_IDEAS = [
+  { pillar: 'tools', tag: 'Tools', hook: '3 AI-Tools die ich täglich nutze (alle unter $20/Mo)' },
+  { pillar: 'tools', tag: 'Tools', hook: 'Claude vs ChatGPT: Welcher schreibt bessere Hooks? (Live-Test)' },
+  { pillar: 'tools', tag: 'Tools', hook: 'POV: Du baust dein eigenes Tool statt Buffer zu zahlen' },
+  { pillar: 'bip', tag: 'BIP', hook: 'Tag 1: 0 Follower. Tag 30: ?. Public Build-in-Public Challenge.' },
+  { pillar: 'bip', tag: 'BIP', hook: 'Was ich in 1 Tag gebaut hab: Solo, mit Claude. (Tool-Demo)' },
+  { pillar: 'bip', tag: 'BIP', hook: 'Real Stats: Mein 1. Reel hatte 465 Views. So analysiere ich's.' },
+  { pillar: 'marketing', tag: 'Mktg', hook: '4-Säulen-Strategie für Solo-Creators in 60 Sek' },
+  { pillar: 'marketing', tag: 'Mktg', hook: 'Hook-Formel die meine Watch-Time von 4s auf 12s gepushed hat' },
+  { pillar: 'marketing', tag: 'Mktg', hook: 'Warum Engagement-Rate wichtiger ist als Follower (mit Beweis)' },
+  { pillar: 'bts', tag: 'BTS', hook: 'Mein Workspace + Stack mit dem ich PEAKING gebaut hab' }
+];
+
+function renderReelIdeas() {
+  const list = document.getElementById('reelIdeasList');
+  list.innerHTML = REEL_IDEAS.map(r => `
+    <div class="reel-card">
+      <div class="flex items-center justify-between mb-2">
+        <span class="pillar-tag pillar-${r.pillar}">${r.tag}</span>
+        <button onclick="copyText('${r.hook.replace(/'/g, "\\'")}', this)" class="text-xs text-gray-400 hover:text-white">📋 Copy</button>
+      </div>
+      <p class="text-sm font-medium leading-snug">${r.hook}</p>
+    </div>
+  `).join('');
+}
+renderReelIdeas();
+
+// ============ POSTING PLAN (4 weeks) ============
+const POSTING_DAYS = ['Di', 'Do', 'Sa']; // 3x/week, kein Overlap mit vegetarianhulk Mo/Mi/Fr/So
+const POSTING_ROTATION = [
+  ['Tools', 'BIP', 'Mktg'],
+  ['BIP', 'Tools', 'BTS'],
+  ['Mktg', 'BIP', 'Tools'],
+  ['BIP', 'Mktg', 'Tools']
+];
+const DAY_FULL = { Mo: 'Montag', Di: 'Dienstag', Mi: 'Mittwoch', Do: 'Donnerstag', Fr: 'Freitag', Sa: 'Samstag', So: 'Sonntag' };
+
+function renderPostingPlan() {
+  const container = document.getElementById('postingPlan');
+  let html = '';
+  POSTING_ROTATION.forEach((week, idx) => {
+    html += `<div class="text-xs font-bold uppercase tracking-wider neon mt-3 mb-1">Woche ${idx + 1}</div>`;
+    POSTING_DAYS.forEach((day, di) => {
+      const pillar = week[di];
+      const colorClass = pillar === 'Tools' ? 'pillar-tools' :
+                        pillar === 'BIP' ? 'pillar-bip' :
+                        pillar === 'Mktg' ? 'pillar-marketing' : 'pillar-bts';
+      html += `
+        <div class="day-row posting" style="grid-template-columns: 60px 1fr 80px 70px;">
+          <span class="text-sm font-bold">${day}</span>
+          <span class="text-sm">${DAY_FULL[day]}</span>
+          <span class="pillar-tag ${colorClass}">${pillar}</span>
+          <span class="text-xs text-gray-400">19:00</span>
+        </div>
+      `;
+    });
+  });
+  html += `<div class="text-xs text-gray-500 mt-4 italic">@vegetarianhulk postet Mo/Mi/Fr/So → kein Tag-Overlap. Du bist täglich aktiv ohne Burnout.</div>`;
+  container.innerHTML = html;
+}
+renderPostingPlan();
+
+// ============ TOAST ============
+let toastTimer;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 1500);
+}
+</script>
+
+</body>
+</html>
