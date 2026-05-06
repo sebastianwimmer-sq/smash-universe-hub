@@ -21,14 +21,14 @@
     backdrop-filter: blur(10px);
     border: 1px solid rgba(255,255,255,0.1);
   }
-  .neon { color: #39FF14; }
+  .neon { color: #FFA94D; }
   .btn-primary {
-    background: linear-gradient(135deg, #39FF14, #2ecc71);
+    background: linear-gradient(135deg, #FFA94D, #FF6B6B);
     color: #0f172a;
     font-weight: bold;
     transition: all 0.2s;
   }
-  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(57, 255, 20, 0.3); }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(255, 169, 77, 0.3); }
   .pillar-pill {
     display: inline-block;
     padding: 3px 10px;
@@ -58,9 +58,9 @@
   .toast {
     position: fixed; bottom: 24px; left: 50%;
     transform: translateX(-50%) translateY(100px);
-    background: #39FF14; color: #0f172a;
+    background: #FFA94D; color: #0f172a;
     padding: 12px 24px; border-radius: 999px; font-weight: bold;
-    box-shadow: 0 8px 24px rgba(57, 255, 20, 0.4);
+    box-shadow: 0 8px 24px rgba(255, 169, 77, 0.4);
     transition: transform 0.3s ease; z-index: 100;
   }
   .toast.show { transform: translateX(-50%) translateY(0); }
@@ -95,7 +95,7 @@
   <div id="content" class="hidden">
 
     <!-- Hero ER -->
-    <div class="glass rounded-3xl p-6 mb-5 text-center" style="border: 1px solid rgba(57,255,20,0.2);">
+    <div class="glass rounded-3xl p-6 mb-5 text-center" style="border: 1px solid rgba(255,169,77,0.2);">
       <div class="text-xs text-gray-400 uppercase tracking-wider mb-1">Ø Engagement-Rate</div>
       <div class="text-5xl md:text-6xl font-bold neon" id="heroER">0%</div>
       <div class="text-sm mt-2" id="heroTrend">—</div>
@@ -141,11 +141,11 @@
       <div class="flex items-center gap-2 mt-3 text-xs text-gray-500">
         <span>weniger</span>
         <div class="flex gap-0.5">
-          <div class="w-4 h-4 rounded" style="background: rgba(57,255,20,0.1)"></div>
-          <div class="w-4 h-4 rounded" style="background: rgba(57,255,20,0.3)"></div>
-          <div class="w-4 h-4 rounded" style="background: rgba(57,255,20,0.55)"></div>
-          <div class="w-4 h-4 rounded" style="background: rgba(57,255,20,0.8)"></div>
-          <div class="w-4 h-4 rounded" style="background: rgba(57,255,20,1)"></div>
+          <div class="w-4 h-4 rounded" style="background: rgba(255,169,77,0.1)"></div>
+          <div class="w-4 h-4 rounded" style="background: rgba(255,169,77,0.3)"></div>
+          <div class="w-4 h-4 rounded" style="background: rgba(255,169,77,0.55)"></div>
+          <div class="w-4 h-4 rounded" style="background: rgba(255,169,77,0.8)"></div>
+          <div class="w-4 h-4 rounded" style="background: rgba(255,169,77,1)"></div>
         </div>
         <span>mehr</span>
       </div>
@@ -401,7 +401,7 @@ function renderHeatmap(reels) {
       } else {
         const a = avg(cell);
         const intensity = Math.min(1, a / maxER);
-        const bg = `rgba(57,255,20,${0.1 + intensity * 0.9})`;
+        const bg = `rgba(255,169,77,${0.1 + intensity * 0.9})`;
         html += `<div class="heatmap-cell" style="background: ${bg};" title="${DAY_LABELS[d]} ${h}h: ${a.toFixed(2)}% ER · ${cell.length} Reels">${cell.length > 1 ? cell.length : ''}</div>`;
       }
     }
@@ -479,7 +479,7 @@ function renderHourChart(hourER, reels) {
       datasets: [{
         label: 'Posts',
         data: counts,
-        backgroundColor: 'rgba(57,255,20,0.7)',
+        backgroundColor: 'rgba(255,169,77,0.7)',
         borderRadius: 4
       }]
     },

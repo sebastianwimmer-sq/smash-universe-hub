@@ -32,13 +32,15 @@
   }
   input:focus, select:focus, textarea:focus {
     outline: none;
-    border-color: #10b981;
+    border-color: #FFA94D;
   }
   .btn-primary {
-    background: linear-gradient(135deg, #10b981, #059669);
+    background: linear-gradient(135deg, #FFD43B, #FFA94D, #FF6B6B);
+    color: #0f172a;
+    font-weight: bold;
     transition: all 0.2s;
   }
-  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3); }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(255, 169, 77, 0.4); }
   .btn-danger {
     background: linear-gradient(135deg, #ef4444, #dc2626);
   }
@@ -59,12 +61,12 @@
     <p class="text-gray-400">⛰️ PEAKING · <span class="neon font-bold">Always peaking.</span></p>
   </div>
 
-  <!-- Smash-Style Screenshot Analyzer -->
-  <div class="rounded-3xl p-6 mb-8" style="background: linear-gradient(135deg, rgba(236, 72, 153, 0.15), rgba(139, 92, 246, 0.15)); border: 1px solid rgba(236, 72, 153, 0.3);">
+  <!-- PEAKING Auto-Analyzer -->
+  <div class="rounded-3xl p-6 mb-8" style="background: linear-gradient(135deg, rgba(255, 107, 107, 0.12), rgba(255, 212, 59, 0.12)); border: 1px solid rgba(255, 169, 77, 0.3);">
     <div class="flex items-center gap-3 mb-4">
       <div class="text-3xl">📸</div>
       <div>
-        <h2 class="text-2xl font-bold">Smash-Style Auto-Analyzer</h2>
+        <h2 class="text-2xl font-bold">PEAKING Auto-Analyzer</h2>
         <p class="text-gray-400 text-sm">Screenshot → KI-Analyse → Tracker-Daten in 60 Sek</p>
       </div>
     </div>
@@ -74,7 +76,7 @@
       <ol class="space-y-2 text-sm text-gray-300">
         <li><b>1.</b> Mach Screenshots vom Insta Pro-Dashboard (alle 3 Tabs: Übersicht, Aufrufe, Interaktionen)</li>
         <li><b>2.</b> Schick die Screenshots an Claude im Chat mit dem Befehl:<br>
-          <code class="block mt-1 p-2 bg-slate-800 rounded-lg text-emerald-400">"Analysiere mein neues Reel wie ein viraler Influencer-Manager"</code>
+          <code class="block mt-1 p-2 bg-slate-800 rounded-lg text-orange-400">"Analysiere mein neues Reel wie ein viraler Influencer-Manager"</code>
         </li>
         <li><b>3.</b> Claude gibt dir zurück:
           <ul class="mt-1 ml-4 space-y-1">
@@ -92,21 +94,21 @@
       <h3 class="font-bold mb-3 flex items-center gap-2">📋 Welche Screenshots brauche ich?</h3>
       <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-sm">
         <div class="bg-slate-800/50 rounded-xl p-3">
-          <div class="font-bold text-emerald-400 mb-1">📸 Screenshot 1</div>
+          <div class="font-bold text-orange-400 mb-1">📸 Screenshot 1</div>
           <div class="text-gray-300">Übersicht mit Aufrufe, Erreichte Konten, Watch-Time, Likes/Comments/Saves/Shares</div>
         </div>
         <div class="bg-slate-800/50 rounded-xl p-3">
-          <div class="font-bold text-emerald-400 mb-1">📸 Screenshot 2</div>
+          <div class="font-bold text-orange-400 mb-1">📸 Screenshot 2</div>
           <div class="text-gray-300">Aufrufe-Verlauf + "Übersprungen"-Rate, "Geteilt"-Rate, "Gefällt mir"-Rate</div>
         </div>
         <div class="bg-slate-800/50 rounded-xl p-3">
-          <div class="font-bold text-emerald-400 mb-1">📸 Screenshot 3</div>
+          <div class="font-bold text-orange-400 mb-1">📸 Screenshot 3</div>
           <div class="text-gray-300">Watch-Time-Kurve + Saves/Repost/Comment-Rate</div>
         </div>
       </div>
     </div>
 
-    <div class="mt-4 p-4 bg-emerald-900/20 border border-emerald-500/30 rounded-2xl text-sm">
+    <div class="mt-4 p-4 bg-orange-900/20 border border-orange-500/30 rounded-2xl text-sm">
       💡 <b>Pro-Tipp:</b> Mach die Screenshots 24-48h nach dem Posten — dann sind die Daten "stabil" und vergleichbar zu deinen vorherigen Reels.
     </div>
   </div>
@@ -262,7 +264,7 @@
   <!-- Footer -->
   <div class="text-center mt-8 text-gray-500 text-sm">
     <p>💡 Tipp: Trag jedes Reel 24h nach Posting ein für saubere Daten</p>
-    <button onclick="exportData()" class="mt-2 text-emerald-400 hover:underline">📥 Daten exportieren (JSON)</button>
+    <button onclick="exportData()" class="mt-2 text-orange-400 hover:underline">📥 Daten exportieren (JSON)</button>
     <span class="mx-2">·</span>
     <button onclick="clearAll()" class="text-red-400 hover:underline">🗑️ Alle Daten löschen</button>
   </div>
