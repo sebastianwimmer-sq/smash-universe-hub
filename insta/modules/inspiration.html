@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+<title>👀 Inspiration — PEAKING</title>
+<link rel="icon" href="../assets/logo.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../assets/logo.svg">
+<link rel="manifest" href="../manifest.json">
+<meta name="theme-color" content="#FFA94D">
+<link rel="stylesheet" href="../assets/effects.css">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="../js/app.js"></script>
+<style>
+  body {
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    min-height: 100dvh;
+    color: white;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+  .glass {
+    background: rgba(30, 41, 59, 0.6);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+  .neon { color: #FFA94D; }
+  .btn-primary {
+    background: linear-gradient(135deg, #FFA94D, #FF6B6B);
+    color: #0f172a;
+    font-weight: bold;
+    transition: all 0.2s;
+  }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(255, 169, 77, 0.4); }
+  input, select, textarea {
+    background: rgba(15, 23, 42, 0.6);
+    border: 1px solid rgba(255,255,255,0.15);
+    color: white;
+  }
+  input:focus, select:focus, textarea:focus {
+    outline: none;
+    border-color: #FFA94D;
+  }
+  .insp-card {
+    background: rgba(15, 23, 42, 0.4);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 14px;
+    padding: 14px;
+    transition: all 0.2s;
+  }
+  .insp-card:hover { border-color: rgba(255, 169, 77, 0.3); transform: translateY(-2px); }
+  .type-pill {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .type-reel { background: rgba(255, 107, 107, 0.2); color: #FF6B6B; }
+  .type-audio { background: rgba(168, 85, 247, 0.2); color: #c084fc; }
+  .type-account { background: rgba(255, 169, 77, 0.2); color: #FFA94D; }
+  .type-thread { background: rgba(59, 130, 246, 0.2); color: #93c5fd; }
+  .type-other { background: rgba(100, 116, 139, 0.2); color: #94a3b8; }
+  .toast {
+    position: fixed; bottom: 24px; left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    background: #FFA94D; color: #0f172a;
+    padding: 12px 24px; border-radius: 999px; font-weight: bold;
+    box-shadow: 0 8px 24px rgba(255, 169, 77, 0.4);
+    transition: transform 0.3s ease; z-index: 100;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+  .modal-bg { background: rgba(0,0,0,0.7); backdrop-filter: blur(4px); }
+  .fab {
+    position: fixed; bottom: 20px; right: 20px;
+    width: 56px; height: 56px; border-radius: 999px;
+    background: linear-gradient(135deg, #FFA94D, #FF6B6B);
+    color: #0f172a; font-size: 28px; font-weight: bold;
+    box-shadow: 0 8px 24px rgba(255, 169, 77, 0.4);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; z-index: 50; border: none; transition: transform 0.2s;
+  }
+  .fab:hover { transform: scale(1.1); }
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 12px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 600;
+    border: 1px solid rgba(255,255,255,0.15);
+    background: rgba(15, 23, 42, 0.6);
+    color: #cbd5e1;
+    cursor: pointer;
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+  .chip:hover { border-color: rgba(255, 169, 77, 0.5); }
+  .chip.active {
+    background: linear-gradient(135deg, #FFA94D, #FF6B6B);
+    color: #0f172a;
+    border-color: #FFA94D;
+  }
+</style>
+</head>
+<body class="p-4 md:p-6 pb-24 bg-depth">
+
+<div class="max-w-5xl mx-auto">
+
+  <!-- Header -->
+  <div class="flex justify-between items-center mb-4">
+    <div>
+      <a href="../dashboard.html" class="text-xs text-gray-400 hover:text-white">← Dashboard</a>
+      <h1 class="text-2xl md:text-3xl font-bold mt-1">👀 <span class="text-sunrise">Inspiration</span></h1>
+      <p class="text-gray-400 text-sm" id="inspStats">0 gespeichert</p>
+    </div>
+    <button onclick="SmashApp.logout()" class="text-sm text-gray-400 hover:text-white">🔒</button>
+  </div>
+
+  <!-- Quick-Add -->
+  <div class="glass rounded-2xl p-4 mb-5 float-in">
+    <div class="text-xs text-gray-500 uppercase tracking-wider font-bold mb-2">⚡ Quick-Add</div>
+    <div class="flex gap-2">
+      <input type="text" id="quickUrl" placeholder="Insta-URL paste hier (Reel/Audio/Account/Thread)…" class="flex-1 p-3 rounded-xl text-sm" onkeypress="if(event.key==='Enter') quickAdd()">
+      <button onclick="quickAdd()" class="btn-primary px-4 rounded-xl">+ Save</button>
+    </div>
+    <p class="text-xs text-gray-500 mt-2">Type wird automatisch erkannt. Notes + Tags kannst du nach Tap auf Card editieren.</p>
+  </div>
+
+  <!-- Filter -->
+  <div class="mb-2 text-xs text-gray-500 font-bold uppercase tracking-wider">Type</div>
+  <div class="flex gap-2 mb-3 overflow-x-auto pb-1" id="typeFilter">
+    <button class="chip active" data-type="all">Alle</button>
+    <button class="chip" data-type="reel">🎬 Reels</button>
+    <button class="chip" data-type="audio">🎵 Audio</button>
+    <button class="chip" data-type="account">👤 Accounts</button>
+    <button class="chip" data-type="thread">🧵 Threads</button>
+    <button class="chip" data-type="other">📌 Other</button>
+  </div>
+
+  <!-- Status Filter -->
+  <div class="mb-2 text-xs text-gray-500 font-bold uppercase tracking-wider">Status</div>
+  <div class="flex gap-2 mb-5 overflow-x-auto pb-1" id="statusFilter">
+    <button class="chip active" data-status="all">Alle</button>
+    <button class="chip" data-status="todo">📥 Inbox</button>
+    <button class="chip" data-status="adopted">✅ Adopted</button>
+    <button class="chip" data-status="archived">🗄️ Archived</button>
+  </div>
+
+  <!-- List -->
+  <div id="inspList" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
+
+  <div id="inspEmpty" class="hidden glass rounded-3xl p-12 text-center">
+    <div class="text-5xl mb-3">👀</div>
+    <h2 class="text-xl font-bold mb-2">Noch keine Inspiration</h2>
+    <p class="text-gray-400 text-sm">Paste oben einen Insta-URL oder tap rechts unten +</p>
+  </div>
+
+  <div class="text-center text-gray-500 text-xs mt-8">
+    👀 PEAKING · Inspiration-Bookmarks · Was du dir abschauen willst
+  </div>
+</div>
+
+<!-- FAB -->
+<button class="fab" onclick="openAddModal()" title="Neue Inspiration">+</button>
+
+<!-- Edit/Add Modal -->
+<div id="modal" class="hidden fixed inset-0 modal-bg z-50 flex items-center justify-center p-4">
+  <div class="glass rounded-3xl p-6 w-full max-w-md max-h-[90vh] overflow-y-auto">
+    <div class="flex justify-between items-center mb-4">
+      <h2 class="text-xl font-bold" id="modalTitle">+ Neue Inspiration</h2>
+      <button onclick="closeModal()" class="text-gray-400 hover:text-white text-2xl">×</button>
+    </div>
+    <div class="space-y-3">
+      <div>
+        <label class="block text-xs text-gray-400 mb-1">URL *</label>
+        <input type="text" id="iUrl" class="w-full p-3 rounded-xl text-sm" placeholder="https://instagram.com/...">
+      </div>
+      <div class="grid grid-cols-2 gap-3">
+        <div>
+          <label class="block text-xs text-gray-400 mb-1">Type</label>
+          <select id="iType" class="w-full p-3 rounded-xl text-sm">
+            <option value="reel">🎬 Reel</option>
+            <option value="audio">🎵 Audio</option>
+            <option value="account">👤 Account</option>
+            <option value="thread">🧵 Thread</option>
+            <option value="other">📌 Other</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-xs text-gray-400 mb-1">Status</label>
+          <select id="iStatus" class="w-full p-3 rounded-xl text-sm">
+            <option value="todo">📥 Inbox</option>
+            <option value="adopted">✅ Adopted</option>
+            <option value="archived">🗄️ Archived</option>
+          </select>
+        </div>
+      </div>
+      <div>
+        <label class="block text-xs text-gray-400 mb-1">Was inspiriert dich? (Hook · Format · Audio · Cut)</label>
+        <textarea id="iNotes" rows="3" class="w-full p-3 rounded-xl text-sm" placeholder="z.B. Hook in Sek 0-2 brutal stark · Cut bei 4s · Audio: …"></textarea>
+      </div>
+      <div>
+        <label class="block text-xs text-gray-400 mb-1">Tags (comma-separated)</label>
+        <input type="text" id="iTags" class="w-full p-3 rounded-xl text-sm" placeholder="z.B. hook,gym,viral">
+      </div>
+      <button onclick="saveInsp()" class="btn-primary w-full p-3 rounded-xl">💾 Speichern</button>
+      <button id="deleteBtn" onclick="deleteInsp()" class="hidden w-full p-2 text-sm text-red-400 hover:text-red-300">🗑️ Löschen</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast" class="toast">✓</div>
+
+<script>
+SmashApp.requireAuth();
+
+let inspirations = [];
+let editingId = null;
+const filters = { type: 'all', status: 'all' };
+
+// ============ INIT ============
+function init() {
+  inspirations = SmashApp.getData('inspirations', []);
+  bindFilters();
+  render();
+}
+
+function bindFilters() {
+  document.querySelectorAll('#typeFilter .chip').forEach(c => {
+    c.onclick = () => {
+      filters.type = c.dataset.type;
+      document.querySelectorAll('#typeFilter .chip').forEach(b => b.classList.remove('active'));
+      c.classList.add('active');
+      render();
+    };
+  });
+  document.querySelectorAll('#statusFilter .chip').forEach(c => {
+    c.onclick = () => {
+      filters.status = c.dataset.status;
+      document.querySelectorAll('#statusFilter .chip').forEach(b => b.classList.remove('active'));
+      c.classList.add('active');
+      render();
+    };
+  });
+}
+
+// ============ TYPE-DETECTION ============
+function detectType(url) {
+  if (!url) return 'other';
+  const u = url.toLowerCase();
+  if (u.includes('/reel/') || u.includes('/reels/')) return 'reel';
+  if (u.includes('/audio/') || u.includes('reels_audio')) return 'audio';
+  if (u.includes('/p/')) return 'reel'; // posts often reels
+  if (u.includes('threads.net') || u.includes('threads.com')) return 'thread';
+  // Plain account URL like instagram.com/handle/
+  if (u.match(/instagram\.com\/[a-z0-9._]+\/?$/)) return 'account';
+  return 'other';
+}
+
+// ============ QUICK ADD ============
+function quickAdd() {
+  const url = document.getElementById('quickUrl').value.trim();
+  if (!url) { showToast('⚠️ URL fehlt'); return; }
+  const item = {
+    id: Date.now(),
+    url,
+    type: detectType(url),
+    status: 'todo',
+    notes: '',
+    tags: '',
+    createdAt: Date.now()
+  };
+  inspirations.unshift(item);
+  SmashApp.setData('inspirations', inspirations);
+  document.getElementById('quickUrl').value = '';
+  render();
+  showToast('💾 Gespeichert · Tap zum editieren');
+}
+
+// ============ RENDER ============
+function render() {
+  const filtered = inspirations.filter(i => {
+    if (filters.type !== 'all' && i.type !== filters.type) return false;
+    if (filters.status !== 'all' && i.status !== filters.status) return false;
+    return true;
+  });
+
+  document.getElementById('inspStats').textContent =
+    `${inspirations.length} gespeichert · 📥 ${inspirations.filter(i => i.status === 'todo').length} Inbox · ✅ ${inspirations.filter(i => i.status === 'adopted').length} adopted`;
+
+  const list = document.getElementById('inspList');
+  const empty = document.getElementById('inspEmpty');
+
+  if (filtered.length === 0) {
+    list.innerHTML = '';
+    empty.classList.remove('hidden');
+    return;
+  }
+  empty.classList.add('hidden');
+
+  list.innerHTML = filtered.map(i => renderCard(i)).join('');
+}
+
+function renderCard(i) {
+  const typeLabels = { reel: '🎬 Reel', audio: '🎵 Audio', account: '👤 Account', thread: '🧵 Thread', other: '📌 Other' };
+  const statusLabels = { todo: '📥 Inbox', adopted: '✅ Adopted', archived: '🗄️ Archived' };
+  const date = new Date(i.createdAt).toLocaleDateString('de-DE', { day: '2-digit', month: 'short' });
+  const handle = (() => {
+    try {
+      const m = i.url.match(/instagram\.com\/([^/?#]+)/);
+      return m ? '@' + m[1] : '';
+    } catch { return ''; }
+  })();
+
+  return `
+    <div class="insp-card" onclick="openEdit(${i.id})">
+      <div class="flex items-center justify-between mb-2 gap-2 flex-wrap">
+        <span class="type-pill type-${i.type}">${typeLabels[i.type] || i.type}</span>
+        <span class="text-[10px] text-gray-500">${date} · ${statusLabels[i.status]}</span>
+      </div>
+      ${handle ? `<div class="text-xs neon font-bold mb-1">${handle}</div>` : ''}
+      <a href="${escapeHtml(i.url)}" target="_blank" rel="noopener" onclick="event.stopPropagation()" class="text-xs text-gray-400 hover:text-white break-all line-clamp-1 block mb-2">${escapeHtml(i.url)}</a>
+      ${i.notes ? `<p class="text-sm text-gray-200 leading-snug mb-2 whitespace-pre-line">${escapeHtml(i.notes)}</p>` : ''}
+      ${i.tags ? `<div class="text-[11px] text-gray-500">${escapeHtml(i.tags).split(',').map(t => '#' + t.trim()).join(' ')}</div>` : ''}
+    </div>
+  `;
+}
+
+function escapeHtml(s) {
+  return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+// ============ ADD/EDIT MODAL ============
+function openAddModal() {
+  editingId = null;
+  document.getElementById('modalTitle').textContent = '+ Neue Inspiration';
+  document.getElementById('iUrl').value = '';
+  document.getElementById('iType').value = 'reel';
+  document.getElementById('iStatus').value = 'todo';
+  document.getElementById('iNotes').value = '';
+  document.getElementById('iTags').value = '';
+  document.getElementById('deleteBtn').classList.add('hidden');
+  document.getElementById('modal').classList.remove('hidden');
+}
+
+function openEdit(id) {
+  const i = inspirations.find(x => x.id === id);
+  if (!i) return;
+  editingId = id;
+  document.getElementById('modalTitle').textContent = '✏️ Bearbeiten';
+  document.getElementById('iUrl').value = i.url;
+  document.getElementById('iType').value = i.type;
+  document.getElementById('iStatus').value = i.status;
+  document.getElementById('iNotes').value = i.notes || '';
+  document.getElementById('iTags').value = i.tags || '';
+  document.getElementById('deleteBtn').classList.remove('hidden');
+  document.getElementById('modal').classList.remove('hidden');
+}
+
+function closeModal() {
+  document.getElementById('modal').classList.add('hidden');
+  editingId = null;
+}
+
+function saveInsp() {
+  const url = document.getElementById('iUrl').value.trim();
+  if (!url) { showToast('⚠️ URL fehlt'); return; }
+  const data = {
+    url,
+    type: document.getElementById('iType').value,
+    status: document.getElementById('iStatus').value,
+    notes: document.getElementById('iNotes').value.trim(),
+    tags: document.getElementById('iTags').value.trim()
+  };
+
+  if (editingId) {
+    const i = inspirations.find(x => x.id === editingId);
+    Object.assign(i, data);
+    showToast('💾 Aktualisiert');
+  } else {
+    inspirations.unshift({ id: Date.now(), createdAt: Date.now(), ...data });
+    showToast('💾 Gespeichert');
+  }
+
+  SmashApp.setData('inspirations', inspirations);
+  closeModal();
+  render();
+}
+
+function deleteInsp() {
+  if (!editingId) return;
+  if (!confirm('Wirklich löschen?')) return;
+  inspirations = inspirations.filter(i => i.id !== editingId);
+  SmashApp.setData('inspirations', inspirations);
+  closeModal();
+  render();
+  showToast('🗑️ Gelöscht');
+}
+
+// ============ TOAST ============
+let toastTimer;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 1500);
+}
+
+document.getElementById('modal').addEventListener('click', e => {
+  if (e.target.id === 'modal') closeModal();
+});
+
+init();
+</script>
+
+</body>
+</html>

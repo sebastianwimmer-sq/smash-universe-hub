@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+<title>⚙️ Settings — PEAKING</title>
+<link rel="icon" href="../assets/logo.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../assets/logo.svg">
+<link rel="manifest" href="../manifest.json">
+<meta name="theme-color" content="#FFA94D">
+<link rel="stylesheet" href="../assets/effects.css">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="../js/app.js"></script>
+<style>
+  body {
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    min-height: 100dvh;
+    color: white;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+  .glass {
+    background: rgba(30, 41, 59, 0.6);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+  .neon { color: #FFA94D; }
+  .btn-primary {
+    background: linear-gradient(135deg, #FFA94D, #FF6B6B);
+    color: #0f172a;
+    font-weight: bold;
+    transition: all 0.2s;
+  }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(255, 169, 77, 0.4); }
+  .btn-danger {
+    background: rgba(239, 68, 68, 0.15);
+    color: #f87171;
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    font-weight: bold;
+    transition: all 0.2s;
+  }
+  .btn-danger:hover { background: rgba(239, 68, 68, 0.25); }
+  .stat-row {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    padding: 10px 14px;
+    border-radius: 10px;
+    background: rgba(15, 23, 42, 0.4);
+    margin-bottom: 6px;
+    align-items: center;
+  }
+  .toast {
+    position: fixed; bottom: 24px; left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    background: #FFA94D; color: #0f172a;
+    padding: 12px 24px; border-radius: 999px; font-weight: bold;
+    box-shadow: 0 8px 24px rgba(255, 169, 77, 0.4);
+    transition: transform 0.3s ease; z-index: 100;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+  .account-card {
+    padding: 16px;
+    border-radius: 14px;
+    background: rgba(15, 23, 42, 0.4);
+    border: 1px solid rgba(255,255,255,0.08);
+  }
+  .account-card.current {
+    border-color: rgba(255, 169, 77, 0.4);
+    background: rgba(255, 169, 77, 0.05);
+  }
+</style>
+</head>
+<body class="p-4 md:p-6 pb-12 bg-depth">
+
+<div class="max-w-3xl mx-auto">
+
+  <!-- Header -->
+  <div class="flex justify-between items-center mb-4">
+    <div>
+      <a href="../dashboard.html" class="text-xs text-gray-400 hover:text-white">← Dashboard</a>
+      <h1 class="text-2xl md:text-3xl font-bold mt-1">⚙️ <span class="text-sunrise">Settings</span></h1>
+      <p class="text-gray-400 text-sm">Daten · Backup · Account-Übersicht</p>
+    </div>
+    <button onclick="SmashApp.logout()" class="text-sm text-gray-400 hover:text-white">🔒</button>
+  </div>
+
+  <!-- Account Overview -->
+  <div class="glass rounded-3xl p-5 mb-5 float-in">
+    <h2 class="text-lg font-bold mb-1">👥 Accounts</h2>
+    <p class="text-xs text-gray-400 mb-4">Beide Accounts sind in separaten Daten-Spaces. Compare-View unten.</p>
+    <div class="space-y-3" id="accountsList"></div>
+  </div>
+
+  <!-- Cross-Account Compare -->
+  <div class="glass rounded-3xl p-5 mb-5 float-in">
+    <h2 class="text-lg font-bold mb-1">📊 Cross-Account-Compare</h2>
+    <p class="text-xs text-gray-400 mb-4">Welcher Account ist gerade aktiver? Zahlen kommen aus deinen lokalen Daten.</p>
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm" id="compareTable">
+        <thead>
+          <tr class="text-left text-xs uppercase tracking-wider text-gray-500 border-b border-white/10">
+            <th class="py-2 pr-3">Metric</th>
+            <th class="py-2 pr-3 text-center">🏔️ vegetarianhulk</th>
+            <th class="py-2 text-center">🚀 peakingworld</th>
+          </tr>
+        </thead>
+        <tbody id="compareBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Backup & Restore -->
+  <div class="glass rounded-3xl p-5 mb-5 float-in">
+    <h2 class="text-lg font-bold mb-1">💾 Backup & Restore</h2>
+    <p class="text-xs text-gray-400 mb-4">Alle Daten beider Accounts in EINE Datei. Zum Sichern und für Device-Migration.</p>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
+      <button onclick="exportAll()" class="btn-primary p-3 rounded-xl">📥 Komplett-Backup (JSON)</button>
+      <button onclick="importBackup()" class="p-3 rounded-xl bg-slate-700/50 border border-white/15 font-bold hover:bg-slate-600/50">📤 Backup importieren</button>
+    </div>
+    <div class="text-xs text-gray-500">
+      Backup enthält: alle Reels, Ideas, Calendar-Slots, Custom-Captions, BIP-Logs, Growth-Checklist beider Accounts. <b>Auth + Migration-Flag werden NICHT geteilt</b> (Sicherheit).
+    </div>
+  </div>
+
+  <!-- Per-Account Reset -->
+  <div class="glass rounded-3xl p-5 mb-5 float-in" style="border-color: rgba(239, 68, 68, 0.2);">
+    <h2 class="text-lg font-bold mb-1">⚠️ Reset</h2>
+    <p class="text-xs text-gray-400 mb-4">Lösche Daten gezielt — pro Account oder komplett. <b>Backup zuerst!</b></p>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
+      <button onclick="resetAccount('vegetarianhulk')" class="btn-danger p-3 rounded-xl text-sm">🏔️ vegetarianhulk wipe</button>
+      <button onclick="resetAccount('peakingworld')" class="btn-danger p-3 rounded-xl text-sm">🚀 peakingworld wipe</button>
+      <button onclick="resetAll()" class="btn-danger p-3 rounded-xl text-sm">🔥 ALLES wipe</button>
+    </div>
+  </div>
+
+  <!-- Tech-Info -->
+  <div class="glass rounded-3xl p-5 mb-5 float-in">
+    <h2 class="text-lg font-bold mb-1">🔧 Tech-Info</h2>
+    <p class="text-xs text-gray-400 mb-4">Was steht aktuell wo. Für Debugging + Transparency.</p>
+    <div class="space-y-2 text-sm">
+      <div class="stat-row"><span class="text-gray-400">Aktueller Account</span><span class="font-bold neon" id="techCurrent">—</span></div>
+      <div class="stat-row"><span class="text-gray-400">localStorage Usage</span><span class="font-bold" id="techStorage">—</span></div>
+      <div class="stat-row"><span class="text-gray-400">Service Worker</span><span class="font-bold" id="techSW">—</span></div>
+      <div class="stat-row"><span class="text-gray-400">PWA Installable</span><span class="font-bold" id="techPWA">—</span></div>
+      <div class="stat-row"><span class="text-gray-400">Cache-Version</span><span class="font-bold" id="techCache">—</span></div>
+    </div>
+    <button onclick="clearCache()" class="mt-4 px-4 py-2 rounded-xl bg-slate-700/50 border border-white/15 text-sm hover:bg-slate-600/50">🧹 Service-Worker Cache leeren</button>
+  </div>
+
+  <div class="text-center text-gray-500 text-xs mt-8">
+    ⚙️ PEAKING · Always peaking. · Daten-Safety first
+  </div>
+</div>
+
+<div id="toast" class="toast">✓</div>
+
+<script>
+SmashApp.requireAuth();
+
+// ============ INIT ============
+function init() {
+  renderAccounts();
+  renderCompare();
+  renderTechInfo();
+}
+
+// ============ ACCOUNTS ============
+function renderAccounts() {
+  const current = SmashApp.getCurrentAccount();
+  const html = Object.values(SmashApp.ACCOUNTS).map(acc => {
+    const isCurrent = acc.key === current;
+    return `
+      <div class="account-card ${isCurrent ? 'current' : ''}">
+        <div class="flex items-center gap-3 mb-2">
+          <span class="text-2xl">${acc.emoji}</span>
+          <div class="flex-1">
+            <div class="font-bold">${acc.handle}</div>
+            <div class="text-xs text-gray-400">${acc.label}</div>
+          </div>
+          ${isCurrent
+            ? '<span class="text-xs neon font-bold">✓ AKTIV</span>'
+            : `<button onclick="switchTo('${acc.key}')" class="text-xs px-3 py-1 rounded-lg bg-slate-700/60 hover:bg-slate-600/60">Switch</button>`}
+        </div>
+      </div>
+    `;
+  }).join('');
+  document.getElementById('accountsList').innerHTML = html;
+}
+
+function switchTo(key) {
+  if (SmashApp.switchAccount(key)) {
+    showToast('🔄 Switched to ' + SmashApp.getAccount(key).handle);
+    setTimeout(() => location.reload(), 500);
+  }
+}
+
+// ============ COMPARE ============
+function renderCompare() {
+  const accs = ['vegetarianhulk', 'peakingworld'];
+  const metrics = [
+    { key: 'reels', label: '📊 Reels getrackt', fmt: n => n.length },
+    { key: 'ideas', label: '💡 Ideen', fmt: n => n.length },
+    { key: 'calendar', label: '📅 Calendar-Slots', fmt: n => n.length },
+    { key: 'captionsCustom', label: '🎨 Eigene Captions', fmt: n => n.length },
+    { key: 'bipLogs', label: '📊 BIP-Log Tage', fmt: n => n.length }
+  ];
+
+  const data = {};
+  accs.forEach(acc => {
+    data[acc] = {};
+    metrics.forEach(m => {
+      const arr = SmashApp.getDataForAccount(acc, m.key, []);
+      data[acc][m.key] = m.fmt(arr);
+    });
+  });
+
+  // Engagement-Rate computed avg (für reels with reach)
+  accs.forEach(acc => {
+    const reels = SmashApp.getDataForAccount(acc, 'reels', []);
+    if (reels.length === 0) {
+      data[acc]['er'] = '—';
+    } else {
+      const ers = reels.map(r => {
+        const denom = Number(r.reach) || Number(r.views) || 0;
+        if (denom === 0) return 0;
+        const eng = (Number(r.likes) || 0) + (Number(r.comments) || 0) + (Number(r.saves) || 0) + (Number(r.shares) || 0);
+        return (eng / denom) * 100;
+      });
+      const avg = ers.reduce((a, b) => a + b, 0) / ers.length;
+      data[acc]['er'] = avg.toFixed(2) + '%';
+    }
+  });
+  metrics.push({ key: 'er', label: '⚡ Ø Engagement-Rate' });
+
+  const body = document.getElementById('compareBody');
+  body.innerHTML = metrics.map(m => {
+    const v1 = data['vegetarianhulk'][m.key];
+    const v2 = data['peakingworld'][m.key];
+    const better1 = isHigher(v1, v2);
+    const better2 = isHigher(v2, v1);
+    return `
+      <tr class="border-b border-white/5">
+        <td class="py-2 pr-3 text-gray-300">${m.label}</td>
+        <td class="py-2 pr-3 text-center font-bold ${better1 ? 'neon' : ''}">${v1}</td>
+        <td class="py-2 text-center font-bold ${better2 ? 'neon' : ''}">${v2}</td>
+      </tr>
+    `;
+  }).join('');
+}
+
+function isHigher(a, b) {
+  const na = parseFloat(String(a).replace('%', ''));
+  const nb = parseFloat(String(b).replace('%', ''));
+  if (isNaN(na) || isNaN(nb)) return false;
+  return na > nb && na > 0;
+}
+
+// ============ BACKUP / RESTORE ============
+function exportAll() {
+  const KEYS = ['reels', 'ideas', 'calendar', 'captionsCustom', 'bipLogs', 'growthChecklist'];
+  const accs = ['vegetarianhulk', 'peakingworld'];
+
+  const data = {
+    exported: new Date().toISOString(),
+    version: 'peaking-v1.3',
+    accounts: {}
+  };
+
+  accs.forEach(acc => {
+    data.accounts[acc] = {};
+    KEYS.forEach(key => {
+      data.accounts[acc][key] = SmashApp.getDataForAccount(acc, key, null);
+    });
+  });
+
+  SmashApp.exportJSON(data, `peaking-backup-${new Date().toISOString().split('T')[0]}.json`);
+  showToast('📥 Komplett-Backup exportiert');
+}
+
+function importBackup() {
+  SmashApp.importJSON(data => {
+    if (!data || !data.accounts) {
+      showToast('⚠️ Ungültiges Backup-Format');
+      return;
+    }
+    if (!confirm('Backup wird ALLE aktuellen Daten überschreiben (beide Accounts). Sicher?')) return;
+
+    Object.entries(data.accounts).forEach(([acc, items]) => {
+      Object.entries(items).forEach(([key, value]) => {
+        if (value !== null && value !== undefined) {
+          localStorage.setItem('smash:' + acc + ':' + key, JSON.stringify(value));
+        }
+      });
+    });
+
+    showToast('📤 Backup importiert · reload');
+    setTimeout(() => location.reload(), 800);
+  });
+}
+
+// ============ RESET ============
+function resetAccount(account) {
+  const acc = SmashApp.getAccount(account);
+  if (!confirm(`Wirklich ALLE Daten von ${acc.handle} löschen? Backup zuerst!`)) return;
+  if (!confirm(`Letzte Warnung: ${acc.handle} wird komplett geleert. OK?`)) return;
+
+  const KEYS = ['reels', 'ideas', 'calendar', 'captionsCustom', 'bipLogs', 'growthChecklist'];
+  KEYS.forEach(key => localStorage.removeItem('smash:' + account + ':' + key));
+  showToast('🔥 ' + acc.handle + ' gewipt');
+  setTimeout(() => location.reload(), 800);
+}
+
+function resetAll() {
+  if (!confirm('Wirklich ALLE Daten beider Accounts löschen? Backup zuerst!')) return;
+  if (!confirm('LETZTE WARNUNG: Komplett-Wipe. Auth + Migration-Flag bleiben. OK?')) return;
+
+  Object.keys(localStorage).forEach(k => {
+    if (k.startsWith('smash:') && k !== 'smash:auth' && k !== 'smash:currentAccount' && k !== 'smash:migrationV2Done') {
+      localStorage.removeItem(k);
+    }
+  });
+  showToast('🔥 Alles gewipt');
+  setTimeout(() => location.reload(), 800);
+}
+
+// ============ TECH-INFO ============
+function renderTechInfo() {
+  const acc = SmashApp.getAccount();
+  document.getElementById('techCurrent').textContent = acc.emoji + ' ' + acc.handle;
+
+  // localStorage usage
+  let bytes = 0;
+  Object.keys(localStorage).forEach(k => {
+    if (k.startsWith('smash:')) {
+      bytes += new Blob([localStorage.getItem(k) || '']).size + new Blob([k]).size;
+    }
+  });
+  document.getElementById('techStorage').textContent = formatBytes(bytes);
+
+  // Service Worker
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.getRegistration().then(reg => {
+      document.getElementById('techSW').textContent = reg ? '✓ Aktiv' : '⚠️ Nicht registriert';
+    });
+  } else {
+    document.getElementById('techSW').textContent = '❌ Browser-Support fehlt';
+  }
+
+  // PWA-Install
+  document.getElementById('techPWA').textContent =
+    window.matchMedia('(display-mode: standalone)').matches ? '✓ Als App installiert' : '📱 Im Browser';
+
+  // Cache version
+  if ('caches' in window) {
+    caches.keys().then(keys => {
+      const peakingCache = keys.find(k => k.startsWith('peaking-'));
+      document.getElementById('techCache').textContent = peakingCache || '—';
+    });
+  }
+}
+
+function formatBytes(b) {
+  if (b < 1024) return b + ' B';
+  if (b < 1024 * 1024) return (b / 1024).toFixed(1) + ' KB';
+  return (b / (1024 * 1024)).toFixed(2) + ' MB';
+}
+
+async function clearCache() {
+  if (!confirm('Service-Worker Cache leeren? App lädt beim nächsten Refresh frisch.')) return;
+  if ('caches' in window) {
+    const keys = await caches.keys();
+    await Promise.all(keys.map(k => caches.delete(k)));
+  }
+  if ('serviceWorker' in navigator) {
+    const regs = await navigator.serviceWorker.getRegistrations();
+    await Promise.all(regs.map(r => r.unregister()));
+  }
+  showToast('🧹 Cache geleert · reload');
+  setTimeout(() => location.reload(), 800);
+}
+
+// ============ TOAST ============
+let toastTimer;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 1800);
+}
+
+init();
+</script>
+
+</body>
+</html>
