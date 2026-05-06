@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PEAKING — Logo V2 Picker</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  body {
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    min-height: 100vh;
+    color: white;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+  .glass {
+    background: rgba(30, 41, 59, 0.6);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+  .neon { color: #39FF14; }
+  .pick-card { transition: all 0.2s; cursor: pointer; }
+  .pick-card:hover { transform: translateY(-4px); border-color: rgba(57, 255, 20, 0.5); }
+</style>
+</head>
+<body class="p-6">
+<div class="max-w-5xl mx-auto">
+  <h1 class="text-3xl font-bold mb-2">⛰️ PEAKING — Logo V2 Picker</h1>
+  <p class="text-gray-400 mb-8">Minimal · Free · Entspannt. Pick eines, sag Claude Code.</p>
+
+  <!-- VARIANT A: Pure Triangle -->
+  <div class="glass rounded-3xl p-8 mb-6 pick-card">
+    <div class="flex items-baseline gap-3 mb-6">
+      <span class="text-2xl font-bold neon">A</span>
+      <h2 class="text-xl font-bold">Pure Triangle (Vercel-Style)</h2>
+      <span class="text-xs text-gray-400">— „Stop hesitating. Click."</span>
+    </div>
+    <div class="flex items-center gap-8 flex-wrap">
+      <img src="logo-v2-a.svg" class="w-8 h-8" title="32px">
+      <img src="logo-v2-a.svg" class="w-12 h-12">
+      <img src="logo-v2-a.svg" class="w-20 h-20">
+      <img src="logo-v2-a.svg" class="w-32 h-32">
+      <div class="flex items-center gap-3">
+        <img src="logo-v2-a.svg" class="w-10 h-10">
+        <div>
+          <div class="text-2xl font-bold tracking-tight">PEAKING</div>
+          <div class="neon text-xs font-bold tracking-wide">Always peaking.</div>
+        </div>
+      </div>
+    </div>
+    <div class="mt-4 text-xs text-gray-500">→ <b>Pro:</b> Maximale Reduktion. Sofort wiedererkennbar. Easy als App-Icon, Favicon, Insta-PB. Wie Vercel: 1 Form = 1 Brand.</div>
+  </div>
+
+  <!-- VARIANT B: Wordmark Only -->
+  <div class="glass rounded-3xl p-8 mb-6 pick-card">
+    <div class="flex items-baseline gap-3 mb-6">
+      <span class="text-2xl font-bold neon">B</span>
+      <h2 class="text-xl font-bold">Wordmark Only (Stripe/Linear-Style)</h2>
+      <span class="text-xs text-gray-400">— „Confidence in the name itself."</span>
+    </div>
+    <div class="flex items-center gap-8 flex-wrap">
+      <img src="logo-v2-b.svg" class="h-6">
+      <img src="logo-v2-b.svg" class="h-10">
+      <img src="logo-v2-b.svg" class="h-16">
+    </div>
+    <div class="mt-4 text-xs text-gray-500">→ <b>Pro:</b> Kein Symbol-Stress. Wort selbst ist die Brand. Wie Stripe, Linear, Cron — premium-Indie-Vibe. <b>Con:</b> Brauchst trotzdem ein kleines Mark fürs Favicon (kann „p" als Mini-Mark sein).</div>
+  </div>
+
+  <!-- VARIANT C: Triangle + Wordmark -->
+  <div class="glass rounded-3xl p-8 mb-6 pick-card">
+    <div class="flex items-baseline gap-3 mb-6">
+      <span class="text-2xl font-bold neon">C</span>
+      <h2 class="text-xl font-bold">Triangle + Wordmark (Vercel-Combo) ⭐</h2>
+      <span class="text-xs text-gray-400">— „Best of both worlds."</span>
+    </div>
+    <div class="flex items-center gap-8 flex-wrap">
+      <img src="logo-v2-c.svg" class="h-8">
+      <img src="logo-v2-c.svg" class="h-12">
+      <img src="logo-v2-c.svg" class="h-16">
+    </div>
+    <div class="mt-4 text-xs text-gray-500">→ <b>Pro:</b> Symbol UND Wordmark verfügbar. Triangle allein als Favicon, beides zusammen für Header. <b>Mein Pick:</b> entspannt + einfach + skalierbar.</div>
+  </div>
+
+  <!-- App-Icon Mockups -->
+  <div class="glass rounded-3xl p-8 mb-6">
+    <h2 class="text-sm font-bold neon mb-6 uppercase tracking-wider">App-Icon-Mockup (alle Varianten)</h2>
+    <div class="flex items-end gap-6 flex-wrap">
+      <!-- A on dark -->
+      <div class="text-center">
+        <div class="rounded-3xl p-4" style="background: linear-gradient(135deg, #0f172a, #1e293b); width: 100px; height: 100px; display: flex; align-items: center; justify-content: center;">
+          <img src="logo-v2-a.svg" class="w-16 h-16">
+        </div>
+        <div class="text-xs text-gray-400 mt-2">A · dark</div>
+      </div>
+      <!-- A on neon -->
+      <div class="text-center">
+        <div class="rounded-3xl p-4" style="background: #39FF14; width: 100px; height: 100px; display: flex; align-items: center; justify-content: center;">
+          <svg viewBox="0 0 64 64" class="w-16 h-16"><path d="M 32 8 L 58 56 L 6 56 Z" fill="#0f172a"/></svg>
+        </div>
+        <div class="text-xs text-gray-400 mt-2">A · neon</div>
+      </div>
+      <!-- C on dark with wordmark -->
+      <div class="text-center">
+        <div class="rounded-3xl p-4 px-5" style="background: linear-gradient(135deg, #0f172a, #1e293b); width: 200px; height: 100px; display: flex; align-items: center; justify-content: center;">
+          <img src="logo-v2-c.svg" class="w-44">
+        </div>
+        <div class="text-xs text-gray-400 mt-2">C · header-style</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Insta-PB -->
+  <div class="glass rounded-3xl p-8">
+    <h2 class="text-sm font-bold neon mb-6 uppercase tracking-wider">Instagram PB (@peakingworld)</h2>
+    <div class="flex items-center gap-8 flex-wrap">
+      <div class="text-center">
+        <div class="rounded-full p-5 mx-auto" style="background: #0f172a; width: 96px; height: 96px; display: flex; align-items: center; justify-content: center; border: 3px solid #39FF14;">
+          <img src="logo-v2-a.svg" class="w-12 h-12">
+        </div>
+        <div class="text-sm font-bold mt-2">A — Triangle</div>
+      </div>
+      <div class="text-center">
+        <div class="rounded-full p-2 mx-auto" style="background: #39FF14; width: 96px; height: 96px; display: flex; align-items: center; justify-content: center;">
+          <svg viewBox="0 0 64 64" class="w-12 h-12"><path d="M 32 8 L 58 56 L 6 56 Z" fill="#0f172a"/></svg>
+        </div>
+        <div class="text-sm font-bold mt-2">A — invertiert</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
