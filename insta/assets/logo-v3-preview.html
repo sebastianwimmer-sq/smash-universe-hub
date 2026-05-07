@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PEAKING — Logo V3 Picker (3D-Feel)</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  body {
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    min-height: 100dvh;
+    color: white;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+  .glass {
+    background: rgba(30, 41, 59, 0.6);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+  .neon { color: #FFA94D; }
+  .text-sunrise {
+    background: linear-gradient(135deg, #FF6B6B, #FFA94D, #FFD43B);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+  }
+  .logo-card {
+    transition: all 0.25s;
+  }
+  .logo-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 40px rgba(255, 169, 77, 0.2);
+    border-color: rgba(255, 169, 77, 0.5);
+  }
+  .preview-bg-dark { background: #0f172a; }
+  .preview-bg-light { background: #fafafa; color: #0f172a; }
+  .preview-bg-insta {
+    background: linear-gradient(135deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+  }
+</style>
+</head>
+<body class="p-4 md:p-8">
+
+<div class="max-w-6xl mx-auto">
+
+  <header class="text-center mb-10">
+    <h1 class="text-4xl md:text-5xl font-bold mb-2"><span class="text-sunrise">PEAKING Logo V3</span></h1>
+    <p class="text-gray-400">3 neue 3D-feel-Konzepte zum Picken · vergleich Aktuelles vs Neue</p>
+  </header>
+
+  <!-- Aktuelles Logo (Reference) -->
+  <section class="mb-10">
+    <h2 class="text-xs uppercase tracking-wider text-gray-500 font-bold text-center mb-4">Aktuell · Flat-Sunrise</h2>
+    <div class="flex justify-center">
+      <div class="glass rounded-2xl p-6 inline-flex items-center gap-6">
+        <img src="logo.svg" alt="Aktuell" class="w-20 h-20">
+        <div>
+          <div class="text-sm text-gray-400 mb-1">Current</div>
+          <div class="font-bold">Flat Triangle</div>
+          <div class="text-xs text-gray-500">1 Polygon · 1 Linear-Gradient</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3 neue Konzepte -->
+  <section class="mb-10">
+    <h2 class="text-xs uppercase tracking-wider text-gray-500 font-bold text-center mb-4">3 neue Konzepte · 3D-Feel</h2>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+
+      <!-- V3-A -->
+      <div class="glass logo-card rounded-2xl p-6 text-center">
+        <div class="flex items-center justify-center mb-4" style="height:120px;">
+          <img src="logo-v3-a.svg" alt="V3-A" class="w-28 h-28" style="filter: drop-shadow(0 8px 24px rgba(255,107,107,0.3));">
+        </div>
+        <h3 class="font-bold text-lg mb-1">V3-A · Faceted</h3>
+        <div class="text-xs neon mb-3">Light/Shadow Split</div>
+        <p class="text-xs text-gray-400 leading-relaxed mb-4">
+          Triangle aufgeteilt in 2 Facets:<br>
+          <b>Sun-Side</b> (Sunrise) + <b>Shadow-Side</b> (dark red).<br>
+          Subtle Ridge-Highlight.<br>
+          <span class="neon">Drama · Tiefe · Mountain-feel</span>
+        </p>
+        <button onclick="pickLogo('v3-a')" class="w-full bg-gradient-to-br from-orange-400 to-red-400 text-slate-900 font-bold p-3 rounded-xl">→ Diese Variante</button>
+      </div>
+
+      <!-- V3-B -->
+      <div class="glass logo-card rounded-2xl p-6 text-center">
+        <div class="flex items-center justify-center mb-4" style="height:120px;">
+          <img src="logo-v3-b.svg" alt="V3-B" class="w-28 h-28" style="filter: drop-shadow(0 8px 24px rgba(255,212,59,0.4));">
+        </div>
+        <h3 class="font-bold text-lg mb-1">V3-B · Rising Sun</h3>
+        <div class="text-xs neon mb-3">Layered · Story</div>
+        <p class="text-xs text-gray-400 leading-relaxed mb-4">
+          <b>Sun</b> (radial-gradient + glow) hinten,<br>
+          <b>Mountain</b> (dark) vorne mit Snow-Cap.<br>
+          Klassische Sunrise-Story.<br>
+          <span class="neon">Narrativ · Emotion · Hopeful</span>
+        </p>
+        <button onclick="pickLogo('v3-b')" class="w-full bg-gradient-to-br from-orange-400 to-red-400 text-slate-900 font-bold p-3 rounded-xl">→ Diese Variante</button>
+      </div>
+
+      <!-- V3-C -->
+      <div class="glass logo-card rounded-2xl p-6 text-center">
+        <div class="flex items-center justify-center mb-4" style="height:120px;">
+          <img src="logo-v3-c.svg" alt="V3-C" class="w-28 h-28" style="filter: drop-shadow(0 8px 24px rgba(199,62,62,0.3));">
+        </div>
+        <h3 class="font-bold text-lg mb-1">V3-C · Isometric Peak</h3>
+        <div class="text-xs neon mb-3">3D-Projection</div>
+        <p class="text-xs text-gray-400 leading-relaxed mb-4">
+          <b>3 Faces</b> (top/left/right) projiziert,<br>
+          ground-shadow ellipse,<br>
+          snow-capped peak top.<br>
+          <span class="neon">Modern · Geo · Tech-feel</span>
+        </p>
+        <button onclick="pickLogo('v3-c')" class="w-full bg-gradient-to-br from-orange-400 to-red-400 text-slate-900 font-bold p-3 rounded-xl">→ Diese Variante</button>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Mockup-Tests pro Variante -->
+  <section class="mb-10">
+    <h2 class="text-xs uppercase tracking-wider text-gray-500 font-bold text-center mb-4">Realitäts-Test · 3 Backgrounds</h2>
+    <div class="space-y-6">
+      <!-- Row pro Variante -->
+      <div class="glass rounded-2xl p-5">
+        <div class="text-xs neon font-bold mb-3">V3-A · Faceted</div>
+        <div class="grid grid-cols-3 gap-3">
+          <div class="preview-bg-dark p-6 rounded-xl flex items-center justify-center"><img src="logo-v3-a.svg" class="w-16 h-16"></div>
+          <div class="preview-bg-light p-6 rounded-xl flex items-center justify-center"><img src="logo-v3-a.svg" class="w-16 h-16"></div>
+          <div class="preview-bg-insta p-6 rounded-xl flex items-center justify-center"><img src="logo-v3-a.svg" class="w-16 h-16"></div>
+        </div>
+      </div>
+      <div class="glass rounded-2xl p-5">
+        <div class="text-xs neon font-bold mb-3">V3-B · Rising Sun</div>
+        <div class="grid grid-cols-3 gap-3">
+          <div class="preview-bg-dark p-6 rounded-xl flex items-center justify-center"><img src="logo-v3-b.svg" class="w-16 h-16"></div>
+          <div class="preview-bg-light p-6 rounded-xl flex items-center justify-center"><img src="logo-v3-b.svg" class="w-16 h-16"></div>
+          <div class="preview-bg-insta p-6 rounded-xl flex items-center justify-center"><img src="logo-v3-b.svg" class="w-16 h-16"></div>
+        </div>
+      </div>
+      <div class="glass rounded-2xl p-5">
+        <div class="text-xs neon font-bold mb-3">V3-C · Isometric</div>
+        <div class="grid grid-cols-3 gap-3">
+          <div class="preview-bg-dark p-6 rounded-xl flex items-center justify-center"><img src="logo-v3-c.svg" class="w-16 h-16"></div>
+          <div class="preview-bg-light p-6 rounded-xl flex items-center justify-center"><img src="logo-v3-c.svg" class="w-16 h-16"></div>
+          <div class="preview-bg-insta p-6 rounded-xl flex items-center justify-center"><img src="logo-v3-c.svg" class="w-16 h-16"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Multi-Size Test -->
+  <section class="mb-10">
+    <h2 class="text-xs uppercase tracking-wider text-gray-500 font-bold text-center mb-4">Skalierung · 16-128px</h2>
+    <div class="glass rounded-2xl p-6">
+      <div class="grid grid-cols-3 gap-4 text-center">
+        <div>
+          <div class="text-xs text-gray-500 mb-2">V3-A</div>
+          <div class="flex items-end justify-center gap-3">
+            <img src="logo-v3-a.svg" class="w-4 h-4">
+            <img src="logo-v3-a.svg" class="w-8 h-8">
+            <img src="logo-v3-a.svg" class="w-16 h-16">
+            <img src="logo-v3-a.svg" class="w-32 h-32">
+          </div>
+        </div>
+        <div>
+          <div class="text-xs text-gray-500 mb-2">V3-B</div>
+          <div class="flex items-end justify-center gap-3">
+            <img src="logo-v3-b.svg" class="w-4 h-4">
+            <img src="logo-v3-b.svg" class="w-8 h-8">
+            <img src="logo-v3-b.svg" class="w-16 h-16">
+            <img src="logo-v3-b.svg" class="w-32 h-32">
+          </div>
+        </div>
+        <div>
+          <div class="text-xs text-gray-500 mb-2">V3-C</div>
+          <div class="flex items-end justify-center gap-3">
+            <img src="logo-v3-c.svg" class="w-4 h-4">
+            <img src="logo-v3-c.svg" class="w-8 h-8">
+            <img src="logo-v3-c.svg" class="w-16 h-16">
+            <img src="logo-v3-c.svg" class="w-32 h-32">
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Pick-Instruktion -->
+  <section class="mb-10">
+    <div class="glass rounded-2xl p-5 text-center">
+      <h3 class="font-bold mb-2">📥 Pick-Instruktion</h3>
+      <p class="text-sm text-gray-400">Klick auf eine Variante, oder sag mir welche du willst — ich mach den Push (logo.svg überschreiben).</p>
+    </div>
+  </section>
+
+</div>
+
+<script>
+function pickLogo(variant) {
+  // Information-only — actual replacement requires git push
+  const msg = `Du hast ${variant} gewählt!\n\nNächster Schritt:\n1. Sag dem Coding-Assistant „Logo ${variant} promoten"\n2. Er kopiert assets/logo-v3-${variant.split('-')[1]}.svg → assets/logo.svg\n3. Push → live in 1-2 Min`;
+  alert(msg);
+}
+</script>
+
+</body>
+</html>
