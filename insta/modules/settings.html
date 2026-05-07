@@ -131,13 +131,21 @@
       </div>
       <input type="checkbox" id="prefBetaBanner" class="w-5 h-5 accent-orange-400" onchange="savePref('betaBanner', this.checked)">
     </label>
-    <label class="flex items-center justify-between p-3 rounded-xl bg-slate-900/40 cursor-pointer">
+    <label class="flex items-center justify-between p-3 rounded-xl bg-slate-900/40 mb-2 cursor-pointer">
       <div>
         <div class="font-bold text-sm">Animations dezenter</div>
         <div class="text-xs text-gray-400">Reduziert Glow + Pulse-Loops (für Power-User-Modus)</div>
       </div>
       <input type="checkbox" id="prefReducedMotion" class="w-5 h-5 accent-orange-400" onchange="savePref('reducedMotion', this.checked)">
     </label>
+    <label class="flex items-center justify-between p-3 rounded-xl bg-slate-900/40 mb-2 cursor-pointer">
+      <div>
+        <div class="font-bold text-sm">🧭 Coach im Dashboard</div>
+        <div class="text-xs text-gray-400">Daily-Coach-Card + Next-3-Steps prominent oben (statt nur als Modul)</div>
+      </div>
+      <input type="checkbox" id="prefDashboardCoach" class="w-5 h-5 accent-orange-400" onchange="savePref('dashboardCoach', this.checked)">
+    </label>
+    <button onclick="resetOnboarding()" class="text-xs neon hover:underline mt-2">↺ Onboarding-Tour erneut ansehen</button>
   </div>
 
   <!-- Admin-Panel-Link (versteckt bis erstes Admin-Login) -->
@@ -373,6 +381,13 @@ function renderPrefs() {
   document.getElementById('prefAccountTint').checked = getPref('accountTint', true);
   document.getElementById('prefBetaBanner').checked = getPref('betaBanner', false);
   document.getElementById('prefReducedMotion').checked = getPref('reducedMotion', false);
+  document.getElementById('prefDashboardCoach').checked = getPref('dashboardCoach', true);
+}
+
+function resetOnboarding() {
+  if (!confirm('Onboarding-Tour beim nächsten Dashboard-Besuch erneut zeigen?')) return;
+  localStorage.removeItem('smash:onboardingDone');
+  showToast('↺ Onboarding wird beim nächsten Dashboard-Visit angezeigt');
 }
 
 function escapeAttr(s) { return String(s||'').replace(/"/g, '&quot;'); }

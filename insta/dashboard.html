@@ -145,8 +145,19 @@
     </div>
   </div>
 
-  <!-- Today/Next Action -->
-  <div class="glass gradient-flow rounded-3xl p-5 mb-6 border-l-4 float-in" style="border-left-color: #FFA94D;">
+  <!-- 🧭 PEAKING Coach (Dashboard-Hero · daily insight + next-3) -->
+  <div id="coachHero" class="rounded-3xl p-5 mb-4 float-in" style="display:none; background: linear-gradient(135deg, rgba(255, 107, 107, 0.10), rgba(255, 169, 77, 0.14), rgba(255, 212, 59, 0.08)); border: 1px solid rgba(255, 169, 77, 0.4); box-shadow: 0 12px 40px rgba(255, 169, 77, 0.12);">
+    <div class="flex justify-between items-start mb-3 gap-3 flex-wrap">
+      <div class="text-xs uppercase tracking-wider text-gray-400 font-bold">🧭 Coach · <span id="coachToday">heute</span></div>
+      <a href="modules/coach.html" class="text-xs neon hover:underline whitespace-nowrap">→ Voller Coach</a>
+    </div>
+    <div id="coachCardBody" class="mb-3"></div>
+    <div id="coachNextSteps" class="grid grid-cols-1 md:grid-cols-3 gap-2"></div>
+    <div id="coachSetupPill" class="mt-3 text-xs text-gray-400" style="display:none;"></div>
+  </div>
+
+  <!-- Today/Next Action (kompakt-Fallback wenn Coach off) -->
+  <div id="nextPostCard" class="glass gradient-flow rounded-3xl p-5 mb-6 border-l-4 float-in" style="border-left-color: #FFA94D;">
     <div class="text-xs text-gray-400 mb-1">🎯 NÄCHSTER POST</div>
     <div class="text-lg md:text-xl font-bold mb-1" id="nextPost">Heute: 💪 Gym-Reel</div>
     <div class="text-sm text-gray-400" id="nextPostTime">Empfohlene Zeit: 19:00 Uhr</div>
@@ -345,6 +356,7 @@
 </div>
 
 <script src="js/app.js"></script>
+<script src="js/coach.js"></script>
 <script>
 SmashApp.requireAuth();
 
@@ -369,6 +381,131 @@ SmashApp.requireAuth();
     document.querySelectorAll('.peaking-pulse, .logo-glow-strong').forEach(el => el.style.animation = 'none');
   }
 })();
+
+// ============ COACH-HERO (Daily Coach im Dashboard) ============
+function renderCoachHero() {
+  function pref(k, def) { try { return JSON.parse(localStorage.getItem('smash:pref:'+k)) ?? def; } catch(e){ return def; } }
+  if (pref('dashboardCoach', true) === false) return;
+  if (typeof Coach === 'undefined') return;
+
+  const hero = document.getElementById('coachHero');
+  if (!hero) return;
+  hero.style.display = 'block';
+  document.getElementById('nextPostCard').style.display = 'none';
+
+  // Daily Coach-Card
+  document.getElementById('coachToday').textContent = new Date().toLocaleDateString('de-DE',{weekday:'long', day:'numeric', month:'long'});
+  const card = Coach.getDailyCard();
+  document.getElementById('coachCardBody').innerHTML = `
+    <div class="flex items-start gap-4">
+      <div class="text-4xl md:text-5xl">${card.emoji}</div>
+      <div class="flex-1">
+        <h2 class="text-lg md:text-xl font-bold mb-1">${escapeHTMLD(card.title)}</h2>
+        <p class="text-sm text-gray-200 leading-relaxed mb-3">${escapeHTMLD(card.body)}</p>
+        ${card.cta ? `<a href="modules/${card.cta.href}" class="inline-block px-4 py-2 rounded-xl text-sm font-bold" style="background: linear-gradient(135deg, #FFA94D, #FF6B6B); color: #0f172a;">${escapeHTMLD(card.cta.text)}</a>` : ''}
+      </div>
+    </div>
+  `;
+
+  // Next-3 Steps (compact)
+  const next3 = Coach.getNext3Steps();
+  document.getElementById('coachNextSteps').innerHTML = next3.map(s => `
+    <a href="modules/${s.href || ''}" class="block p-3 rounded-xl text-xs ${s.done ? 'opacity-50' : ''}" style="background: rgba(15, 23, 42, 0.5); border: 1px solid rgba(255, 169, 77, 0.15);">
+      <div class="flex items-center gap-2">
+        <span style="color:${s.done ? '#84cc16' : '#FFA94D'}">${s.done ? '✓' : '○'}</span>
+        <span class="${s.done ? 'line-through text-gray-500' : ''}">${escapeHTMLD(s.text)}</span>
+      </div>
+    </a>
+  `).join('');
+
+  // Setup-Progress-Pill
+  const setup = Coach.getSetupChecklist();
+  if (setup.completed < setup.total) {
+    const pill = document.getElementById('coachSetupPill');
+    pill.style.display = 'block';
+    pill.innerHTML = `
+      <span class="neon font-bold">⚡ Setup ${setup.completed}/${setup.total} done</span> ·
+      <a href="modules/coach.html#setup" class="hover:underline">Wizard öffnen</a> ·
+      ${setup.pct}% ready
+    `;
+  }
+}
+
+function escapeHTMLD(s) { return String(s||'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+// ============ ONBOARDING-TOUR (1× beim ersten Login) ============
+function maybeShowOnboarding() {
+  if (localStorage.getItem('smash:onboardingDone')) return;
+  if (typeof Coach === 'undefined') return;
+
+  const overlay = document.createElement('div');
+  overlay.id = 'onboardingOverlay';
+  overlay.style.cssText = 'position:fixed;inset:0;z-index:300;background:rgba(15,23,42,0.92);backdrop-filter:blur(10px);display:flex;align-items:center;justify-content:center;padding:20px;';
+  const steps = [
+    {
+      emoji: '🌅',
+      title: 'Willkommen bei PEAKING',
+      body: 'Solo-Creator-Stack für Instagram. <b class="neon">Always peaking.</b> heißt: heute 1 Schritt weiter, nicht alles auf einmal. Wir nehmen dich an die Hand — Setup-Wizard, Daily-Coach, Pattern-Insights.'
+    },
+    {
+      emoji: '🧭',
+      title: 'Coach ist dein Mastermind',
+      body: 'Oben im Dashboard siehst du jeden Tag <b class="neon">eine Top-Action</b> — basierend auf deinen Daten. Plus die nächsten 3 Steps. Kein Decision-Fatigue, kein Scrollen.'
+    },
+    {
+      emoji: '⚡',
+      title: 'Setup-Wizard',
+      body: '6 Schritte: Pillars · Posting-Plan · Bio · Erste Hook · Erstes Reel · Cross-Post. PEAKING erkennt automatisch wenn du sie tust. Alles in <b class="neon">→ Coach</b>.'
+    },
+    {
+      emoji: '🪝',
+      title: 'Hook = 80% des Reach',
+      body: '50+ verifizierte Hook-Patterns mit Win-Rate aus DEINEN Daten. Loss-Hooks performen 2-3× besser im 2026-Algo. Smart-Recommendations passen sich an deinen Account-Pillar-Mix an.'
+    },
+    {
+      emoji: '🔄',
+      title: '2 Accounts? 1 Click → Cross-Post',
+      body: 'Wenn du @vegetarianhulk + @peakingworld pflegst: 1 Reel auf Account A → Re-Cut für Account B in 3 Klicks. Hebel pro Idee verdoppelt.'
+    },
+    {
+      emoji: '⛰️',
+      title: 'Du bist soweit.',
+      body: 'Web-Only. Keine App-Store-Wartezeit. Iteration in Minuten. <b class="neon">Always peaking.</b> Lass uns climben.'
+    }
+  ];
+  let idx = 0;
+
+  function renderStep() {
+    const s = steps[idx];
+    overlay.innerHTML = `
+      <div style="background:linear-gradient(135deg,#1e293b,#0f172a); border:1px solid rgba(255,169,77,0.3); border-radius:24px; max-width:500px; width:100%; padding:32px; text-align:center;">
+        <div style="font-size:64px; margin-bottom:16px;">${s.emoji}</div>
+        <h2 style="font-size:22px; font-weight:bold; margin-bottom:12px;">${s.title}</h2>
+        <p style="color:#cbd5e1; font-size:15px; line-height:1.6; margin-bottom:24px;">${s.body}</p>
+        <div style="display:flex; gap:8px; justify-content:center; margin-bottom:20px;">
+          ${steps.map((_, i) => `<div style="width:8px; height:8px; border-radius:50%; background:${i === idx ? '#FFA94D' : 'rgba(255,255,255,0.15)'};"></div>`).join('')}
+        </div>
+        <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
+          ${idx > 0 ? '<button onclick="onboardPrev()" style="background:transparent; color:#94a3b8; border:1px solid rgba(255,255,255,0.1); padding:10px 18px; border-radius:12px; cursor:pointer; font-size:13px;">← Zurück</button>' : ''}
+          <button onclick="${idx === steps.length-1 ? 'finishOnboarding()' : 'onboardNext()'}" style="background:linear-gradient(135deg,#FFA94D,#FF6B6B); color:#0f172a; font-weight:bold; padding:10px 22px; border-radius:12px; border:none; cursor:pointer; font-size:13px;">
+            ${idx === steps.length-1 ? '⛰️ Lets go climben' : 'Weiter →'}
+          </button>
+          ${idx < steps.length-1 ? '<button onclick="finishOnboarding()" style="background:transparent; color:#64748b; border:none; cursor:pointer; font-size:12px; padding:10px;">Skip</button>' : ''}
+        </div>
+      </div>
+    `;
+  }
+
+  window.onboardNext = () => { idx = Math.min(steps.length-1, idx+1); renderStep(); };
+  window.onboardPrev = () => { idx = Math.max(0, idx-1); renderStep(); };
+  window.finishOnboarding = () => {
+    localStorage.setItem('smash:onboardingDone', JSON.stringify({ at: new Date().toISOString() }));
+    overlay.remove();
+  };
+
+  document.body.appendChild(overlay);
+  renderStep();
+}
 
 // ============ ACCOUNT-SWITCHER ============
 function renderAccountSwitcher() {
@@ -411,6 +548,8 @@ document.addEventListener('click', (e) => {
 });
 
 renderAccountSwitcher();
+renderCoachHero();
+setTimeout(maybeShowOnboarding, 800);
 
 // Account-Labels in den Account-Übersicht-Sections setzen
 const __accLabel = SmashApp.getAccount().handle;
