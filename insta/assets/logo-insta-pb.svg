@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 320" fill="none">
+  <title>PEAKING Logo Insta-PB — 320×320 mit Solid-BG für Profile-Crop</title>
+  <defs>
+    <!-- Solid Background (Dark mit subtle Sunrise-Tint) -->
+    <radialGradient id="bgGradient" cx="50%" cy="50%" r="65%">
+      <stop offset="0%"  stop-color="#1e1b4b"/>
+      <stop offset="60%" stop-color="#0f172a"/>
+      <stop offset="100%" stop-color="#000"/>
+    </radialGradient>
+    <!-- Voll-Sun-Disk (groß, prominent, hinter Pyramide) -->
+    <radialGradient id="sunRayD" cx="50%" cy="50%" r="50%">
+      <stop offset="0%"  stop-color="#FFE066" stop-opacity="1"/>
+      <stop offset="35%" stop-color="#FFD43B" stop-opacity="0.95"/>
+      <stop offset="65%" stop-color="#FFA94D" stop-opacity="0.7"/>
+      <stop offset="90%" stop-color="#FF6B6B" stop-opacity="0.3"/>
+      <stop offset="100%" stop-color="transparent"/>
+    </radialGradient>
+    <!-- Two-Tone Pyramide -->
+    <linearGradient id="pyrLightI" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%"  stop-color="#FF8E5A"/>
+      <stop offset="100%" stop-color="#C73E3E"/>
+    </linearGradient>
+    <linearGradient id="pyrDarkI" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%"  stop-color="#5C1F1F"/>
+      <stop offset="100%" stop-color="#1A0808"/>
+    </linearGradient>
+    <!-- Glow für Pyramide -->
+    <filter id="pyrGlowI" x="-15%" y="-15%" width="130%" height="130%">
+      <feGaussianBlur stdDeviation="2" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <!-- Solid BG für Insta-Crop (Kreis) — Insta cropt zu Kreis, BG füllt komplette square -->
+  <rect width="320" height="320" fill="url(#bgGradient)"/>
+
+  <!-- Voll-Sun-Disk hinter Pyramide -->
+  <circle cx="160" cy="160" r="125" fill="url(#sunRayD)"/>
+
+  <!-- Two-Tone Faceted Pyramide (zentriert, groß) -->
+  <g filter="url(#pyrGlowI)">
+    <!-- Right Face (dark) -->
+    <path d="M 160 60 L 240 260 L 160 260 Z" fill="url(#pyrDarkI)"/>
+    <!-- Left Face (light, sun-side) -->
+    <path d="M 160 60 L 80 260 L 160 260 Z" fill="url(#pyrLightI)"/>
+    <!-- Center Spine Highlight -->
+    <line x1="160" y1="60" x2="160" y2="260" stroke="#FFD43B" stroke-width="2.5" stroke-opacity="0.9" stroke-linecap="round"/>
+    <!-- Apex Sparkle -->
+    <circle cx="160" cy="60" r="3" fill="#FFE066" opacity="0.95"/>
+  </g>
+</svg>

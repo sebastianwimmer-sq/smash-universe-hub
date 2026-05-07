@@ -229,30 +229,35 @@
 
     <!-- PNG-Multi-Size-Generator -->
     <div class="glass rounded-3xl p-5 mb-4">
-      <h2 class="text-lg font-bold mb-2">📐 PNG-Multi-Size-Generator</h2>
-      <p class="text-xs text-gray-400 mb-4">Wähle ein Logo + Size. Wird im Browser gerendert + als PNG runtergeladen. Für: Favicon (16/32), Apple-Touch-Icon (180), Insta-Bio (320), OG-Image (1200).</p>
+      <h2 class="text-lg font-bold mb-2">📐 PNG-Multi-Size-Generator <span class="text-xs neon font-normal">· 2× Retina-Quality</span></h2>
+      <p class="text-xs text-gray-400 mb-2">Wähle ein Logo + Size. Wird browser-side mit 2× supersampling gerendert (extra-scharf) + als PNG runtergeladen.</p>
+      <div class="text-xs text-gray-500 mb-3 p-2 rounded-lg" style="background: rgba(255, 169, 77, 0.08); border-left: 3px solid #FFA94D;">
+        💡 <b>Quick-Reference:</b> Insta-Profilbild = <b>320</b> oder <b>1024</b> · Apple-Touch-Icon = <b>180</b> · Open-Graph (Social-Share) = <b>1200</b> · Favicon Browser-Tab = <b>32</b>
+      </div>
       <div class="flex gap-2 flex-wrap mb-3">
         <select id="pngLogo" class="bg-slate-800 rounded-lg p-2 text-sm">
-          <option value="logo-mix-a2.svg">⭐ Mix-A2 · Faceted Peak (Research-Empfehlung)</option>
-          <option value="logo-mix-d.svg">⭐ Mix-D · Negative-Space (16px-tauglich)</option>
+          <option value="logo-insta-pb.svg">📸 Insta-PB Optimized (mit Solid-BG, Crop-safe)</option>
+          <option value="logo.svg">⭐ Mix-A2 Mark (Hauptlogo, transparent)</option>
+          <option value="logo-mix-a2.svg">⭐ Mix-A2 mit Wordmark</option>
+          <option value="logo-mix-d.svg">⭐ Mix-D · Negative-Space</option>
           <option value="logo-mix-a.svg">🌅 Mix-A · Stacked (V1)</option>
           <option value="logo-mix-b.svg">🌅 Mix-B · Mountain-Range</option>
           <option value="logo-mix-c.svg">🌅 Mix-C · Banner</option>
-          <option value="logo.svg">⛰️ Original (Flat-Sunrise)</option>
           <option value="logo-v3-a.svg">V3-A · Faceted Mountain</option>
           <option value="logo-v3-b.svg">V3-B · Rising Sun</option>
           <option value="logo-v3-c.svg">V3-C · Isometric Peak</option>
           <option value="logo-v3-d-still.svg">V3-D-Still · 3D-Pyramide</option>
         </select>
         <select id="pngSize" class="bg-slate-800 rounded-lg p-2 text-sm">
-          <option value="16">16 × 16 (Favicon mini)</option>
-          <option value="32">32 × 32 (Favicon)</option>
-          <option value="64">64 × 64 (App-Icon S)</option>
-          <option value="128">128 × 128 (App-Icon M)</option>
-          <option value="180">180 × 180 (Apple-Touch)</option>
-          <option value="320">320 × 320 (Insta-Bio)</option>
-          <option value="512">512 × 512 (App-Icon XL)</option>
-          <option value="1200">1200 × 1200 (OG-Image)</option>
+          <option value="320" selected>📸 320 × 320 (Insta-Bio, default)</option>
+          <option value="1024">📸 1024 × 1024 (Insta-Bio HD)</option>
+          <option value="180">🍎 180 × 180 (Apple-Touch-Icon)</option>
+          <option value="1200">🌐 1200 × 1200 (OG-Image / Social-Share)</option>
+          <option value="512">📦 512 × 512 (App-Icon-XL / PWA)</option>
+          <option value="128">📦 128 × 128 (App-Icon M)</option>
+          <option value="64">⚙️ 64 × 64 (App-Icon S)</option>
+          <option value="32">🔖 32 × 32 (Browser-Favicon)</option>
+          <option value="16">🔖 16 × 16 (Favicon mini)</option>
         </select>
         <button onclick="generatePng()" class="px-4 py-2 rounded-lg bg-gradient-to-br from-orange-400 to-red-400 text-slate-900 font-bold text-sm">📥 PNG generieren</button>
       </div>
@@ -489,6 +494,7 @@ document.getElementById('tabBar').addEventListener('click', e => {
 
 // ============ BRAND-ASSETS TAB ============
 const LOGOS = [
+  { file: 'logo-insta-pb.svg', name: '📸 Insta-PB Optimized',     desc: '320×320 · Solid-BG · perfekt für Insta-Profile-Crop' },
   { file: 'logo-mix-a2.svg',   name: '⭐ Mix-A2 · Faceted Peak',   desc: 'Research-Empfehlung · Two-Tone + Voll-Sun-Halo · ohne Zipfel' },
   { file: 'logo-mix-d.svg',    name: '⭐ Mix-D · Negative-Space',  desc: 'Research-Alt · Sun-Disk mit Pyramid-Cut · 16px-Favicon-tauglich' },
   { file: 'logo-mix-a.svg',    name: '🌅 Mix-A · Stacked (V1)',   desc: 'Pyramide + Halo + Wordmark · alte Version mit Zipfel' },
@@ -531,24 +537,41 @@ async function generatePng() {
   const file = document.getElementById('pngLogo').value;
   const size = Number(document.getElementById('pngSize').value);
   const preview = document.getElementById('pngPreview');
-  preview.innerHTML = '<div class="text-sm text-gray-400">⏳ Generiere…</div>';
+  preview.innerHTML = '<div class="text-sm text-gray-400">⏳ Generiere mit 2× Retina-Quality…</div>';
 
   try {
-    // Load SVG as text
+    // Load SVG as text + parse to inject explicit width/height for clean Browser-Render
     const res = await fetch('assets/' + file);
-    const svgText = await res.text();
-    const blob = new Blob([svgText], { type: 'image/svg+xml' });
+    let svgText = await res.text();
+    // Force native render-size to 2× target → supersampling
+    const renderSize = size * 2;
+    // Strip existing width/height attrs on <svg>, replace with target render-size
+    svgText = svgText.replace(/<svg([^>]*)>/, (m, attrs) => {
+      const cleaned = attrs.replace(/\s(width|height)="[^"]*"/g, '');
+      return `<svg${cleaned} width="${renderSize}" height="${renderSize}">`;
+    });
+    const blob = new Blob([svgText], { type: 'image/svg+xml;charset=utf-8' });
     const url = URL.createObjectURL(blob);
     const img = new Image();
     img.crossOrigin = 'anonymous';
     img.onload = () => {
+      // Render at 2× into oversized canvas, then downsample to target → sharp result
       const canvas = document.createElement('canvas');
       canvas.width = size;
       canvas.height = size;
       const ctx = canvas.getContext('2d');
       ctx.imageSmoothingEnabled = true;
       ctx.imageSmoothingQuality = 'high';
-      ctx.drawImage(img, 0, 0, size, size);
+      // Use intermediate oversize canvas for proper supersampling
+      const superCanvas = document.createElement('canvas');
+      superCanvas.width = renderSize;
+      superCanvas.height = renderSize;
+      const superCtx = superCanvas.getContext('2d');
+      superCtx.imageSmoothingEnabled = true;
+      superCtx.imageSmoothingQuality = 'high';
+      superCtx.drawImage(img, 0, 0, renderSize, renderSize);
+      // Now downsample super → target
+      ctx.drawImage(superCanvas, 0, 0, size, size);
       URL.revokeObjectURL(url);
       // Trigger download
       canvas.toBlob(b => {
@@ -557,7 +580,7 @@ async function generatePng() {
         a.download = file.replace('.svg', '') + `-${size}x${size}.png`;
         a.click();
         URL.revokeObjectURL(a.href);
-        preview.innerHTML = `<div class="text-sm" style="color:#84cc16;">✓ ${a.download} runtergeladen</div><img src="${canvas.toDataURL()}" style="max-width:200px; max-height:200px; margin-top:10px; border-radius:8px; box-shadow: 0 0 24px rgba(255,169,77,0.3);">`;
+        preview.innerHTML = `<div class="text-sm" style="color:#84cc16;">✓ ${a.download} runtergeladen (2× Retina)</div><img src="${canvas.toDataURL()}" style="max-width:240px; max-height:240px; margin-top:12px; border-radius:12px; box-shadow: 0 0 32px rgba(255,169,77,0.35);">`;
       }, 'image/png');
     };
     img.onerror = () => {
