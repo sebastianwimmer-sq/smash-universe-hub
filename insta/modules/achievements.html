@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+<title>🏆 Achievements — PEAKING</title>
+<link rel="icon" href="../assets/logo.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../assets/logo.svg">
+<link rel="manifest" href="../manifest.json">
+<meta name="theme-color" content="#FFA94D">
+<link rel="stylesheet" href="../assets/effects.css">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="../js/app.js"></script>
+<style>
+  body {
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    min-height: 100dvh;
+    color: white;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+  .glass {
+    background: rgba(30, 41, 59, 0.6);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+  .neon { color: #FFA94D; }
+  .toast {
+    position: fixed; bottom: 24px; left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    background: #FFA94D; color: #0f172a;
+    padding: 12px 24px; border-radius: 999px; font-weight: bold;
+    box-shadow: 0 8px 24px rgba(255, 169, 77, 0.4);
+    transition: transform 0.3s ease; z-index: 100;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 12px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+    border: 1px solid rgba(255,255,255,0.15);
+    background: rgba(15, 23, 42, 0.6);
+    color: #cbd5e1;
+    cursor: pointer;
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+  .chip.active {
+    background: linear-gradient(135deg, #FFA94D, #FF6B6B);
+    color: #0f172a;
+    border-color: #FFA94D;
+  }
+
+  /* Badge */
+  .badge-card {
+    background: rgba(15, 23, 42, 0.5);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 16px;
+    padding: 16px;
+    text-align: center;
+    transition: all 0.25s;
+    position: relative;
+    overflow: hidden;
+  }
+  .badge-card.unlocked {
+    border-color: rgba(255, 169, 77, 0.4);
+    background: linear-gradient(135deg, rgba(255, 169, 77, 0.08), rgba(255, 212, 59, 0.05));
+  }
+  .badge-card.unlocked:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 28px rgba(0,0,0,0.4), 0 0 24px rgba(255, 169, 77, 0.25);
+  }
+  .badge-card.locked {
+    opacity: 0.4;
+    filter: grayscale(0.7);
+  }
+  .badge-card.locked:hover { opacity: 0.65; }
+  .badge-icon {
+    width: 64px; height: 64px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 32px;
+    margin: 0 auto 10px;
+    border: 3px solid rgba(255,255,255,0.1);
+  }
+  .badge-card.unlocked .badge-icon {
+    border-color: var(--tier-color, #FFA94D);
+    box-shadow: 0 0 20px var(--tier-glow, rgba(255, 169, 77, 0.4));
+    animation: badge-shine 4s ease-in-out infinite;
+  }
+  @keyframes badge-shine {
+    0%, 100% { box-shadow: 0 0 20px var(--tier-glow, rgba(255, 169, 77, 0.4)); }
+    50% { box-shadow: 0 0 32px var(--tier-glow, rgba(255, 169, 77, 0.7)); }
+  }
+  .tier-pill {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-size: 9px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-top: 4px;
+  }
+  .tier-bronze { background: rgba(205, 127, 50, 0.25); color: #d49a6a; }
+  .tier-silver { background: rgba(192, 192, 192, 0.25); color: #d4d4d4; }
+  .tier-gold { background: rgba(255, 215, 0, 0.25); color: #ffd700; }
+  .tier-diamond { background: rgba(185, 242, 255, 0.25); color: #b9f2ff; }
+  .tier-legend { background: linear-gradient(135deg, rgba(255, 107, 107, 0.3), rgba(255, 212, 59, 0.3)); color: #FFA94D; }
+
+  .hero-stats {
+    background: linear-gradient(135deg, rgba(255, 107, 107, 0.12), rgba(255, 212, 59, 0.12));
+    border: 1px solid rgba(255, 169, 77, 0.3);
+  }
+
+  /* Confetti-Burst on new unlock */
+  @keyframes confetti-pop {
+    0% { transform: scale(0.3); opacity: 0; }
+    50% { transform: scale(1.2); opacity: 1; }
+    100% { transform: scale(1); opacity: 1; }
+  }
+  .new-unlock-badge {
+    animation: confetti-pop 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+</style>
+</head>
+<body class="p-4 md:p-6 pb-12 bg-depth">
+
+<div class="max-w-5xl mx-auto">
+
+  <!-- Header -->
+  <div class="flex justify-between items-center mb-4">
+    <div>
+      <a href="../dashboard.html" class="text-xs text-gray-400 hover:text-white">← Dashboard</a>
+      <h1 class="text-2xl md:text-3xl font-bold mt-1">🏆 <span class="text-sunrise">Achievements</span></h1>
+      <p class="text-gray-400 text-sm" id="subtitle">Auto-Unlock Badges für deinen Climb</p>
+    </div>
+    <button onclick="SmashApp.logout()" class="text-sm text-gray-400 hover:text-white">🔒</button>
+  </div>
+
+  <!-- Hero Stats -->
+  <div class="glass hero-stats rounded-3xl p-6 mb-5 text-center scale-in">
+    <div class="text-xs text-gray-400 uppercase tracking-wider mb-1">Unlocked</div>
+    <div class="text-5xl md:text-6xl font-bold text-sunrise" id="heroProgress">0/30</div>
+    <div class="text-xs text-gray-500 mt-2" id="heroXP">0 XP · Bronze 0 · Silver 0 · Gold 0 · Diamond 0 · Legend 0</div>
+  </div>
+
+  <!-- Filter -->
+  <div class="mb-2 text-xs text-gray-500 font-bold uppercase tracking-wider">Filter</div>
+  <div class="flex gap-2 mb-3 overflow-x-auto pb-1" id="filterChips">
+    <button class="chip active" data-filter="all">Alle</button>
+    <button class="chip" data-filter="unlocked">✓ Unlocked</button>
+    <button class="chip" data-filter="locked">🔒 Locked</button>
+    <button class="chip" data-filter="bronze">Bronze</button>
+    <button class="chip" data-filter="silver">Silver</button>
+    <button class="chip" data-filter="gold">Gold</button>
+    <button class="chip" data-filter="diamond">Diamond</button>
+    <button class="chip" data-filter="legend">Legend</button>
+  </div>
+
+  <!-- Category Filter -->
+  <div class="mb-2 text-xs text-gray-500 font-bold uppercase tracking-wider">Kategorie</div>
+  <div class="flex gap-2 mb-5 overflow-x-auto pb-1" id="catChips">
+    <button class="chip active" data-cat="all">Alle</button>
+    <button class="chip" data-cat="tracker">📊 Tracker</button>
+    <button class="chip" data-cat="bip">📝 BIP</button>
+    <button class="chip" data-cat="goals">🏔️ Goals</button>
+    <button class="chip" data-cat="series">🎞️ Series</button>
+    <button class="chip" data-cat="bootstrap">📅 Bootstrap</button>
+    <button class="chip" data-cat="tool">🛠️ Tool-Use</button>
+  </div>
+
+  <!-- Badge Grid -->
+  <div id="badgeGrid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 stagger"></div>
+
+  <div id="emptyState" class="hidden text-center py-12 text-gray-500">
+    <div class="text-5xl mb-3">🏆</div>
+    <p>Keine Achievements mit diesen Filtern.</p>
+  </div>
+
+  <div class="text-center text-gray-500 text-xs mt-12">
+    🏆 PEAKING · Achievements · Auto-Unlock basierend auf deinen echten Daten
+  </div>
+</div>
+
+<div id="toast" class="toast">✓</div>
+
+<script>
+SmashApp.requireAuth();
+
+// ============ ACHIEVEMENTS DEFINITION ============
+// Auto-unlock-checks lesen aus localStorage (account-aware via SmashApp.getData)
+const ACHIEVEMENTS = [
+  // === TRACKER ===
+  { id: 'first_reel', tier: 'bronze', category: 'tracker', icon: '🎬', title: 'First Reel',
+    desc: 'Erstes Reel getrackt', xp: 10,
+    check: () => SmashApp.getData('reels', []).length >= 1 },
+  { id: 'reels_10', tier: 'silver', category: 'tracker', icon: '📊', title: '10 Reels',
+    desc: '10 Reels getrackt', xp: 25,
+    check: () => SmashApp.getData('reels', []).length >= 10 },
+  { id: 'reels_50', tier: 'gold', category: 'tracker', icon: '🏆', title: '50 Reels',
+    desc: '50 Reels getrackt — Konsistenz-Profi', xp: 100,
+    check: () => SmashApp.getData('reels', []).length >= 50 },
+  { id: 'reels_100', tier: 'diamond', category: 'tracker', icon: '💎', title: '100 Reels',
+    desc: '100 Reels getrackt — Daten-Diamant', xp: 250,
+    check: () => SmashApp.getData('reels', []).length >= 100 },
+  { id: 'first_1k_views', tier: 'silver', category: 'tracker', icon: '👁️', title: 'First 1k Views',
+    desc: 'Erstes Reel mit >1.000 Views', xp: 30,
+    check: () => SmashApp.getData('reels', []).some(r => Number(r.views) >= 1000) },
+  { id: 'first_10k_views', tier: 'gold', category: 'tracker', icon: '🚀', title: 'First 10k Views',
+    desc: 'Erstes Reel mit >10.000 Views — Algorithm liebt dich', xp: 100,
+    check: () => SmashApp.getData('reels', []).some(r => Number(r.views) >= 10000) },
+  { id: 'first_100k_views', tier: 'diamond', category: 'tracker', icon: '💥', title: 'First 100k Views',
+    desc: 'Erstes Reel mit >100.000 Views — Viral!', xp: 500,
+    check: () => SmashApp.getData('reels', []).some(r => Number(r.views) >= 100000) },
+  { id: 'hold_60', tier: 'silver', category: 'tracker', icon: '⚡', title: '60% Hook-Hold',
+    desc: 'Erstes Reel mit 2s-Hook-Hold ≥60% — Algo-Threshold geknackt', xp: 50,
+    check: () => SmashApp.getData('reels', []).some(r => Number(r.hookHold2s) >= 60) },
+  { id: 'spr_1', tier: 'silver', category: 'tracker', icon: '📨', title: 'Sends-Master',
+    desc: 'Erstes Reel mit Sends-per-Reach ≥1% (Mosseri-Threshold)', xp: 50,
+    check: () => SmashApp.getData('reels', []).some(r => {
+      const reach = Number(r.reach) || Number(r.views) || 0;
+      const sends = Number(r.sends) || 0;
+      return reach > 0 && (sends / reach) * 100 >= 1;
+    }) },
+  { id: 'spr_3', tier: 'gold', category: 'tracker', icon: '🔥', title: 'Sends-Pro',
+    desc: 'Erstes Reel mit Sends-per-Reach ≥3% — Distribution-King', xp: 150,
+    check: () => SmashApp.getData('reels', []).some(r => {
+      const reach = Number(r.reach) || Number(r.views) || 0;
+      const sends = Number(r.sends) || 0;
+      return reach > 0 && (sends / reach) * 100 >= 3;
+    }) },
+  { id: 'first_loss_hook', tier: 'bronze', category: 'tracker', icon: '💸', title: 'Loss-Hook tested',
+    desc: 'Erstes Loss-Hook-Reel getrackt', xp: 15,
+    check: () => {
+      const reels = SmashApp.getData('reels', []);
+      return reels.some(r => /verbrannt|verloren|fehler|disaster|wrong|hab gelogen/i.test(r.title || ''));
+    } },
+  { id: 'first_trial', tier: 'bronze', category: 'tracker', icon: '🧪', title: 'Trial-Tester',
+    desc: 'Erstes Trial-Reel getrackt', xp: 15,
+    check: () => SmashApp.getData('reels', []).some(r => r.isTrial === true) },
+  { id: 'funnel_match', tier: 'gold', category: 'tracker', icon: '🎯', title: 'Funnel-Mix',
+    desc: '3-Layer-Funnel im Healthy-Mix (50% Reach ±5%)', xp: 75,
+    check: () => {
+      const reels = SmashApp.getData('reels', []);
+      if (reels.length < 5) return false;
+      const reach = reels.filter(r => (r.funnelLayer || 'reach') === 'reach').length;
+      const pct = (reach / reels.length) * 100;
+      return pct >= 45 && pct <= 55;
+    } },
+
+  // === BIP ===
+  { id: 'first_bip', tier: 'bronze', category: 'bip', icon: '📝', title: 'First BIP-Log',
+    desc: 'Erste BIP-Notiz', xp: 10,
+    check: () => SmashApp.getData('bipLogs', []).length >= 1 },
+  { id: 'bip_streak_7', tier: 'silver', category: 'bip', icon: '🔥', title: '7-Day BIP-Streak',
+    desc: '7 Tage in Folge BIP geloggt', xp: 50,
+    check: () => {
+      const logs = SmashApp.getData('bipLogs', []);
+      const dates = new Set(logs.map(l => l.date));
+      let streak = 0;
+      let cursor = new Date();
+      while (dates.has(cursor.toISOString().split('T')[0])) {
+        streak++;
+        cursor.setDate(cursor.getDate() - 1);
+        if (streak >= 7) return true;
+      }
+      return false;
+    } },
+  { id: 'bip_streak_30', tier: 'gold', category: 'bip', icon: '⛰️', title: '30-Day BIP-Streak',
+    desc: '30 Tage in Folge BIP geloggt — Discipline-Beast', xp: 200,
+    check: () => {
+      const logs = SmashApp.getData('bipLogs', []);
+      const dates = new Set(logs.map(l => l.date));
+      let streak = 0;
+      let cursor = new Date();
+      while (dates.has(cursor.toISOString().split('T')[0])) {
+        streak++;
+        cursor.setDate(cursor.getDate() - 1);
+        if (streak >= 30) return true;
+      }
+      return false;
+    } },
+  { id: 'bip_100', tier: 'diamond', category: 'bip', icon: '💎', title: '100 BIP-Logs',
+    desc: '100 Building-in-Public-Tage dokumentiert', xp: 300,
+    check: () => SmashApp.getData('bipLogs', []).length >= 100 },
+
+  // === GOALS ===
+  { id: 'g_100', tier: 'silver', category: 'goals', icon: '👥', title: '100 Followers',
+    desc: 'Real-User-Validation erreicht', xp: 50,
+    check: () => (SmashApp.getData('goals') || {}).current >= 100 },
+  { id: 'g_1k', tier: 'gold', category: 'goals', icon: '🎯', title: '1k Followers',
+    desc: 'Algorithm spürt dich', xp: 200,
+    check: () => (SmashApp.getData('goals') || {}).current >= 1000 },
+  { id: 'g_10k', tier: 'diamond', category: 'goals', icon: '⭐', title: '10k Followers',
+    desc: 'Story-Link-Sticker freigeschaltet', xp: 500,
+    check: () => (SmashApp.getData('goals') || {}).current >= 10000 },
+  { id: 'g_100k', tier: 'diamond', category: 'goals', icon: '🌟', title: '100k Followers',
+    desc: 'Macro-Influencer-Tier erreicht', xp: 1000,
+    check: () => (SmashApp.getData('goals') || {}).current >= 100000 },
+  { id: 'g_1m', tier: 'legend', category: 'goals', icon: '🏔️', title: '1M Peak',
+    desc: 'The destination — Always peaking achieved', xp: 5000,
+    check: () => (SmashApp.getData('goals') || {}).current >= 1000000 },
+
+  // === SERIES ===
+  { id: 'series_first', tier: 'bronze', category: 'series', icon: '🎞️', title: 'First Series',
+    desc: 'Erste Reel-Serie gestartet', xp: 15,
+    check: () => SmashApp.getData('reelSeries', []).length >= 1 },
+  { id: 'series_complete', tier: 'gold', category: 'series', icon: '🏁', title: 'Series Complete',
+    desc: 'Erste Serie komplett gepostet', xp: 150,
+    check: () => SmashApp.getData('reelSeries', []).some(s => {
+      const reels = s.reels || [];
+      const total = s.total || reels.length;
+      const posted = reels.filter(r => r.status === 'posted').length;
+      return total > 0 && posted >= total;
+    }) },
+  { id: 'series_10reels', tier: 'silver', category: 'series', icon: '📚', title: 'Series-Builder',
+    desc: '10+ Reels in einer Serie', xp: 50,
+    check: () => SmashApp.getData('reelSeries', []).some(s => (s.reels || []).length >= 10) },
+
+  // === BOOTSTRAP ===
+  { id: 'bootstrap_started', tier: 'bronze', category: 'bootstrap', icon: '🚀', title: 'Bootstrap Started',
+    desc: '30-Tage-Plan gestartet', xp: 10,
+    check: () => SmashApp.getData('bootstrapPlan') !== null },
+  { id: 'bootstrap_50', tier: 'silver', category: 'bootstrap', icon: '⚡', title: 'Halfway',
+    desc: '50% des 30-Tage-Plans done', xp: 75,
+    check: () => {
+      const data = SmashApp.getData('bootstrapPlan');
+      if (!data) return false;
+      const done = Object.values(data.items || {}).filter(v => v === 'done').length;
+      return done >= 9; // ~50% von 18 items
+    } },
+  { id: 'bootstrap_complete', tier: 'diamond', category: 'bootstrap', icon: '🎉', title: 'Bootstrap Complete',
+    desc: '30-Tage-Plan komplett — alle 18 done', xp: 300,
+    check: () => {
+      const data = SmashApp.getData('bootstrapPlan');
+      if (!data) return false;
+      const done = Object.values(data.items || {}).filter(v => v === 'done').length;
+      return done >= 18;
+    } },
+
+  // === TOOL-USE (Meta) ===
+  { id: 'first_idea_used', tier: 'bronze', category: 'tool', icon: '💡', title: 'Idea Adopted',
+    desc: 'Erste Idee als „using" markiert', xp: 10,
+    check: () => SmashApp.getData('ideas', []).some(i => i.status === 'using' || i.status === 'posted') },
+  { id: 'ideas_50', tier: 'silver', category: 'tool', icon: '💭', title: 'Idea-Bank-Builder',
+    desc: '50+ Ideen gespeichert', xp: 30,
+    check: () => SmashApp.getData('ideas', []).length >= 50 },
+  { id: 'first_custom_caption', tier: 'bronze', category: 'tool', icon: '🎨', title: 'Caption-Crafter',
+    desc: 'Erstes eigenes Caption-Template', xp: 10,
+    check: () => SmashApp.getData('captionsCustom', []).length >= 1 },
+  { id: 'first_custom_hook', tier: 'bronze', category: 'tool', icon: '🪝', title: 'Hook-Crafter',
+    desc: 'Erster eigener Hook gespeichert', xp: 10,
+    check: () => SmashApp.getData('customHooks', []).length >= 1 },
+  { id: 'multi_account_active', tier: 'silver', category: 'tool', icon: '🔄', title: 'Dual-Account-Pilot',
+    desc: 'Beide Accounts haben mind. 1 Reel getrackt', xp: 40,
+    check: () => {
+      const veg = SmashApp.getDataForAccount('vegetarianhulk', 'reels', []);
+      const peak = SmashApp.getDataForAccount('peakingworld', 'reels', []);
+      return veg.length >= 1 && peak.length >= 1;
+    } },
+  { id: 'first_inspiration', tier: 'bronze', category: 'tool', icon: '👀', title: 'Inspiration-Saver',
+    desc: 'Erste Reel-Inspiration gespeichert', xp: 10,
+    check: () => SmashApp.getData('inspirations', []).length >= 1 }
+];
+
+// ============ STATE ============
+const filters = { tier: 'all', cat: 'all' };
+let unlocked = {};
+let newlyUnlockedThisSession = [];
+
+// ============ INIT ============
+function init() {
+  unlocked = SmashApp.getData('achievements', {}) || {};
+  checkUnlocks();
+  bindFilters();
+  render();
+  if (newlyUnlockedThisSession.length > 0) {
+    setTimeout(() => {
+      showToast(`🏆 ${newlyUnlockedThisSession.length} neue Achievement${newlyUnlockedThisSession.length > 1 ? 's' : ''}!`);
+    }, 600);
+  }
+}
+
+function checkUnlocks() {
+  let count = 0;
+  ACHIEVEMENTS.forEach(a => {
+    if (unlocked[a.id]) return;
+    try {
+      if (a.check()) {
+        unlocked[a.id] = Date.now();
+        newlyUnlockedThisSession.push(a.id);
+        count++;
+      }
+    } catch (e) {
+      console.warn('Achievement check failed for', a.id, e);
+    }
+  });
+  if (count > 0) SmashApp.setData('achievements', unlocked);
+}
+
+function bindFilters() {
+  document.querySelectorAll('#filterChips .chip').forEach(c => {
+    c.onclick = () => {
+      filters.tier = c.dataset.filter;
+      document.querySelectorAll('#filterChips .chip').forEach(b => b.classList.remove('active'));
+      c.classList.add('active');
+      render();
+    };
+  });
+  document.querySelectorAll('#catChips .chip').forEach(c => {
+    c.onclick = () => {
+      filters.cat = c.dataset.cat;
+      document.querySelectorAll('#catChips .chip').forEach(b => b.classList.remove('active'));
+      c.classList.add('active');
+      render();
+    };
+  });
+}
+
+// ============ RENDER ============
+const TIER_COLORS = {
+  bronze: { color: '#cd7f32', glow: 'rgba(205, 127, 50, 0.5)' },
+  silver: { color: '#c0c0c0', glow: 'rgba(192, 192, 192, 0.5)' },
+  gold: { color: '#FFD700', glow: 'rgba(255, 215, 0, 0.5)' },
+  diamond: { color: '#b9f2ff', glow: 'rgba(185, 242, 255, 0.6)' },
+  legend: { color: '#FFA94D', glow: 'rgba(255, 169, 77, 0.7)' }
+};
+
+function render() {
+  // Hero stats
+  const total = ACHIEVEMENTS.length;
+  const unlockedCount = Object.keys(unlocked).filter(id => ACHIEVEMENTS.some(a => a.id === id)).length;
+  document.getElementById('heroProgress').textContent = `${unlockedCount}/${total}`;
+
+  const xp = ACHIEVEMENTS.filter(a => unlocked[a.id]).reduce((s, a) => s + (a.xp || 0), 0);
+  const tierCounts = { bronze: 0, silver: 0, gold: 0, diamond: 0, legend: 0 };
+  ACHIEVEMENTS.forEach(a => { if (unlocked[a.id]) tierCounts[a.tier]++; });
+  document.getElementById('heroXP').textContent =
+    `${xp} XP · 🟫 ${tierCounts.bronze} · ⚪ ${tierCounts.silver} · 🟡 ${tierCounts.gold} · 💎 ${tierCounts.diamond} · 🌟 ${tierCounts.legend}`;
+
+  // Filter
+  const filtered = ACHIEVEMENTS.filter(a => {
+    if (filters.tier === 'unlocked' && !unlocked[a.id]) return false;
+    if (filters.tier === 'locked' && unlocked[a.id]) return false;
+    if (['bronze','silver','gold','diamond','legend'].includes(filters.tier) && a.tier !== filters.tier) return false;
+    if (filters.cat !== 'all' && a.category !== filters.cat) return false;
+    return true;
+  });
+
+  // Sort: unlocked first, then by tier (legend → bronze)
+  const tierOrder = { legend: 0, diamond: 1, gold: 2, silver: 3, bronze: 4 };
+  filtered.sort((a, b) => {
+    const ua = !!unlocked[a.id], ub = !!unlocked[b.id];
+    if (ua !== ub) return ub - ua;
+    return tierOrder[a.tier] - tierOrder[b.tier];
+  });
+
+  const grid = document.getElementById('badgeGrid');
+  const empty = document.getElementById('emptyState');
+  if (filtered.length === 0) { grid.innerHTML = ''; empty.classList.remove('hidden'); return; }
+  empty.classList.add('hidden');
+
+  grid.innerHTML = filtered.map(a => renderBadge(a)).join('');
+}
+
+function renderBadge(a) {
+  const isUnlocked = !!unlocked[a.id];
+  const isNew = newlyUnlockedThisSession.includes(a.id);
+  const t = TIER_COLORS[a.tier];
+  const dateStr = isUnlocked
+    ? new Date(unlocked[a.id]).toLocaleDateString('de-DE', { day: '2-digit', month: 'short', year: 'numeric' })
+    : '🔒 Locked';
+  return `
+    <div class="badge-card ${isUnlocked ? 'unlocked' : 'locked'} ${isNew ? 'new-unlock-badge' : ''}" style="--tier-color: ${t.color}; --tier-glow: ${t.glow};">
+      <div class="badge-icon">${a.icon}</div>
+      <div class="font-bold text-sm leading-tight mb-1">${escapeHtml(a.title)}</div>
+      <div class="text-[11px] text-gray-400 leading-snug mb-2">${escapeHtml(a.desc)}</div>
+      <div class="tier-pill tier-${a.tier}">${a.tier} · ${a.xp} XP</div>
+      <div class="text-[10px] text-gray-500 mt-2">${dateStr}</div>
+    </div>
+  `;
+}
+
+function escapeHtml(s) {
+  return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+// ============ TOAST ============
+let toastTimer;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+init();
+</script>
+
+</body>
+</html>
