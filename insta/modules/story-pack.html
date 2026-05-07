@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>📨 Story-Pack — PEAKING</title>
+<link rel="icon" href="../assets/logo.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/effects.css">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="../js/app.js"></script>
+<style>
+  body {
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    min-height: 100dvh;
+    color: white;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+  .glass {
+    background: rgba(30, 41, 59, 0.6);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+  .neon { color: #FFA94D; }
+  .text-sunrise {
+    background: linear-gradient(135deg, #FF6B6B, #FFA94D, #FFD43B);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+  }
+  /* Story-Slide-Preview (9:16 ratio, scaled down for screen, full-res for export) */
+  .story-frame {
+    width: 270px;            /* 1080 / 4 */
+    height: 480px;           /* 1920 / 4 */
+    border-radius: 18px;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.5);
+    margin: 0 auto;
+    transform-origin: top left;
+  }
+  .story-render {
+    /* Full-res for html2canvas export */
+    width: 1080px;
+    height: 1920px;
+    position: absolute;
+    top: 0; left: 0;
+    transform: scale(0.25);  /* match story-frame size */
+    transform-origin: top left;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    color: white;
+    overflow: hidden;
+  }
+  /* Templates */
+  .slide-bg-sunrise {
+    background: linear-gradient(135deg, #1e1b4b 0%, #312e81 30%, #FFA94D 100%);
+  }
+  .slide-bg-dark {
+    background: linear-gradient(180deg, #0f172a 0%, #1e293b 50%, #312e81 100%);
+  }
+  .slide-bg-pop {
+    background: linear-gradient(135deg, #FF6B6B 0%, #FFA94D 50%, #FFD43B 100%);
+  }
+  .slide-bg-ink {
+    background: radial-gradient(circle at top right, #FFA94D22 0%, transparent 50%), linear-gradient(180deg, #0f172a 0%, #000 100%);
+  }
+  .btn-primary {
+    background: linear-gradient(135deg, #FFA94D, #FF6B6B);
+    color: #0f172a;
+    font-weight: 700;
+    padding: 10px 18px;
+    border-radius: 12px;
+    cursor: pointer;
+    border: none;
+    transition: transform 0.15s;
+    font-size: 13px;
+  }
+  .btn-primary:hover { transform: translateY(-1px); }
+  .btn-secondary {
+    background: rgba(15, 23, 42, 0.6);
+    border: 1px solid rgba(255, 169, 77, 0.3);
+    color: white;
+    padding: 10px 18px;
+    border-radius: 12px;
+    cursor: pointer;
+    font-size: 13px;
+  }
+  .toast {
+    position: fixed; bottom: 24px; left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    background: #FFA94D; color: #0f172a;
+    padding: 12px 24px; border-radius: 999px; font-weight: bold;
+    z-index: 100; transition: transform 0.3s;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+</style>
+</head>
+<body class="p-4 md:p-6 pb-12">
+
+<div class="max-w-6xl mx-auto">
+
+  <!-- Header -->
+  <div class="flex justify-between items-center mb-5">
+    <div>
+      <a href="../dashboard.html" class="text-xs text-gray-400 hover:text-white">← Dashboard</a>
+      <h1 class="text-2xl md:text-3xl font-bold mt-1">📨 <span class="text-sunrise">Story-Pack</span></h1>
+      <p class="text-gray-400 text-sm">Auto-Story-Slides für Cross-Post · Reel-Drop · BIP · Hook-Insight</p>
+    </div>
+    <div class="flex gap-2">
+      <select id="accountSelector" class="bg-slate-800 rounded-lg p-2 text-sm" onchange="reload()"></select>
+      <button onclick="SmashApp.logout()" class="text-sm text-gray-400 hover:text-white">🔒</button>
+    </div>
+  </div>
+
+  <!-- WHY -->
+  <div class="glass rounded-2xl p-4 mb-5" style="border: 1px solid rgba(255, 169, 77, 0.3);">
+    <p class="text-sm text-gray-300 leading-relaxed">
+      <b class="neon">📨 Wann nutzen?</b> Nach jedem Cross-Post / Reel-Launch / BIP-Tag → 1× pro Tag eine Story-Slide für Continuity.
+      Stories halten Algo warm zwischen den Reels & ziehen Profile-Visits auf <code>peaking.world</code>.
+      Templates ziehen automatisch deine letzten Daten — du musst nur posten.
+    </p>
+  </div>
+
+  <!-- Templates Grid -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+    <!-- 🔄 Cross-Post-Announcement -->
+    <div class="glass rounded-2xl p-5">
+      <div class="flex items-center justify-between mb-3 flex-wrap gap-2">
+        <h2 class="font-bold text-lg">🔄 Cross-Post-Announcement</h2>
+        <span class="text-xs text-gray-500" id="cpDataInfo">—</span>
+      </div>
+      <div class="story-frame" id="frame-crosspost">
+        <div class="story-render slide-bg-sunrise" id="render-crosspost"></div>
+      </div>
+      <div class="mt-4 flex gap-2 flex-wrap">
+        <button onclick="downloadSlide('crosspost')" class="btn-primary">📥 PNG Download</button>
+        <button onclick="copyCaption('crosspost')" class="btn-secondary">📋 Caption</button>
+        <button onclick="reroll('crosspost')" class="btn-secondary">↻ Refresh</button>
+      </div>
+    </div>
+
+    <!-- 🎬 Reel-Drop -->
+    <div class="glass rounded-2xl p-5">
+      <div class="flex items-center justify-between mb-3 flex-wrap gap-2">
+        <h2 class="font-bold text-lg">🎬 Reel-Drop-Tease</h2>
+        <span class="text-xs text-gray-500" id="reelDataInfo">—</span>
+      </div>
+      <div class="story-frame" id="frame-reel">
+        <div class="story-render slide-bg-dark" id="render-reel"></div>
+      </div>
+      <div class="mt-4 flex gap-2 flex-wrap">
+        <button onclick="downloadSlide('reel')" class="btn-primary">📥 PNG Download</button>
+        <button onclick="copyCaption('reel')" class="btn-secondary">📋 Caption</button>
+        <button onclick="reroll('reel')" class="btn-secondary">↻ Refresh</button>
+      </div>
+    </div>
+
+    <!-- 📊 BIP-Update -->
+    <div class="glass rounded-2xl p-5">
+      <div class="flex items-center justify-between mb-3 flex-wrap gap-2">
+        <h2 class="font-bold text-lg">📊 BIP-Day-Update</h2>
+        <span class="text-xs text-gray-500" id="bipDataInfo">—</span>
+      </div>
+      <div class="story-frame" id="frame-bip">
+        <div class="story-render slide-bg-ink" id="render-bip"></div>
+      </div>
+      <div class="mt-4 flex gap-2 flex-wrap">
+        <button onclick="downloadSlide('bip')" class="btn-primary">📥 PNG Download</button>
+        <button onclick="copyCaption('bip')" class="btn-secondary">📋 Caption</button>
+        <button onclick="reroll('bip')" class="btn-secondary">↻ Refresh</button>
+      </div>
+    </div>
+
+    <!-- 🪝 Hook-Insight -->
+    <div class="glass rounded-2xl p-5">
+      <div class="flex items-center justify-between mb-3 flex-wrap gap-2">
+        <h2 class="font-bold text-lg">🪝 Hook-Insight</h2>
+        <span class="text-xs text-gray-500" id="hookDataInfo">—</span>
+      </div>
+      <div class="story-frame" id="frame-hook">
+        <div class="story-render slide-bg-pop" id="render-hook"></div>
+      </div>
+      <div class="mt-4 flex gap-2 flex-wrap">
+        <button onclick="downloadSlide('hook')" class="btn-primary">📥 PNG Download</button>
+        <button onclick="copyCaption('hook')" class="btn-secondary">📋 Caption</button>
+        <button onclick="reroll('hook')" class="btn-secondary">↻ Refresh</button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Story-Posting-Plan -->
+  <div class="glass rounded-2xl p-5 mt-6">
+    <h2 class="font-bold text-lg mb-2">📅 Story-Posting-Plan (Empfehlung)</h2>
+    <ul class="text-sm text-gray-300 leading-relaxed space-y-1">
+      <li>• <b class="neon">Mo/Mi/Fr/Sa</b>: Reel-Drop-Tease 1-2h vor Reel-Veröffentlichung</li>
+      <li>• <b class="neon">+24-48h</b> nach Reel: Cross-Post-Announcement → drüben rüberziehen</li>
+      <li>• <b class="neon">Daily 7-9 AM</b>: BIP-Day-Update (kurz, ehrlich, no hype)</li>
+      <li>• <b class="neon">Wöchentlich Sa</b>: Hook-Insight oder Top-Performer-Recap</li>
+    </ul>
+    <div class="mt-3 text-xs text-gray-500">Stories halten Algo warm zwischen Reels — 1-2 pro Tag reicht.</div>
+  </div>
+
+</div>
+
+<div id="toast" class="toast">✓</div>
+
+<!-- Hidden caption store -->
+<div id="captions" style="display:none;">
+  <textarea id="cap-crosspost"></textarea>
+  <textarea id="cap-reel"></textarea>
+  <textarea id="cap-bip"></textarea>
+  <textarea id="cap-hook"></textarea>
+</div>
+
+<script>
+SmashApp.requireAuth();
+
+// ============ ACCOUNT SELECTOR ============
+function buildAccountSelector() {
+  const sel = document.getElementById('accountSelector');
+  const current = SmashApp.getCurrentAccount();
+  sel.innerHTML = Object.values(SmashApp.ACCOUNTS).map(a =>
+    `<option value="${a.key}" ${a.key === current ? 'selected' : ''}>${a.emoji} ${a.handle}</option>`
+  ).join('');
+}
+
+function reload() {
+  const acc = document.getElementById('accountSelector').value;
+  if (acc !== SmashApp.getCurrentAccount()) SmashApp.switchAccount(acc);
+  renderAll();
+}
+
+// ============ DATA-FETCH ============
+function getLatestCrossPost() {
+  const log = SmashApp.getData('crossPostLog', []) || [];
+  const acc = SmashApp.getCurrentAccount();
+  return log.find(l => l.from === acc) || log[0] || null;
+}
+
+function getLatestReel() {
+  const reels = (SmashApp.getData('reels', []) || []).slice();
+  if (!reels.length) return null;
+  return reels.sort((a, b) => new Date(b.date || 0) - new Date(a.date || 0))[0];
+}
+
+function getTopPerformerReel() {
+  const reels = (SmashApp.getData('reels', []) || []).slice();
+  if (!reels.length) return null;
+  return reels.sort((a, b) => (Number(b.plays)||0) - (Number(a.plays)||0))[0];
+}
+
+function getBipStreak() {
+  const logs = SmashApp.getData('bipLogs', []) || [];
+  return { count: logs.length, latest: logs[0] || null };
+}
+
+function getTopHookFormat() {
+  const usage = SmashApp.getData('hookUsage', {}) || {};
+  const formatCounts = {};
+  Object.entries(usage).forEach(([id, u]) => {
+    // we'd need hooks here — simplified: count by format-id-prefix from SEED_HOOKS-IDs
+    // 4001-4099 = loss, 41xx = twist, 42xx = stat, 43xx = mistake, 44xx = curiosity
+    // 45xx = pov, 46xx = comparison, 47xx = story, 48xx = question, 49xx = quote
+    const idNum = Number(id);
+    let fmt = 'mixed';
+    if (idNum >= 4000 && idNum < 4100) fmt = 'loss';
+    else if (idNum >= 4100 && idNum < 4200) fmt = 'twist';
+    else if (idNum >= 4200 && idNum < 4300) fmt = 'stat';
+    else if (idNum >= 4300 && idNum < 4400) fmt = 'mistake';
+    else if (idNum >= 4400 && idNum < 4500) fmt = 'curiosity';
+    else if (idNum >= 4500 && idNum < 4600) fmt = 'pov';
+    else if (idNum >= 4600 && idNum < 4700) fmt = 'comparison';
+    else if (idNum >= 4700 && idNum < 4800) fmt = 'story';
+    else if (idNum >= 4800 && idNum < 4900) fmt = 'question';
+    else if (idNum >= 4900 && idNum < 5000) fmt = 'quote';
+    formatCounts[fmt] = (formatCounts[fmt] || 0) + (u.count || 0);
+  });
+  const sorted = Object.entries(formatCounts).sort((a, b) => b[1] - a[1]);
+  return sorted[0] || null;
+}
+
+// ============ RENDER TEMPLATES ============
+const FORMAT_NAMES = {
+  loss: 'Loss-Hooks', twist: 'Plot-Twists', stat: 'Stat-Reveals', mistake: 'Mistake-Confessions',
+  curiosity: 'Curiosity-Gaps', pov: 'POVs', comparison: 'Comparisons', story: 'Stories',
+  question: 'Questions', quote: 'Quotes'
+};
+
+function escapeHTML(s) { return String(s||'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+function renderCrossPost() {
+  const cp = getLatestCrossPost();
+  const acc = SmashApp.getCurrentAccount();
+  const accInfo = SmashApp.getAccount();
+  const info = document.getElementById('cpDataInfo');
+  const r = document.getElementById('render-crosspost');
+
+  if (!cp) {
+    info.textContent = 'Noch kein Cross-Post';
+    r.innerHTML = template_crosspost_empty(accInfo);
+    setCaption('crosspost', `Diese Story zeigt: noch keine Cross-Posts. Geh in Cross-Post-Modul und mach den ersten.\n\n#buildinginpublic #peakingworld`);
+    return;
+  }
+  const fromAcc = SmashApp.getAccount(cp.from);
+  const toAcc = SmashApp.getAccount(cp.to);
+  info.textContent = `Letzter: ${fromAcc.emoji}→${toAcc.emoji} · ${timeAgo(cp.date)}`;
+  r.innerHTML = template_crosspost(fromAcc, toAcc, cp.sourceHook || 'Original-Reel');
+  setCaption('crosspost',
+    `🔄 Cross-Post-Day. Was auf @${cp.from} funktioniert hat, kommt jetzt zu @${cp.to} — nur durch andere Lens.\n\nWelche Account-Audience holt mehr ab? Drop's in den DMs.\n\n#buildinginpublic #crossposting #peakingworld`);
+}
+
+function renderReel() {
+  const reel = getLatestReel();
+  const acc = SmashApp.getCurrentAccount();
+  const accInfo = SmashApp.getAccount();
+  const info = document.getElementById('reelDataInfo');
+  const r = document.getElementById('render-reel');
+
+  if (!reel) {
+    info.textContent = 'Noch kein Reel';
+    r.innerHTML = template_reel_empty(accInfo);
+    setCaption('reel', `Heute kommt mein erstes Reel auf @${acc} — Track + Caption ready, push it!\n\n#firstreel #buildinginpublic`);
+    return;
+  }
+  info.textContent = `Letzter: ▶ ${SmashApp.formatNumber(reel.plays||0)} · ${timeAgo(reel.date)}`;
+  r.innerHTML = template_reel(accInfo, reel);
+  setCaption('reel',
+    `🎬 NEUES REEL — ${reel.hook || 'Hook'}\n\nLink in Bio → @${acc}\n\n#newreel #buildinginpublic #peakingworld`);
+}
+
+function renderBip() {
+  const acc = SmashApp.getCurrentAccount();
+  const accInfo = SmashApp.getAccount();
+  const bip = getBipStreak();
+  const info = document.getElementById('bipDataInfo');
+  const r = document.getElementById('render-bip');
+
+  info.textContent = bip.count > 0 ? `Day ${bip.count} · letzter ${timeAgo(bip.latest?.date)}` : 'Noch kein BIP-Log';
+  r.innerHTML = template_bip(accInfo, bip);
+  setCaption('bip',
+    `📊 Day ${bip.count || '0'} of 1000.\n\n${bip.latest?.note || bip.latest?.text || 'Heute weiter dran. Real progress, no hype.'}\n\n#buildinginpublic #soloFounder #peakingworld`);
+}
+
+function renderHook() {
+  const acc = SmashApp.getCurrentAccount();
+  const accInfo = SmashApp.getAccount();
+  const top = getTopHookFormat();
+  const info = document.getElementById('hookDataInfo');
+  const r = document.getElementById('render-hook');
+
+  if (!top) {
+    info.textContent = 'Noch keine Hook-Daten';
+    r.innerHTML = template_hook_empty(accInfo);
+    setCaption('hook', `Hooks aus dem PEAKING-Stack — 50+ Patterns, alle mit Win-Rate-Data.\n\nLoss-Hooks performen 2-3× besser im 2026-Algo (Greg Isenberg).\n\n#instagrowth #hooks #peakingworld`);
+    return;
+  }
+  info.textContent = `Top: ${FORMAT_NAMES[top[0]]} (${top[1]}× genutzt)`;
+  r.innerHTML = template_hook(accInfo, top[0], top[1]);
+  setCaption('hook',
+    `🪝 Mein Top-Hook-Format: ${FORMAT_NAMES[top[0]]} (${top[1]}× genutzt).\n\n2026-Algo-Reality: Hook = 80% des Reach-Erfolgs. Die ersten 2 Sek entscheiden alles.\n\n#hooks #instagrowth #peakingworld`);
+}
+
+// ============ SLIDE-TEMPLATES (HTML) ============
+const COMMON_HEADER = (acc, label) => `
+  <div style="position:absolute; top:60px; left:60px; right:60px; display:flex; align-items:center; gap:20px;">
+    <div style="font-size:64px;">${acc.emoji}</div>
+    <div>
+      <div style="font-size:36px; font-weight:700; opacity:0.9;">@${acc.key}</div>
+      <div style="font-size:24px; opacity:0.6; margin-top:4px;">${label}</div>
+    </div>
+  </div>
+`;
+
+const COMMON_FOOTER = `
+  <div style="position:absolute; bottom:60px; left:60px; right:60px; display:flex; justify-content:space-between; align-items:center;">
+    <div style="display:flex; align-items:center; gap:14px;">
+      <div style="width:40px; height:40px; background: linear-gradient(135deg, #FF6B6B, #FFA94D, #FFD43B); border-radius: 8px;"></div>
+      <span style="font-size:28px; font-weight:700; letter-spacing:1px;">PEAKING</span>
+    </div>
+    <span style="font-size:24px; opacity:0.6;">peaking.world</span>
+  </div>
+`;
+
+function template_crosspost(fromAcc, toAcc, hook) {
+  return `
+    ${COMMON_HEADER(fromAcc, 'Cross-Post-Day')}
+    <div style="position:absolute; top:380px; left:60px; right:60px; text-align:center;">
+      <div style="font-size:200px; line-height:1;">🔄</div>
+      <div style="font-size:42px; font-weight:700; margin-top:30px; opacity:0.9;">Same idea, andere Lens</div>
+      <div style="font-size:32px; margin-top:20px; opacity:0.7; padding: 20px 0;">
+        ${escapeHTML(fromAcc.emoji + ' @' + fromAcc.key)}<br>
+        <span style="font-size:48px; opacity:0.9;">↓</span><br>
+        ${escapeHTML(toAcc.emoji + ' @' + toAcc.key)}
+      </div>
+      <div style="font-size:28px; margin-top:40px; padding: 20px 30px; background: rgba(0,0,0,0.4); border-radius: 16px; line-height:1.4;">
+        „${escapeHTML(hook.slice(0, 100))}${hook.length > 100 ? '…' : ''}"
+      </div>
+    </div>
+    ${COMMON_FOOTER}
+  `;
+}
+
+function template_crosspost_empty(acc) {
+  return `
+    ${COMMON_HEADER(acc, 'Cross-Post-Day')}
+    <div style="position:absolute; top:550px; left:60px; right:60px; text-align:center;">
+      <div style="font-size:240px; line-height:1; opacity:0.5;">🔄</div>
+      <div style="font-size:42px; font-weight:700; margin-top:40px;">First Cross-Post Loading</div>
+      <div style="font-size:28px; margin-top:30px; opacity:0.7;">Cross-Post-Modul → Re-Cut + Save</div>
+    </div>
+    ${COMMON_FOOTER}
+  `;
+}
+
+function template_reel(acc, reel) {
+  const plays = SmashApp.formatNumber(reel.plays||0);
+  const er = reel.plays > 0
+    ? ((((reel.likes||0)+(reel.comments||0)+(reel.saves||0)+(reel.shares||0)) / reel.plays) * 100).toFixed(1)
+    : '0';
+  return `
+    ${COMMON_HEADER(acc, 'Reel-Drop-Tease')}
+    <div style="position:absolute; top:380px; left:60px; right:60px;">
+      <div style="font-size:64px; font-weight:900; line-height:1.1; background: linear-gradient(135deg, #FF6B6B, #FFA94D, #FFD43B); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; color:transparent;">
+        🎬 NEUES REEL
+      </div>
+      <div style="font-size:38px; font-weight:600; margin-top:60px; line-height:1.3; padding: 30px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255, 169, 77, 0.3); border-radius: 20px;">
+        „${escapeHTML((reel.hook || reel.title || 'Hook').slice(0, 120))}${(reel.hook||reel.title||'').length > 120 ? '…' : ''}"
+      </div>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-top: 60px;">
+        <div style="text-align:center; padding:30px; background: rgba(255, 169, 77, 0.1); border-radius:16px;">
+          <div style="font-size:54px; font-weight:900; color:#FFA94D;">▶ ${plays}</div>
+          <div style="font-size:24px; opacity:0.7; margin-top:8px;">Plays</div>
+        </div>
+        <div style="text-align:center; padding:30px; background: rgba(255, 169, 77, 0.1); border-radius:16px;">
+          <div style="font-size:54px; font-weight:900; color:#FFA94D;">⚡ ${er}%</div>
+          <div style="font-size:24px; opacity:0.7; margin-top:8px;">ER</div>
+        </div>
+      </div>
+    </div>
+    ${COMMON_FOOTER}
+  `;
+}
+
+function template_reel_empty(acc) {
+  return `
+    ${COMMON_HEADER(acc, 'First Reel')}
+    <div style="position:absolute; top:550px; left:60px; right:60px; text-align:center;">
+      <div style="font-size:240px; line-height:1;">🎬</div>
+      <div style="font-size:48px; font-weight:700; margin-top:40px;">First Reel coming.</div>
+      <div style="font-size:28px; margin-top:30px; opacity:0.7;">Track ihn im Tracker-Modul.</div>
+    </div>
+    ${COMMON_FOOTER}
+  `;
+}
+
+function template_bip(acc, bip) {
+  const dayNum = bip.count || 0;
+  const dayMsg = bip.latest?.note || bip.latest?.text || 'Heute weiter dran.';
+  return `
+    ${COMMON_HEADER(acc, 'Building in Public')}
+    <div style="position:absolute; top:420px; left:60px; right:60px;">
+      <div style="text-align:center;">
+        <div style="font-size:42px; opacity:0.6; font-weight:600;">DAY</div>
+        <div style="font-size:280px; font-weight:900; line-height:1; background: linear-gradient(135deg, #FF6B6B, #FFA94D, #FFD43B); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; color:transparent;">
+          ${dayNum}
+        </div>
+        <div style="font-size:42px; opacity:0.6; font-weight:600;">of 1000</div>
+      </div>
+      <div style="margin-top:80px; font-size:36px; line-height:1.4; padding: 40px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255, 169, 77, 0.3); border-radius: 20px; text-align:center;">
+        ${escapeHTML(dayMsg.slice(0, 200))}${dayMsg.length > 200 ? '…' : ''}
+      </div>
+    </div>
+    ${COMMON_FOOTER}
+  `;
+}
+
+function template_hook(acc, format, count) {
+  const fmtName = FORMAT_NAMES[format] || format;
+  return `
+    ${COMMON_HEADER(acc, 'Hook-Insight')}
+    <div style="position:absolute; top:420px; left:60px; right:60px;">
+      <div style="font-size:240px; line-height:1; text-align:center;">🪝</div>
+      <div style="font-size:36px; opacity:0.7; text-align:center; margin-top:20px;">Mein Top-Format:</div>
+      <div style="font-size:84px; font-weight:900; text-align:center; margin-top:20px; color:#0f172a; text-shadow: 0 0 20px rgba(255,255,255,0.3);">
+        ${escapeHTML(fmtName)}
+      </div>
+      <div style="text-align:center; margin-top:30px;">
+        <span style="font-size:42px; font-weight:700; padding: 12px 32px; background: rgba(0,0,0,0.4); border-radius:999px;">
+          ${count}× genutzt
+        </span>
+      </div>
+      <div style="margin-top:80px; padding: 30px; background: rgba(0,0,0,0.4); border-radius:16px; text-align:center;">
+        <div style="font-size:32px; font-weight:600; opacity:0.9;">Hook = 80% Reach (2026-Algo)</div>
+      </div>
+    </div>
+    ${COMMON_FOOTER}
+  `;
+}
+
+function template_hook_empty(acc) {
+  return `
+    ${COMMON_HEADER(acc, 'Hook-Library')}
+    <div style="position:absolute; top:550px; left:60px; right:60px; text-align:center;">
+      <div style="font-size:240px; line-height:1;">🪝</div>
+      <div style="font-size:48px; font-weight:700; margin-top:40px; color:#0f172a;">50+ Hook-Patterns</div>
+      <div style="font-size:32px; margin-top:30px; opacity:0.7; color:#0f172a;">Alle mit Win-Rate aus deinen Daten</div>
+    </div>
+    ${COMMON_FOOTER}
+  `;
+}
+
+// ============ CAPTIONS + COPY + DOWNLOAD ============
+function setCaption(key, text) {
+  const ta = document.getElementById('cap-' + key);
+  if (ta) ta.value = text;
+}
+
+async function copyCaption(key) {
+  const text = document.getElementById('cap-' + key).value;
+  try {
+    await navigator.clipboard.writeText(text);
+    showToast('📋 Caption kopiert');
+  } catch (e) { showToast('⚠️ Copy failed'); }
+}
+
+async function downloadSlide(key) {
+  showToast('🖼️ Generiere PNG…');
+  const node = document.getElementById('render-' + key);
+  // Temporarily reset transform for full-res capture
+  const origTransform = node.style.transform;
+  node.style.transform = 'scale(1)';
+  // Hide overflow on parent so html2canvas captures full size
+  const frame = document.getElementById('frame-' + key);
+  const origOverflow = frame.style.overflow;
+  const origH = frame.style.height;
+  const origW = frame.style.width;
+  frame.style.overflow = 'visible';
+  frame.style.height = '1920px';
+  frame.style.width = '1080px';
+
+  try {
+    const canvas = await html2canvas(node, {
+      width: 1080, height: 1920, scale: 1,
+      backgroundColor: null, useCORS: true, logging: false
+    });
+    const link = document.createElement('a');
+    link.download = `peaking-story-${key}-${new Date().toISOString().split('T')[0]}.png`;
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+    showToast('✓ PNG heruntergeladen');
+  } catch (e) {
+    showToast('⚠️ Download fehlgeschlagen');
+  } finally {
+    node.style.transform = origTransform;
+    frame.style.overflow = origOverflow;
+    frame.style.height = origH;
+    frame.style.width = origW;
+  }
+}
+
+function reroll(key) {
+  if (key === 'crosspost') renderCrossPost();
+  if (key === 'reel') renderReel();
+  if (key === 'bip') renderBip();
+  if (key === 'hook') renderHook();
+  showToast('↻ Refreshed');
+}
+
+function renderAll() {
+  renderCrossPost();
+  renderReel();
+  renderBip();
+  renderHook();
+}
+
+function timeAgo(iso) {
+  if (!iso) return '—';
+  const d = new Date(iso); const s = Math.floor((Date.now() - d.getTime())/1000);
+  if (s < 60) return 'gerade';
+  if (s < 3600) return Math.floor(s/60) + 'min';
+  if (s < 86400) return Math.floor(s/3600) + 'h';
+  if (s < 86400*30) return Math.floor(s/86400) + 'd';
+  return d.toLocaleDateString('de-DE');
+}
+
+let toastTimer;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 1800);
+}
+
+// ============ INIT ============
+buildAccountSelector();
+renderAll();
+</script>
+
+</body>
+</html>
