@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+<title>🎞️ Reel Series — PEAKING</title>
+<link rel="icon" href="../assets/logo.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../assets/logo.svg">
+<link rel="manifest" href="../manifest.json">
+<meta name="theme-color" content="#FFA94D">
+<link rel="stylesheet" href="../assets/effects.css">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="../js/app.js"></script>
+<style>
+  body {
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    min-height: 100dvh;
+    color: white;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+  .glass {
+    background: rgba(30, 41, 59, 0.6);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+  .neon { color: #FFA94D; }
+  .btn-primary {
+    background: linear-gradient(135deg, #FFA94D, #FF6B6B);
+    color: #0f172a;
+    font-weight: bold;
+    transition: all 0.2s;
+  }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(255, 169, 77, 0.4); }
+  input, select, textarea { background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(255,255,255,0.15); color: white; }
+  input:focus, select:focus, textarea:focus { outline: none; border-color: #FFA94D; }
+  .modal-bg { background: rgba(0,0,0,0.7); backdrop-filter: blur(4px); }
+  .toast {
+    position: fixed; bottom: 24px; left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    background: #FFA94D; color: #0f172a;
+    padding: 12px 24px; border-radius: 999px; font-weight: bold;
+    box-shadow: 0 8px 24px rgba(255, 169, 77, 0.4);
+    transition: transform 0.3s ease; z-index: 100;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+  .series-card {
+    background: rgba(15, 23, 42, 0.4);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 16px;
+    padding: 16px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .series-card:hover {
+    border-color: rgba(255, 169, 77, 0.3);
+    transform: translateY(-2px);
+  }
+  .series-progress-bar {
+    height: 6px;
+    background: rgba(15, 23, 42, 0.6);
+    border-radius: 999px;
+    overflow: hidden;
+    margin-top: 10px;
+  }
+  .series-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #FFA94D, #FF6B6B);
+    border-radius: 999px;
+    transition: width 0.4s ease;
+  }
+  .reel-row {
+    display: grid;
+    grid-template-columns: 50px 1fr auto;
+    gap: 10px;
+    align-items: center;
+    padding: 12px;
+    border-radius: 12px;
+    background: rgba(15, 23, 42, 0.4);
+    margin-bottom: 6px;
+    border-left: 3px solid transparent;
+    transition: all 0.15s;
+  }
+  .reel-row:hover { background: rgba(15, 23, 42, 0.6); }
+  .reel-row.posted { border-left-color: #10b981; opacity: 0.7; }
+  .reel-row.recorded { border-left-color: #f59e0b; }
+  .reel-row.planned { border-left-color: rgba(255,255,255,0.15); }
+  .reel-day {
+    font-size: 22px;
+    font-weight: 900;
+    color: #FFA94D;
+    text-align: center;
+    line-height: 1;
+  }
+  .reel-day-sub {
+    font-size: 9px;
+    color: #94a3b8;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .status-pill {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .status-planned { background: rgba(100, 116, 139, 0.2); color: #94a3b8; }
+  .status-recorded { background: rgba(245, 158, 11, 0.2); color: #fbbf24; }
+  .status-posted { background: rgba(16, 185, 129, 0.2); color: #34d399; }
+  .fab {
+    position: fixed; bottom: 20px; right: 20px;
+    width: 56px; height: 56px; border-radius: 999px;
+    background: linear-gradient(135deg, #FFA94D, #FF6B6B);
+    color: #0f172a; font-size: 28px; font-weight: bold;
+    box-shadow: 0 8px 24px rgba(255, 169, 77, 0.4);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; z-index: 50; border: none;
+  }
+</style>
+</head>
+<body class="p-4 md:p-6 pb-24 bg-depth">
+
+<div class="max-w-4xl mx-auto">
+
+  <!-- Header -->
+  <div class="flex justify-between items-center mb-4">
+    <div>
+      <a href="#" onclick="backToList(); return false;" id="backLink" class="text-xs text-gray-400 hover:text-white">← Dashboard</a>
+      <h1 class="text-2xl md:text-3xl font-bold mt-1">🎞️ <span class="text-sunrise" id="pageTitle">Reel Series</span></h1>
+      <p class="text-gray-400 text-sm" id="pageSub">Multi-Reel-Serien für Building-in-Public</p>
+    </div>
+    <button onclick="SmashApp.logout()" class="text-sm text-gray-400 hover:text-white">🔒</button>
+  </div>
+
+  <!-- Series List -->
+  <div id="seriesView">
+    <div class="glass rounded-3xl p-5 mb-5 float-in" style="background: linear-gradient(135deg, rgba(255, 107, 107, 0.08), rgba(255, 212, 59, 0.08)); border-color: rgba(255, 169, 77, 0.3);">
+      <div class="flex items-baseline justify-between mb-2">
+        <h2 class="text-lg font-bold">🚀 Was ist eine Reel-Serie?</h2>
+        <span class="text-xs text-gray-400" id="seriesCount">0 Serien</span>
+      </div>
+      <p class="text-sm text-gray-300 mb-3 leading-snug">
+        Eine Serie = Mehrere Reels mit gleichem Thema, fortlaufender Nummerierung („Day 1 of 30"), Mini-Story-Bogen.<br>
+        <span class="neon font-bold">Algorithm liebt's, Audience folgt drauf.</span> Plus: Public-Commitment = du musst liefern.
+      </p>
+      <div class="text-xs text-gray-500">
+        💡 Beispiele: „30-Day BIP Challenge" · „5 AI-Tools die Solo-Creators brauchen" · „Mountain-Mindset-Mini-Series" · „Day-in-Life Week"
+      </div>
+    </div>
+
+    <div id="seriesList" class="grid grid-cols-1 md:grid-cols-2 gap-3 stagger"></div>
+    <div id="seriesEmpty" class="hidden glass rounded-3xl p-10 text-center">
+      <div class="text-5xl mb-3">🎞️</div>
+      <h2 class="text-lg font-bold mb-2">Noch keine Serien</h2>
+      <p class="text-gray-400 text-sm mb-4">Tap rechts unten + um deine erste Reel-Serie zu starten.</p>
+      <button onclick="openSeriesModal()" class="btn-primary px-5 py-2.5 rounded-xl">+ Erste Serie starten</button>
+    </div>
+  </div>
+
+  <!-- Detail View (Series Reels) -->
+  <div id="detailView" class="hidden">
+    <div class="glass rounded-3xl p-5 mb-5">
+      <div class="flex items-start justify-between mb-3 gap-3 flex-wrap">
+        <div>
+          <h2 class="text-xl font-bold" id="detailName">Serie</h2>
+          <p class="text-xs text-gray-400 mt-1" id="detailMeta">…</p>
+        </div>
+        <div class="flex gap-2">
+          <button onclick="editSeries()" class="text-xs px-3 py-2 rounded-lg bg-slate-700/40 hover:bg-slate-600/40">✏️</button>
+        </div>
+      </div>
+      <div class="series-progress-bar mb-2">
+        <div class="series-progress-fill" id="detailProgress" style="width: 0%"></div>
+      </div>
+      <p class="text-xs text-gray-400" id="detailProgressLabel">0 / 0 gepostet</p>
+    </div>
+
+    <div class="glass rounded-3xl p-5 mb-5">
+      <div class="flex items-baseline justify-between mb-3">
+        <h2 class="text-lg font-bold">📋 Reels in dieser Serie</h2>
+        <button onclick="openReelModal()" class="text-xs neon hover:underline">+ Reel adden</button>
+      </div>
+      <div id="reelsList"></div>
+      <div id="reelsEmpty" class="hidden text-center py-8 text-gray-500 italic text-sm">
+        Noch keine Reels. Tap „+ Reel adden" um deine Series zu füllen.
+      </div>
+    </div>
+  </div>
+
+  <div class="text-center text-gray-500 text-xs mt-8">
+    🎞️ PEAKING · Reel-Series · Build a story arc, not just one-offs
+  </div>
+</div>
+
+<!-- FAB -->
+<button class="fab" onclick="onFabClick()" id="fab">+</button>
+
+<!-- Series Modal -->
+<div id="seriesModal" class="hidden fixed inset-0 modal-bg z-50 flex items-center justify-center p-4">
+  <div class="glass rounded-3xl p-6 w-full max-w-md max-h-[90vh] overflow-y-auto">
+    <div class="flex justify-between items-center mb-4">
+      <h2 class="text-xl font-bold" id="seriesModalTitle">+ Neue Serie</h2>
+      <button onclick="closeSeriesModal()" class="text-gray-400 hover:text-white text-2xl">×</button>
+    </div>
+    <div class="space-y-3">
+      <div>
+        <label class="block text-xs text-gray-400 mb-1">Serien-Name *</label>
+        <input type="text" id="sName" class="w-full p-3 rounded-xl text-sm" placeholder="z.B. 30-Day BIP Challenge">
+      </div>
+      <div>
+        <label class="block text-xs text-gray-400 mb-1">Beschreibung / Theme (optional)</label>
+        <textarea id="sDesc" rows="2" class="w-full p-3 rounded-xl text-sm" placeholder="z.B. Daily progress als Solo-Creator von 0 → 1k Follower"></textarea>
+      </div>
+      <div class="grid grid-cols-2 gap-3">
+        <div>
+          <label class="block text-xs text-gray-400 mb-1">Geplante Anzahl</label>
+          <input type="number" id="sTotal" min="2" max="365" placeholder="30" class="w-full p-3 rounded-xl text-sm">
+        </div>
+        <div>
+          <label class="block text-xs text-gray-400 mb-1">Säule</label>
+          <select id="sPillar" class="w-full p-3 rounded-xl text-sm">
+            <!-- account-aware filled via JS -->
+          </select>
+        </div>
+      </div>
+      <button onclick="saveSeries()" class="btn-primary w-full p-3 rounded-xl">💾 Speichern</button>
+      <button id="sDeleteBtn" onclick="deleteSeries()" class="hidden w-full p-2 text-sm text-red-400 hover:text-red-300">🗑️ Serie löschen (mit allen Reels)</button>
+    </div>
+  </div>
+</div>
+
+<!-- Reel Modal -->
+<div id="reelModal" class="hidden fixed inset-0 modal-bg z-50 flex items-center justify-center p-4">
+  <div class="glass rounded-3xl p-6 w-full max-w-md max-h-[90vh] overflow-y-auto">
+    <div class="flex justify-between items-center mb-4">
+      <h2 class="text-xl font-bold" id="reelModalTitle">+ Reel adden</h2>
+      <button onclick="closeReelModal()" class="text-gray-400 hover:text-white text-2xl">×</button>
+    </div>
+    <div class="space-y-3">
+      <div>
+        <label class="block text-xs text-gray-400 mb-1">Day-Nummer</label>
+        <input type="number" id="rDay" class="w-full p-3 rounded-xl text-sm" min="1">
+      </div>
+      <div>
+        <label class="block text-xs text-gray-400 mb-1">Hook / Idee *</label>
+        <textarea id="rHook" rows="3" class="w-full p-3 rounded-xl text-sm" placeholder="z.B. Day 1 of 30: First post, 0 followers — let's go."></textarea>
+      </div>
+      <div class="grid grid-cols-2 gap-3">
+        <div>
+          <label class="block text-xs text-gray-400 mb-1">Status</label>
+          <select id="rStatus" class="w-full p-3 rounded-xl text-sm">
+            <option value="planned">📋 Planned</option>
+            <option value="recorded">🎥 Recorded</option>
+            <option value="posted">✓ Posted</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-xs text-gray-400 mb-1">Datum (optional)</label>
+          <input type="date" id="rDate" class="w-full p-3 rounded-xl text-sm">
+        </div>
+      </div>
+      <div>
+        <label class="block text-xs text-gray-400 mb-1">Notes</label>
+        <textarea id="rNotes" rows="2" class="w-full p-3 rounded-xl text-sm" placeholder="z.B. Audio: …, Visual: …, Cut bei …"></textarea>
+      </div>
+      <button onclick="saveReel()" class="btn-primary w-full p-3 rounded-xl">💾 Speichern</button>
+      <button id="rDeleteBtn" onclick="deleteReel()" class="hidden w-full p-2 text-sm text-red-400 hover:text-red-300">🗑️ Löschen</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast" class="toast">✓</div>
+
+<script>
+SmashApp.requireAuth();
+
+let series = [];
+let currentSeriesId = null;
+let editingSeriesId = null;
+let editingReelId = null;
+
+// ============ INIT ============
+function init() {
+  series = SmashApp.getData('reelSeries', []);
+  fillPillarSelect();
+  renderList();
+}
+
+function fillPillarSelect() {
+  const sel = document.getElementById('sPillar');
+  sel.innerHTML = Object.entries(SmashApp.PILLAR_INFO).map(([key, info]) =>
+    `<option value="${key}">${info.emoji} ${info.name}</option>`
+  ).join('');
+}
+
+// ============ LIST VIEW ============
+function renderList() {
+  document.getElementById('seriesCount').textContent = `${series.length} Serien`;
+  const list = document.getElementById('seriesList');
+  const empty = document.getElementById('seriesEmpty');
+
+  if (series.length === 0) {
+    list.innerHTML = '';
+    empty.classList.remove('hidden');
+    return;
+  }
+  empty.classList.add('hidden');
+
+  list.innerHTML = series.map(s => {
+    const reels = s.reels || [];
+    const posted = reels.filter(r => r.status === 'posted').length;
+    const total = s.total || reels.length;
+    const pct = total > 0 ? (posted / total) * 100 : 0;
+    const info = SmashApp.PILLAR_INFO[s.pillar] || { emoji: '🎬', name: '?' };
+
+    return `
+      <div class="series-card" onclick="openDetail(${s.id})">
+        <div class="flex items-baseline justify-between mb-1 gap-2 flex-wrap">
+          <h3 class="font-bold text-base">${escapeHtml(s.name)}</h3>
+          <span class="text-xs neon">${info.emoji}</span>
+        </div>
+        ${s.desc ? `<p class="text-xs text-gray-400 mb-2 line-clamp-2">${escapeHtml(s.desc)}</p>` : ''}
+        <div class="flex justify-between items-baseline text-xs text-gray-400 mt-2">
+          <span>${posted}/${total} gepostet</span>
+          <span class="neon font-bold">${pct.toFixed(0)}%</span>
+        </div>
+        <div class="series-progress-bar">
+          <div class="series-progress-fill" style="width: ${pct}%"></div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+// ============ DETAIL VIEW ============
+function openDetail(id) {
+  currentSeriesId = id;
+  const s = series.find(x => x.id === id);
+  if (!s) return;
+  document.getElementById('seriesView').classList.add('hidden');
+  document.getElementById('detailView').classList.remove('hidden');
+  document.getElementById('pageTitle').textContent = s.name;
+  document.getElementById('pageSub').textContent = s.desc || 'Multi-Reel-Serie';
+  document.getElementById('backLink').textContent = '← Zurück zu Serien';
+  document.getElementById('detailName').textContent = s.name;
+
+  const info = SmashApp.PILLAR_INFO[s.pillar] || { emoji: '🎬', name: '?' };
+  document.getElementById('detailMeta').textContent = `${info.emoji} ${info.name} · Geplant: ${s.total || (s.reels || []).length} Reels`;
+
+  renderReels();
+}
+
+function backToList() {
+  if (currentSeriesId) {
+    currentSeriesId = null;
+    document.getElementById('seriesView').classList.remove('hidden');
+    document.getElementById('detailView').classList.add('hidden');
+    document.getElementById('pageTitle').textContent = 'Reel Series';
+    document.getElementById('pageSub').textContent = 'Multi-Reel-Serien für Building-in-Public';
+    document.getElementById('backLink').textContent = '← Dashboard';
+    renderList();
+  } else {
+    location.href = '../dashboard.html';
+  }
+}
+
+function renderReels() {
+  const s = series.find(x => x.id === currentSeriesId);
+  if (!s) return;
+  const reels = (s.reels || []).sort((a, b) => (a.day || 0) - (b.day || 0));
+  const total = s.total || reels.length;
+  const posted = reels.filter(r => r.status === 'posted').length;
+  const pct = total > 0 ? (posted / total) * 100 : 0;
+
+  document.getElementById('detailProgress').style.width = pct + '%';
+  document.getElementById('detailProgressLabel').textContent = `${posted} / ${total} gepostet · ${pct.toFixed(0)}%`;
+
+  const list = document.getElementById('reelsList');
+  const empty = document.getElementById('reelsEmpty');
+
+  if (reels.length === 0) {
+    list.innerHTML = '';
+    empty.classList.remove('hidden');
+    return;
+  }
+  empty.classList.add('hidden');
+
+  const labels = { planned: '📋 Planned', recorded: '🎥 Recorded', posted: '✓ Posted' };
+  list.innerHTML = reels.map(r => {
+    const day = r.day || '?';
+    const total = s.total || reels.length;
+    return `
+      <div class="reel-row ${r.status}" onclick="openReelEdit(${r.id})">
+        <div>
+          <div class="reel-day">${day}</div>
+          <div class="reel-day-sub">/ ${total}</div>
+        </div>
+        <div>
+          <div class="text-sm font-medium leading-snug">${escapeHtml(r.hook)}</div>
+          ${r.notes ? `<div class="text-[11px] text-gray-500 mt-1 line-clamp-1">${escapeHtml(r.notes)}</div>` : ''}
+          ${r.date ? `<div class="text-[11px] text-gray-400 mt-1">📅 ${SmashApp.formatDate(r.date)}</div>` : ''}
+        </div>
+        <span class="status-pill status-${r.status}">${labels[r.status]}</span>
+      </div>
+    `;
+  }).join('');
+}
+
+function escapeHtml(s) {
+  return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+// ============ FAB ============
+function onFabClick() {
+  if (currentSeriesId) {
+    openReelModal();
+  } else {
+    openSeriesModal();
+  }
+}
+
+// ============ SERIES MODAL ============
+function openSeriesModal() {
+  editingSeriesId = null;
+  document.getElementById('seriesModalTitle').textContent = '+ Neue Serie';
+  document.getElementById('sName').value = '';
+  document.getElementById('sDesc').value = '';
+  document.getElementById('sTotal').value = 30;
+  document.getElementById('sPillar').value = Object.keys(SmashApp.PILLAR_INFO)[0];
+  document.getElementById('sDeleteBtn').classList.add('hidden');
+  document.getElementById('seriesModal').classList.remove('hidden');
+}
+
+function editSeries() {
+  const s = series.find(x => x.id === currentSeriesId);
+  if (!s) return;
+  editingSeriesId = currentSeriesId;
+  document.getElementById('seriesModalTitle').textContent = '✏️ Serie bearbeiten';
+  document.getElementById('sName').value = s.name;
+  document.getElementById('sDesc').value = s.desc || '';
+  document.getElementById('sTotal').value = s.total || (s.reels || []).length;
+  document.getElementById('sPillar').value = s.pillar;
+  document.getElementById('sDeleteBtn').classList.remove('hidden');
+  document.getElementById('seriesModal').classList.remove('hidden');
+}
+
+function closeSeriesModal() { document.getElementById('seriesModal').classList.add('hidden'); editingSeriesId = null; }
+
+function saveSeries() {
+  const name = document.getElementById('sName').value.trim();
+  if (!name) { showToast('⚠️ Name fehlt'); return; }
+  const data = {
+    name,
+    desc: document.getElementById('sDesc').value.trim(),
+    total: parseInt(document.getElementById('sTotal').value) || 30,
+    pillar: document.getElementById('sPillar').value
+  };
+
+  if (editingSeriesId) {
+    const s = series.find(x => x.id === editingSeriesId);
+    Object.assign(s, data);
+    showToast('💾 Serie aktualisiert');
+  } else {
+    series.push({ id: Date.now(), createdAt: Date.now(), reels: [], ...data });
+    showToast('💾 Serie erstellt — los geht\'s!');
+  }
+
+  SmashApp.setData('reelSeries', series);
+  closeSeriesModal();
+  if (currentSeriesId) {
+    renderReels();
+    openDetail(currentSeriesId);
+  } else {
+    renderList();
+  }
+}
+
+function deleteSeries() {
+  if (!editingSeriesId) return;
+  const s = series.find(x => x.id === editingSeriesId);
+  if (!confirm(`Serie "${s.name}" und ALLE ${(s.reels || []).length} Reels darin löschen?`)) return;
+  series = series.filter(x => x.id !== editingSeriesId);
+  SmashApp.setData('reelSeries', series);
+  closeSeriesModal();
+  backToList();
+  showToast('🗑️ Serie gelöscht');
+}
+
+// ============ REEL MODAL ============
+function openReelModal() {
+  editingReelId = null;
+  document.getElementById('reelModalTitle').textContent = '+ Reel adden';
+  const s = series.find(x => x.id === currentSeriesId);
+  const nextDay = s && s.reels.length > 0
+    ? Math.max(...s.reels.map(r => r.day || 0)) + 1
+    : 1;
+  document.getElementById('rDay').value = nextDay;
+  document.getElementById('rHook').value = '';
+  document.getElementById('rStatus').value = 'planned';
+  document.getElementById('rDate').value = '';
+  document.getElementById('rNotes').value = '';
+  document.getElementById('rDeleteBtn').classList.add('hidden');
+  document.getElementById('reelModal').classList.remove('hidden');
+}
+
+function openReelEdit(id) {
+  const s = series.find(x => x.id === currentSeriesId);
+  const r = s.reels.find(x => x.id === id);
+  if (!r) return;
+  editingReelId = id;
+  document.getElementById('reelModalTitle').textContent = `✏️ Day ${r.day} bearbeiten`;
+  document.getElementById('rDay').value = r.day || 1;
+  document.getElementById('rHook').value = r.hook;
+  document.getElementById('rStatus').value = r.status;
+  document.getElementById('rDate').value = r.date || '';
+  document.getElementById('rNotes').value = r.notes || '';
+  document.getElementById('rDeleteBtn').classList.remove('hidden');
+  document.getElementById('reelModal').classList.remove('hidden');
+}
+
+function closeReelModal() { document.getElementById('reelModal').classList.add('hidden'); editingReelId = null; }
+
+function saveReel() {
+  const hook = document.getElementById('rHook').value.trim();
+  if (!hook) { showToast('⚠️ Hook fehlt'); return; }
+  const s = series.find(x => x.id === currentSeriesId);
+  if (!s) return;
+  const data = {
+    day: parseInt(document.getElementById('rDay').value) || 1,
+    hook,
+    status: document.getElementById('rStatus').value,
+    date: document.getElementById('rDate').value || null,
+    notes: document.getElementById('rNotes').value.trim()
+  };
+
+  s.reels = s.reels || [];
+  if (editingReelId) {
+    const r = s.reels.find(x => x.id === editingReelId);
+    Object.assign(r, data);
+    showToast('💾 Aktualisiert');
+  } else {
+    s.reels.push({ id: Date.now(), ...data });
+    showToast(data.status === 'posted' ? '✓ Day ' + data.day + ' gepostet — solid!' : '💾 Day ' + data.day + ' geplant');
+  }
+
+  SmashApp.setData('reelSeries', series);
+  closeReelModal();
+  renderReels();
+}
+
+function deleteReel() {
+  if (!editingReelId) return;
+  if (!confirm('Reel löschen?')) return;
+  const s = series.find(x => x.id === currentSeriesId);
+  s.reels = s.reels.filter(x => x.id !== editingReelId);
+  SmashApp.setData('reelSeries', series);
+  closeReelModal();
+  renderReels();
+  showToast('🗑️ Gelöscht');
+}
+
+// ============ TOAST ============
+let toastTimer;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 1800);
+}
+
+document.getElementById('seriesModal').addEventListener('click', e => { if (e.target.id === 'seriesModal') closeSeriesModal(); });
+document.getElementById('reelModal').addEventListener('click', e => { if (e.target.id === 'reelModal') closeReelModal(); });
+
+init();
+</script>
+
+</body>
+</html>
