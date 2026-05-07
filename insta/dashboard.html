@@ -144,106 +144,148 @@
     <div class="text-sm text-gray-400" id="nextPostTime">Empfohlene Zeit: 19:00 Uhr</div>
   </div>
 
-  <!-- Module Grid -->
-  <h2 class="text-lg font-bold mb-3">⚡ Quick Actions</h2>
-  <div class="grid grid-cols-2 md:grid-cols-3 gap-3 mb-6 stagger">
-    
-    <a href="modules/tracker.html" class="glass module-card lift-glow press-feedback rounded-2xl p-5">
-      <div class="text-3xl mb-2">📊</div>
-      <div class="font-bold mb-1">Reel Tracker</div>
-      <div class="text-xs text-gray-400">Performance tracken</div>
-    </a>
-    
-    <a href="modules/builder.html" class="glass module-card lift-glow press-feedback rounded-2xl p-5">
-      <div class="text-3xl mb-2">🖼️</div>
-      <div class="font-bold mb-1">Carousel Builder</div>
-      <div class="text-xs text-gray-400">Slides erstellen</div>
-    </a>
-    
-    <a href="modules/ideas.html" class="glass module-card lift-glow press-feedback rounded-2xl p-5">
-      <div class="text-3xl mb-2">💡</div>
-      <div class="font-bold mb-1">Idea Bank</div>
-      <div class="text-xs text-gray-400">Reel-Ideen</div>
-    </a>
-    
-    <a href="modules/calendar.html" class="glass module-card lift-glow press-feedback rounded-2xl p-5">
-      <div class="text-3xl mb-2">📅</div>
-      <div class="font-bold mb-1">Calendar</div>
-      <div class="text-xs text-gray-400">Wochenplan</div>
-    </a>
-    
-    <a href="modules/captions.html" class="glass module-card lift-glow press-feedback rounded-2xl p-5">
-      <div class="text-3xl mb-2">🎨</div>
-      <div class="font-bold mb-1">Captions</div>
-      <div class="text-xs text-gray-400">Templates</div>
-    </a>
-    
-    <a href="modules/analytics.html" class="glass module-card lift-glow press-feedback rounded-2xl p-5">
-      <div class="text-3xl mb-2">📈</div>
-      <div class="font-bold mb-1">Analytics</div>
-      <div class="text-xs text-gray-400">Trends & Insights</div>
-    </a>
+  <!-- Module Search -->
+  <div class="mb-4">
+    <input type="text" id="moduleSearch" placeholder="🔍 Modul suchen…"
+           class="w-full p-3 rounded-xl text-sm"
+           style="background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(255,255,255,0.15); color: white;"
+           oninput="filterModules()">
+  </div>
 
-    <a href="modules/growth.html" class="glass module-card lift-glow press-feedback rounded-2xl p-5" style="border: 1px solid rgba(255, 169, 77, 0.3);">
-      <div class="text-3xl mb-2">🚀</div>
-      <div class="font-bold mb-1 text-sunrise">Growth Center</div>
-      <div class="text-xs text-gray-400">@peakingworld bootstrap</div>
-    </a>
+  <!-- Quick Actions: Categorized -->
 
-    <a href="modules/recorder.html" class="glass module-card lift-glow press-feedback rounded-2xl p-5">
-      <div class="text-3xl mb-2">🎥</div>
-      <div class="font-bold mb-1">Recorder</div>
-      <div class="text-xs text-gray-400">Reel filmen · Pro-Cam</div>
-    </a>
+  <!-- 🎯 TRACK & GROW -->
+  <div class="cat-block mb-5" data-cat="track">
+    <div class="flex items-center gap-2 mb-2">
+      <span class="text-xs uppercase tracking-wider font-bold neon">🎯 Track & Grow</span>
+      <span class="text-[10px] text-gray-500" data-cat-count>5 Module</span>
+    </div>
+    <div class="grid grid-cols-2 md:grid-cols-3 gap-3 stagger">
+      <a href="modules/tracker.html" class="mod-tile glass module-card lift-glow press-feedback rounded-2xl p-5" data-keywords="reel performance tracking stats views likes hook">
+        <div class="text-3xl mb-2">📊</div>
+        <div class="font-bold mb-1">Reel Tracker</div>
+        <div class="text-xs text-gray-400">Performance + 2026 Algo-Metrics</div>
+      </a>
+      <a href="modules/analytics.html" class="mod-tile glass module-card lift-glow press-feedback rounded-2xl p-5" data-keywords="analytics charts er sends pillar funnel heatmap insights trends">
+        <div class="text-3xl mb-2">📈</div>
+        <div class="font-bold mb-1">Analytics</div>
+        <div class="text-xs text-gray-400">Sends-per-Reach · Funnel · Heatmap</div>
+      </a>
+      <a href="modules/goals.html" class="mod-tile glass module-card lift-glow press-feedback rounded-2xl p-5" data-keywords="goals milestones followers 1m climb peak">
+        <div class="text-3xl mb-2">🏔️</div>
+        <div class="font-bold mb-1">Goals</div>
+        <div class="text-xs text-gray-400">Climb to 1M · 11 Milestones</div>
+      </a>
+      <a href="modules/bip.html" class="mod-tile glass module-card lift-glow press-feedback rounded-2xl p-5" data-keywords="bip building public log diary tagebuch streak energy notes">
+        <div class="text-3xl mb-2">📝</div>
+        <div class="font-bold mb-1">BIP Daily-Log</div>
+        <div class="text-xs text-gray-400">Building in Public · Streak</div>
+      </a>
+      <a href="modules/achievements.html" class="mod-tile glass module-card lift-glow press-feedback rounded-2xl p-5" data-keywords="achievements badges trophies xp tier bronze silver gold diamond legend">
+        <div class="text-3xl mb-2">🏆</div>
+        <div class="font-bold mb-1">Achievements</div>
+        <div class="text-xs text-gray-400">33 Auto-Unlock-Badges</div>
+      </a>
+    </div>
+  </div>
 
-    <a href="modules/bip.html" class="glass module-card lift-glow press-feedback rounded-2xl p-5">
-      <div class="text-3xl mb-2">📊</div>
-      <div class="font-bold mb-1">BIP Daily-Log</div>
-      <div class="text-xs text-gray-400">Building in Public</div>
-    </a>
+  <!-- 🎨 CREATE -->
+  <div class="cat-block mb-5" data-cat="create">
+    <div class="flex items-center gap-2 mb-2">
+      <span class="text-xs uppercase tracking-wider font-bold neon">🎨 Create</span>
+      <span class="text-[10px] text-gray-500" data-cat-count>5 Module</span>
+    </div>
+    <div class="grid grid-cols-2 md:grid-cols-3 gap-3 stagger">
+      <a href="modules/recorder.html" class="mod-tile glass module-card lift-glow press-feedback rounded-2xl p-5" data-keywords="recorder camera video aufnehmen filmen pro film hook countdown">
+        <div class="text-3xl mb-2">🎥</div>
+        <div class="font-bold mb-1">Recorder</div>
+        <div class="text-xs text-gray-400">Reel filmen · Pro-Cam</div>
+      </a>
+      <a href="modules/builder.html" class="mod-tile glass module-card lift-glow press-feedback rounded-2xl p-5" data-keywords="carousel builder slides bilder berg fotos sortieren">
+        <div class="text-3xl mb-2">🖼️</div>
+        <div class="font-bold mb-1">Carousel Builder</div>
+        <div class="text-xs text-gray-400">10 Slides · Bulk-Download</div>
+      </a>
+      <a href="modules/hooks.html" class="mod-tile glass module-card lift-glow press-feedback rounded-2xl p-5" data-keywords="hook library patterns win rate loss twist stat reveal mistake curiosity pov" style="border: 1px solid rgba(255, 169, 77, 0.3);">
+        <div class="text-3xl mb-2">🪝</div>
+        <div class="font-bold mb-1 text-sunrise">Hook Library</div>
+        <div class="text-xs text-gray-400">50+ Patterns · Win-Rate</div>
+      </a>
+      <a href="modules/captions.html" class="mod-tile glass module-card lift-glow press-feedback rounded-2xl p-5" data-keywords="captions templates hashtags variablen quick copy loss hook">
+        <div class="text-3xl mb-2">🎨</div>
+        <div class="font-bold mb-1">Captions</div>
+        <div class="text-xs text-gray-400">28 Templates · Hashtag-Sets</div>
+      </a>
+      <a href="modules/ideas.html" class="mod-tile glass module-card lift-glow press-feedback rounded-2xl p-5" data-keywords="ideas reel-ideen format pillar pov story quote">
+        <div class="text-3xl mb-2">💡</div>
+        <div class="font-bold mb-1">Idea Bank</div>
+        <div class="text-xs text-gray-400">Reel-Ideen · Filter · Custom</div>
+      </a>
+    </div>
+  </div>
 
-    <a href="modules/inspiration.html" class="glass module-card lift-glow press-feedback rounded-2xl p-5">
-      <div class="text-3xl mb-2">👀</div>
-      <div class="font-bold mb-1">Inspiration</div>
-      <div class="text-xs text-gray-400">Reels/Audio/Accounts saven</div>
-    </a>
+  <!-- 📅 PLAN -->
+  <div class="cat-block mb-5" data-cat="plan">
+    <div class="flex items-center gap-2 mb-2">
+      <span class="text-xs uppercase tracking-wider font-bold neon">📅 Plan</span>
+      <span class="text-[10px] text-gray-500" data-cat-count>3 Module</span>
+    </div>
+    <div class="grid grid-cols-2 md:grid-cols-3 gap-3 stagger">
+      <a href="modules/calendar.html" class="mod-tile glass module-card lift-glow press-feedback rounded-2xl p-5" data-keywords="calendar wochenplan posting schedule mo mi fr sa">
+        <div class="text-3xl mb-2">📅</div>
+        <div class="font-bold mb-1">Calendar</div>
+        <div class="text-xs text-gray-400">Wochenplan · Mo/Mi/Fr/Sa</div>
+      </a>
+      <a href="modules/series.html" class="mod-tile glass module-card lift-glow press-feedback rounded-2xl p-5" data-keywords="series multi reel story arc day x of y bip">
+        <div class="text-3xl mb-2">🎞️</div>
+        <div class="font-bold mb-1">Reel Series</div>
+        <div class="text-xs text-gray-400">Multi-Reel-Story-Arcs</div>
+      </a>
+      <a href="modules/growth.html" class="mod-tile glass module-card lift-glow press-feedback rounded-2xl p-5" data-keywords="growth bootstrap profil setup checklist 30 tage plan cross promo" style="border: 1px solid rgba(255, 169, 77, 0.3);">
+        <div class="text-3xl mb-2">🚀</div>
+        <div class="font-bold mb-1 text-sunrise">Growth Center</div>
+        <div class="text-xs text-gray-400">30-Tage-Bootstrap · Setup</div>
+      </a>
+    </div>
+  </div>
 
-    <a href="modules/goals.html" class="glass module-card lift-glow press-feedback rounded-2xl p-5">
-      <div class="text-3xl mb-2">🏔️</div>
-      <div class="font-bold mb-1">Goals</div>
-      <div class="text-xs text-gray-400">Climb to 1M · Milestones</div>
-    </a>
+  <!-- 🤝 ENGAGE -->
+  <div class="cat-block mb-5" data-cat="engage">
+    <div class="flex items-center gap-2 mb-2">
+      <span class="text-xs uppercase tracking-wider font-bold neon">🤝 Engage</span>
+      <span class="text-[10px] text-gray-500" data-cat-count>2 Module</span>
+    </div>
+    <div class="grid grid-cols-2 md:grid-cols-3 gap-3 stagger">
+      <a href="modules/inspiration.html" class="mod-tile glass module-card lift-glow press-feedback rounded-2xl p-5" data-keywords="inspiration bookmarks insta urls reels audio accounts">
+        <div class="text-3xl mb-2">👀</div>
+        <div class="font-bold mb-1">Inspiration</div>
+        <div class="text-xs text-gray-400">Reel/Audio/Account-Bookmarks</div>
+      </a>
+      <a href="modules/replies.html" class="mod-tile glass module-card lift-glow press-feedback rounded-2xl p-5" data-keywords="replies dm comment story templates antworten quick">
+        <div class="text-3xl mb-2">💬</div>
+        <div class="font-bold mb-1">Quick Replies</div>
+        <div class="text-xs text-gray-400">DM · Comment · Story</div>
+      </a>
+    </div>
+  </div>
 
-    <a href="modules/replies.html" class="glass module-card lift-glow press-feedback rounded-2xl p-5">
-      <div class="text-3xl mb-2">💬</div>
-      <div class="font-bold mb-1">Quick Replies</div>
-      <div class="text-xs text-gray-400">DM · Comment · Story</div>
-    </a>
+  <!-- ⚙️ ADMIN -->
+  <div class="cat-block mb-6" data-cat="admin">
+    <div class="flex items-center gap-2 mb-2">
+      <span class="text-xs uppercase tracking-wider font-bold neon">⚙️ Admin</span>
+      <span class="text-[10px] text-gray-500" data-cat-count>1 Modul</span>
+    </div>
+    <div class="grid grid-cols-2 md:grid-cols-3 gap-3 stagger">
+      <a href="modules/settings.html" class="mod-tile glass module-card lift-glow press-feedback rounded-2xl p-5" data-keywords="settings backup compare reset accounts data export import">
+        <div class="text-3xl mb-2">⚙️</div>
+        <div class="font-bold mb-1">Settings</div>
+        <div class="text-xs text-gray-400">Backup · Compare · Reset</div>
+      </a>
+    </div>
+  </div>
 
-    <a href="modules/series.html" class="glass module-card lift-glow press-feedback rounded-2xl p-5">
-      <div class="text-3xl mb-2">🎞️</div>
-      <div class="font-bold mb-1">Reel Series</div>
-      <div class="text-xs text-gray-400">Multi-Reel-Story-Arcs</div>
-    </a>
-
-    <a href="modules/hooks.html" class="glass module-card lift-glow press-feedback rounded-2xl p-5" style="border: 1px solid rgba(255, 169, 77, 0.3);">
-      <div class="text-3xl mb-2">🪝</div>
-      <div class="font-bold mb-1 text-sunrise">Hook Library</div>
-      <div class="text-xs text-gray-400">50+ Patterns · Win-Rate</div>
-    </a>
-
-    <a href="modules/achievements.html" class="glass module-card lift-glow press-feedback rounded-2xl p-5">
-      <div class="text-3xl mb-2">🏆</div>
-      <div class="font-bold mb-1">Achievements</div>
-      <div class="text-xs text-gray-400">30+ Auto-Unlock-Badges</div>
-    </a>
-
-    <a href="modules/settings.html" class="glass module-card lift-glow press-feedback rounded-2xl p-5">
-      <div class="text-3xl mb-2">⚙️</div>
-      <div class="font-bold mb-1">Settings</div>
-      <div class="text-xs text-gray-400">Backup · Compare · Reset</div>
-    </a>
-
+  <div id="searchEmpty" class="hidden text-center py-8 text-gray-500 text-sm">
+    🤷 Kein Modul gefunden für „<span id="searchTerm"></span>"
   </div>
 
   <!-- Säulen-Balance -->
@@ -398,6 +440,45 @@ function renderRecentReels() {
   }).join('');
 }
 renderRecentReels();
+
+// ============ MODULE-SEARCH ============
+function filterModules() {
+  const q = document.getElementById('moduleSearch').value.toLowerCase().trim();
+  const tiles = document.querySelectorAll('.mod-tile');
+  const blocks = document.querySelectorAll('.cat-block');
+  const empty = document.getElementById('searchEmpty');
+
+  if (!q) {
+    tiles.forEach(t => t.style.display = '');
+    blocks.forEach(b => b.style.display = '');
+    empty.classList.add('hidden');
+    return;
+  }
+
+  let totalShown = 0;
+  blocks.forEach(b => {
+    let blockShown = 0;
+    b.querySelectorAll('.mod-tile').forEach(t => {
+      const kw = (t.dataset.keywords || '').toLowerCase();
+      const text = t.textContent.toLowerCase();
+      if (kw.includes(q) || text.includes(q)) {
+        t.style.display = '';
+        blockShown++;
+        totalShown++;
+      } else {
+        t.style.display = 'none';
+      }
+    });
+    b.style.display = blockShown > 0 ? '' : 'none';
+  });
+
+  if (totalShown === 0) {
+    empty.classList.remove('hidden');
+    document.getElementById('searchTerm').textContent = q;
+  } else {
+    empty.classList.add('hidden');
+  }
+}
 </script>
 
 </body>
