@@ -209,9 +209,11 @@
       <p class="text-xs text-gray-400 mb-4">Wähle ein Logo + Size. Wird im Browser gerendert + als PNG runtergeladen. Für: Favicon (16/32), Apple-Touch-Icon (180), Insta-Bio (320), OG-Image (1200).</p>
       <div class="flex gap-2 flex-wrap mb-3">
         <select id="pngLogo" class="bg-slate-800 rounded-lg p-2 text-sm">
-          <option value="logo-mix-a.svg">🌅 Mix-A · Stacked (best für Insta-Bio)</option>
-          <option value="logo-mix-b.svg">🌅 Mix-B · Mountain-Range (Header)</option>
-          <option value="logo-mix-c.svg">🌅 Mix-C · Banner (Footer/Mobile-Top)</option>
+          <option value="logo-mix-a2.svg">⭐ Mix-A2 · Faceted Peak (Research-Empfehlung)</option>
+          <option value="logo-mix-d.svg">⭐ Mix-D · Negative-Space (16px-tauglich)</option>
+          <option value="logo-mix-a.svg">🌅 Mix-A · Stacked (V1)</option>
+          <option value="logo-mix-b.svg">🌅 Mix-B · Mountain-Range</option>
+          <option value="logo-mix-c.svg">🌅 Mix-C · Banner</option>
           <option value="logo.svg">⛰️ Original (Flat-Sunrise)</option>
           <option value="logo-v3-a.svg">V3-A · Faceted Mountain</option>
           <option value="logo-v3-b.svg">V3-B · Rising Sun</option>
@@ -462,7 +464,9 @@ document.getElementById('tabBar').addEventListener('click', e => {
 
 // ============ BRAND-ASSETS TAB ============
 const LOGOS = [
-  { file: 'logo-mix-a.svg',    name: '🌅 Mix-A · Stacked',       desc: 'Pyramide + Halo + Wordmark · für Insta-Bio + App-Icon' },
+  { file: 'logo-mix-a2.svg',   name: '⭐ Mix-A2 · Faceted Peak',   desc: 'Research-Empfehlung · Two-Tone + Voll-Sun-Halo · ohne Zipfel' },
+  { file: 'logo-mix-d.svg',    name: '⭐ Mix-D · Negative-Space',  desc: 'Research-Alt · Sun-Disk mit Pyramid-Cut · 16px-Favicon-tauglich' },
+  { file: 'logo-mix-a.svg',    name: '🌅 Mix-A · Stacked (V1)',   desc: 'Pyramide + Halo + Wordmark · alte Version mit Zipfel' },
   { file: 'logo-mix-b.svg',    name: '🌅 Mix-B · Mountain-Range', desc: '4 Peaks + Wordmark rechts · Header + Press-Kit' },
   { file: 'logo-mix-c.svg',    name: '🌅 Mix-C · Banner',         desc: 'Pyramide-Icon + Wordmark inline · Footer + Mobile-Top' },
   { file: 'logo.svg',          name: 'Original · Flat-Sunrise',  desc: '1 Polygon · Sunrise-Gradient' },

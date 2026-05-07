@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 280 320" fill="none">
+  <title>PEAKING Logo Mix-D — Negative-Space Peak (Sun-Disk + Pyramid-Cut)</title>
+  <defs>
+    <!-- Voll-Sonnen-Gradient (kompakter Disk-Look) -->
+    <linearGradient id="sunFillD" x1="50%" y1="0%" x2="50%" y2="100%">
+      <stop offset="0%"  stop-color="#FFE066"/>
+      <stop offset="35%" stop-color="#FFD43B"/>
+      <stop offset="70%" stop-color="#FFA94D"/>
+      <stop offset="100%" stop-color="#FF6B6B"/>
+    </linearGradient>
+    <!-- Pyramid mask (negative-space cut) -->
+    <mask id="peakCutD">
+      <rect x="0" y="0" width="280" height="280" fill="white"/>
+      <path d="M 140 70 L 200 218 L 80 218 Z" fill="black"/>
+    </mask>
+    <linearGradient id="wordmarkD" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%"  stop-color="#FF6B6B"/>
+      <stop offset="50%" stop-color="#FFA94D"/>
+      <stop offset="100%" stop-color="#FFD43B"/>
+    </linearGradient>
+    <filter id="softShadowD" x="-15%" y="-15%" width="130%" height="130%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="3"/>
+      <feOffset dx="0" dy="4"/>
+      <feFlood flood-color="#FFA94D" flood-opacity="0.35"/>
+      <feComposite in2="SourceAlpha" operator="in"/>
+      <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <!-- Sun-Disk mit Pyramid als Aussparung -->
+  <g filter="url(#softShadowD)">
+    <circle cx="140" cy="140" r="100" fill="url(#sunFillD)" mask="url(#peakCutD)"/>
+  </g>
+
+  <!-- Wordmark -->
+  <text x="140" y="278" text-anchor="middle"
+        font-family="-apple-system, system-ui, 'Helvetica Neue', sans-serif"
+        font-size="40" font-weight="900" fill="url(#wordmarkD)" letter-spacing="4">PEAKING</text>
+
+  <!-- Sub-Tagline -->
+  <text x="140" y="302" text-anchor="middle"
+        font-family="-apple-system, system-ui, sans-serif"
+        font-size="11" font-weight="500" fill="#FFA94D" letter-spacing="6" opacity="0.7">ALWAYS PEAKING.</text>
+</svg>
