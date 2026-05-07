@@ -83,6 +83,28 @@
     <button onclick="SmashApp.logout()" class="text-sm text-gray-400 hover:text-white">🔒</button>
   </div>
 
+  <!-- 👤 Personal Profile (Basics) -->
+  <div class="glass rounded-3xl p-5 mb-5 float-in">
+    <h2 class="text-lg font-bold mb-1">👤 Profil <span class="text-xs text-gray-500 font-normal">· Basics</span></h2>
+    <p class="text-xs text-gray-400 mb-4">Wer du bist. Wird in Captions, Story-Pack, Coach-Personalisierung benutzt.</p>
+    <div class="space-y-3">
+      <div>
+        <label class="block text-xs text-gray-400 mb-1">Display-Name</label>
+        <input type="text" id="profileName" placeholder="Sebi" class="w-full bg-slate-800 rounded-lg p-2 text-sm" oninput="saveProfile('name', this.value)">
+      </div>
+      <div>
+        <label class="block text-xs text-gray-400 mb-1">Tagline / Founder-Identity</label>
+        <input type="text" id="profileTagline" placeholder="z.B. Solo-Founder · Outdoor-Creator · Indie-Builder" class="w-full bg-slate-800 rounded-lg p-2 text-sm" oninput="saveProfile('tagline', this.value)">
+      </div>
+      <div>
+        <label class="block text-xs text-gray-400 mb-1">Default-Account beim Login</label>
+        <select id="profileDefaultAccount" class="w-full bg-slate-800 rounded-lg p-2 text-sm" onchange="saveProfile('defaultAccount', this.value)">
+          <option value="">— letzter aktiver Account —</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
   <!-- Account Overview -->
   <div class="glass rounded-3xl p-5 mb-5 float-in">
     <h2 class="text-lg font-bold mb-1">👥 Accounts</h2>
@@ -146,6 +168,121 @@
       <input type="checkbox" id="prefDashboardCoach" class="w-5 h-5 accent-orange-400" onchange="savePref('dashboardCoach', this.checked)">
     </label>
     <button onclick="resetOnboarding()" class="text-xs neon hover:underline mt-2">↺ Onboarding-Tour erneut ansehen</button>
+  </div>
+
+  <!-- 🌍 Locale & Time (Basics) -->
+  <div class="glass rounded-3xl p-5 mb-5 float-in">
+    <h2 class="text-lg font-bold mb-1">🌍 Locale & Time</h2>
+    <p class="text-xs text-gray-400 mb-4">Sprache, Datum, Wochenstart. Wird in Calendar, Analytics, Date-Display benutzt.</p>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+      <div>
+        <label class="block text-xs text-gray-400 mb-1">Sprache</label>
+        <select id="prefLocale" class="w-full bg-slate-800 rounded-lg p-2 text-sm" onchange="savePref('locale', this.value)">
+          <option value="de">🇩🇪 Deutsch</option>
+          <option value="en">🇬🇧 English</option>
+        </select>
+      </div>
+      <div>
+        <label class="block text-xs text-gray-400 mb-1">Datums-Format</label>
+        <select id="prefDateFormat" class="w-full bg-slate-800 rounded-lg p-2 text-sm" onchange="savePref('dateFormat', this.value)">
+          <option value="dd.mm.yyyy">31.12.2026</option>
+          <option value="mm/dd/yyyy">12/31/2026</option>
+          <option value="yyyy-mm-dd">2026-12-31 (ISO)</option>
+        </select>
+      </div>
+      <div>
+        <label class="block text-xs text-gray-400 mb-1">Wochenstart</label>
+        <select id="prefWeekStart" class="w-full bg-slate-800 rounded-lg p-2 text-sm" onchange="savePref('weekStart', this.value)">
+          <option value="mon">Montag</option>
+          <option value="sun">Sonntag</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- 🎯 Defaults (Basics) -->
+  <div class="glass rounded-3xl p-5 mb-5 float-in">
+    <h2 class="text-lg font-bold mb-1">🎯 Defaults</h2>
+    <p class="text-xs text-gray-400 mb-4">Vorgaben bei neuer Idee / neuem Reel / neuem Post. Spart pro Action 1-2 Klicks.</p>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+      <div>
+        <label class="block text-xs text-gray-400 mb-1">Default-Pillar bei neuer Idee</label>
+        <select id="prefDefaultPillar" class="w-full bg-slate-800 rounded-lg p-2 text-sm" onchange="savePref('defaultPillar', this.value)">
+          <option value="">— erste verfügbare —</option>
+        </select>
+      </div>
+      <div>
+        <label class="block text-xs text-gray-400 mb-1">Default-Format</label>
+        <select id="prefDefaultFormat" class="w-full bg-slate-800 rounded-lg p-2 text-sm" onchange="savePref('defaultFormat', this.value)">
+          <option value="reel">🎬 Reel</option>
+          <option value="carousel">📑 Carousel</option>
+          <option value="story">📨 Story</option>
+          <option value="post">🖼️ Post</option>
+        </select>
+      </div>
+      <div>
+        <label class="block text-xs text-gray-400 mb-1">Default-Posting-Zeit</label>
+        <input type="time" id="prefDefaultTime" value="19:00" class="w-full bg-slate-800 rounded-lg p-2 text-sm" onchange="savePref('defaultTime', this.value)">
+      </div>
+    </div>
+  </div>
+
+  <!-- 🤖 Coach-Settings -->
+  <div class="glass rounded-3xl p-5 mb-5 float-in">
+    <h2 class="text-lg font-bold mb-1">🤖 Coach-Verhalten</h2>
+    <p class="text-xs text-gray-400 mb-4">Wie der Coach mit dir spricht + wie viel Insights.</p>
+    <div class="space-y-3">
+      <div>
+        <label class="block text-xs text-gray-400 mb-1">Coach-Tone</label>
+        <select id="prefCoachTone" class="w-full bg-slate-800 rounded-lg p-2 text-sm" onchange="savePref('coachTone', this.value)">
+          <option value="motivating">⛰️ Motivierend („You got this — heute 1 Schritt weiter.")</option>
+          <option value="analytical">📊 Analytisch („Daten zeigen: Loss-Hooks +2.3× ER")</option>
+          <option value="balanced">⚖️ Mix (default)</option>
+        </select>
+      </div>
+      <label class="flex items-center justify-between p-3 rounded-xl bg-slate-900/40 cursor-pointer">
+        <div>
+          <div class="font-bold text-sm">Mastermind-Truth rotieren</div>
+          <div class="text-xs text-gray-400">Daily-Wechsel zwischen 12 Algo-Wahrheiten (off = nur eine fixe)</div>
+        </div>
+        <input type="checkbox" id="prefMastermindRotate" class="w-5 h-5 accent-orange-400" onchange="savePref('mastermindRotate', this.checked)">
+      </label>
+      <label class="flex items-center justify-between p-3 rounded-xl bg-slate-900/40 cursor-pointer">
+        <div>
+          <div class="font-bold text-sm">Pattern-Insights ausführlicher</div>
+          <div class="text-xs text-gray-400">Mehr Detail-Reasoning bei Coach-Card („Warum?" + Quelle)</div>
+        </div>
+        <input type="checkbox" id="prefVerboseInsights" class="w-5 h-5 accent-orange-400" onchange="savePref('verboseInsights', this.checked)">
+      </label>
+    </div>
+  </div>
+
+  <!-- 💾 Auto-Save Settings -->
+  <div class="glass rounded-3xl p-5 mb-5 float-in">
+    <h2 class="text-lg font-bold mb-1">💾 Auto-Save Verhalten</h2>
+    <p class="text-xs text-gray-400 mb-4">Wann + wie oft automatisch gespeichert wird. Brain · Captions · Notes.</p>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+      <div>
+        <label class="block text-xs text-gray-400 mb-1">Auto-Save Interval (Brain/Notes)</label>
+        <select id="prefAutoSaveInterval" class="w-full bg-slate-800 rounded-lg p-2 text-sm" onchange="savePref('autoSaveInterval', Number(this.value))">
+          <option value="500">500ms (sofort)</option>
+          <option value="1000">1s (default)</option>
+          <option value="3000">3s (entspannt)</option>
+          <option value="0">Off — manuell</option>
+        </select>
+      </div>
+      <div>
+        <label class="block text-xs text-gray-400 mb-1">Backup-Reminder</label>
+        <select id="prefBackupReminder" class="w-full bg-slate-800 rounded-lg p-2 text-sm" onchange="savePref('backupReminder', this.value)">
+          <option value="never">Nie</option>
+          <option value="weekly">Wöchentlich</option>
+          <option value="monthly">Monatlich (default)</option>
+        </select>
+      </div>
+    </div>
+    <div class="mt-3 text-xs text-gray-500">
+      💡 Tipp: Web-Only = lokale Daten. Backup oft wichtiger als Save-Frequenz. Empfehlung: monatliches Backup-Erinnerung + Komplett-Export wenn du Device wechselst.
+    </div>
   </div>
 
   <!-- Admin-Panel-Link (versteckt bis erstes Admin-Login) -->
@@ -226,13 +363,70 @@ SmashApp.requireAuth();
 
 // ============ INIT ============
 function init() {
+  renderProfile();
   renderAccounts();
   renderPillars();
   renderPlan();
+  renderLocaleAndDefaults();
   renderPrefs();
   renderAdminRow();
   renderCompare();
   renderTechInfo();
+}
+
+// ============ PROFILE (Basics) ============
+function getProfile() {
+  try { return JSON.parse(localStorage.getItem('smash:profile') || '{}'); } catch (e) { return {}; }
+}
+function saveProfile(field, value) {
+  const p = getProfile();
+  p[field] = value;
+  localStorage.setItem('smash:profile', JSON.stringify(p));
+}
+
+function renderProfile() {
+  const p = getProfile();
+  document.getElementById('profileName').value = p.name || '';
+  document.getElementById('profileTagline').value = p.tagline || '';
+  // Build Default-Account-Dropdown
+  const sel = document.getElementById('profileDefaultAccount');
+  Object.values(SmashApp.ACCOUNTS).forEach(a => {
+    const opt = document.createElement('option');
+    opt.value = a.key;
+    opt.textContent = `${a.emoji} ${a.handle}`;
+    if (p.defaultAccount === a.key) opt.selected = true;
+    sel.appendChild(opt);
+  });
+}
+
+// ============ LOCALE + DEFAULTS DROPDOWNS ============
+function renderLocaleAndDefaults() {
+  // Locale
+  document.getElementById('prefLocale').value = getPref('locale', 'de');
+  document.getElementById('prefDateFormat').value = getPref('dateFormat', 'dd.mm.yyyy');
+  document.getElementById('prefWeekStart').value = getPref('weekStart', 'mon');
+
+  // Defaults — Pillar-Dropdown füllen mit aktuellen Account-Pillars
+  const pillarSel = document.getElementById('prefDefaultPillar');
+  const pillars = SmashApp.getPillarInfo();
+  Object.entries(pillars).forEach(([k, p]) => {
+    const opt = document.createElement('option');
+    opt.value = k;
+    opt.textContent = `${p.emoji} ${p.name}`;
+    if (getPref('defaultPillar', '') === k) opt.selected = true;
+    pillarSel.appendChild(opt);
+  });
+  document.getElementById('prefDefaultFormat').value = getPref('defaultFormat', 'reel');
+  document.getElementById('prefDefaultTime').value = getPref('defaultTime', '19:00');
+
+  // Coach
+  document.getElementById('prefCoachTone').value = getPref('coachTone', 'balanced');
+  document.getElementById('prefMastermindRotate').checked = getPref('mastermindRotate', true);
+  document.getElementById('prefVerboseInsights').checked = getPref('verboseInsights', false);
+
+  // Auto-Save
+  document.getElementById('prefAutoSaveInterval').value = String(getPref('autoSaveInterval', 1000));
+  document.getElementById('prefBackupReminder').value = getPref('backupReminder', 'monthly');
 }
 
 // ============ ADMIN-ROW (visual hide wie SMASH) ============

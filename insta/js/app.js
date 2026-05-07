@@ -46,7 +46,24 @@ const SmashApp = (function() {
 
   function getCurrentAccount() {
     const stored = localStorage.getItem(STORAGE_PREFIX + 'currentAccount');
-    return ACCOUNTS[stored] ? stored : 'vegetarianhulk';
+    if (ACCOUNTS[stored]) return stored;
+    // Fallback: smash:profile.defaultAccount (Settings → Profile)
+    try {
+      const profile = JSON.parse(localStorage.getItem(STORAGE_PREFIX + 'profile') || '{}');
+      if (profile.defaultAccount && ACCOUNTS[profile.defaultAccount]) return profile.defaultAccount;
+    } catch (e) {}
+    return 'vegetarianhulk';
+  }
+
+  function getProfile() {
+    try { return JSON.parse(localStorage.getItem(STORAGE_PREFIX + 'profile') || '{}'); } catch(e) { return {}; }
+  }
+
+  function getPref(key, fallback) {
+    try {
+      const v = localStorage.getItem(STORAGE_PREFIX + 'pref:' + key);
+      return v === null ? fallback : JSON.parse(v);
+    } catch (e) { return fallback; }
   }
 
   function switchAccount(accountKey) {
@@ -486,6 +503,10 @@ const SmashApp = (function() {
     getCurrentAccount,
     switchAccount,
     getAccount,
+
+    // Profile + Prefs (Basics)
+    getProfile,
+    getPref,
 
     // Helpers (PILLAR_INFO is a dynamic getter — returns pillars for current account)
     get PILLAR_INFO() { return getPillarInfo(); },

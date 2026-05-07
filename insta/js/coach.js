@@ -131,13 +131,13 @@ const Coach = (function() {
     }
 
     // Default: motivational steady-state
-    return {
+    return _toneAdapt({
       emoji: '⛰️',
       priority: 'low',
       title: 'Steady climb.',
       body: `Du bist on track. ${reels.length} Reels getrackt. Always peaking — heute 1 Schritt weiter.`,
       cta: { text: '→ Today', href: '../dashboard.html' }
-    };
+    });
   }
 
   // ============ SETUP-CHECKLIST ============
@@ -351,8 +351,25 @@ const Coach = (function() {
   ];
 
   function getMastermindToday() {
+    // Respect Settings → Coach-Verhalten → mastermindRotate pref (default: rotate)
+    const rotate = SmashApp.getPref ? SmashApp.getPref('mastermindRotate', true) : true;
+    if (!rotate) return MASTERMIND_TRUTHS[0]; // fixe Wahrheit (Hook = 80%)
     const dayOfYear = Math.floor((Date.now() - new Date(new Date().getFullYear(), 0, 0).getTime()) / 86400000);
     return MASTERMIND_TRUTHS[dayOfYear % MASTERMIND_TRUTHS.length];
+  }
+
+  // Coach-Tone-aware Card-Body-Wrapper (motivating/analytical/balanced)
+  function _toneAdapt(card) {
+    const tone = SmashApp.getPref ? SmashApp.getPref('coachTone', 'balanced') : 'balanced';
+    if (tone === 'motivating' && card.priority !== 'high') {
+      // Sanftere, motivierende Sprache
+      return { ...card, body: card.body.replace(/⚠️|Risk|underused|Drift/g, '').trim() + ' Du machst das gut.' };
+    }
+    if (tone === 'analytical' && card.body.length < 200) {
+      // Append data-source hint
+      return { ...card, body: card.body + ' (Quelle: deine Tracker-Daten + 2026-Algo-Studien)' };
+    }
+    return card;
   }
 
   function getAllMastermindTruths() {
