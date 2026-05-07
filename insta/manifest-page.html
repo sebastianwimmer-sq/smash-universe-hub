@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Manifest — PEAKING</title>
+<meta name="description" content="PEAKING Manifest — 7 Beliefs für Solo-Creators on the climb.">
+<link rel="icon" href="assets/logo.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="assets/logo.svg">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#FFA94D">
+<link rel="stylesheet" href="assets/effects.css">
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  body {
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    min-height: 100dvh;
+    color: white;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+  .glass {
+    background: rgba(30, 41, 59, 0.6);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+  .neon { color: #FFA94D; }
+  .text-sunrise {
+    background: linear-gradient(135deg, #FF6B6B, #FFA94D, #FFD43B);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+  }
+  .belief {
+    border-left: 3px solid rgba(255, 169, 77, 0.5);
+    padding-left: 24px;
+    margin-bottom: 28px;
+    transition: all 0.25s;
+  }
+  .belief:hover {
+    border-left-color: #FFA94D;
+    transform: translateX(4px);
+  }
+  .belief-num {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 800;
+    color: #FFA94D;
+    letter-spacing: 2px;
+    margin-bottom: 6px;
+  }
+</style>
+</head>
+<body class="bg-depth">
+
+<div class="max-w-3xl mx-auto px-5 py-12">
+
+  <!-- Header -->
+  <div class="text-center mb-12">
+    <img src="assets/logo.svg" alt="PEAKING" class="w-20 h-20 mx-auto mb-4 logo-glow">
+    <h1 class="text-5xl md:text-6xl font-black tracking-tight mb-2">
+      <span class="text-sunrise">Manifest</span>
+    </h1>
+    <p class="neon font-bold tracking-wide">Always peaking.</p>
+  </div>
+
+  <!-- Manifest -->
+  <div class="glass rounded-3xl p-8 md:p-12 mb-8">
+    <p class="text-2xl md:text-3xl font-bold mb-10 text-center leading-relaxed">
+      <span class="text-sunrise">Wir glauben.</span>
+    </p>
+
+    <div class="space-y-2">
+      <div class="belief">
+        <div class="belief-num">01</div>
+        <p class="text-lg leading-relaxed">
+          Wir glauben, dass <b>Solo-Creator</b> bessere Tools verdienen als Buffer-Abos und Agency-Stacks.
+        </p>
+      </div>
+
+      <div class="belief">
+        <div class="belief-num">02</div>
+        <p class="text-lg leading-relaxed">
+          Wir glauben, dass <b>der Hook</b> 80% des Reach-Erfolgs entscheidet. Die ersten 2 Sekunden sind alles.
+        </p>
+      </div>
+
+      <div class="belief">
+        <div class="belief-num">03</div>
+        <p class="text-lg leading-relaxed">
+          Wir glauben, dass <b>Sends-per-Reach &gt; Likes</b>. DM-Shares schlagen Vanity-Metrics als Distribution-Signal.
+        </p>
+      </div>
+
+      <div class="belief">
+        <div class="belief-num">04</div>
+        <p class="text-lg leading-relaxed">
+          Wir glauben, dass <b>Loss-Hooks &gt; Win-Hooks</b>. Ehrlichkeit performt 2-3× besser als Brag.
+        </p>
+      </div>
+
+      <div class="belief">
+        <div class="belief-num">05</div>
+        <p class="text-lg leading-relaxed">
+          Wir glauben, dass <b>Building in Public</b> nicht Marketing-Trick ist — sondern Disziplin gegen Selbstlügen.
+        </p>
+      </div>
+
+      <div class="belief">
+        <div class="belief-num">06</div>
+        <p class="text-lg leading-relaxed">
+          Wir glauben, dass <b>Real Tools &gt; AI-Hype</b>. Pattern-Recognition aus deinen eigenen Daten schlägt jede Generic-Hook-Bibliothek.
+        </p>
+      </div>
+
+      <div class="belief">
+        <div class="belief-num">07</div>
+        <p class="text-lg leading-relaxed">
+          Wir glauben, dass <b>der Climb der Peak ist</b>. Nicht das Ziel zählt — die täglichen Steps.
+        </p>
+      </div>
+    </div>
+
+    <p class="text-2xl md:text-3xl font-bold mt-12 text-center leading-relaxed">
+      <span class="text-sunrise">From climb to peak.</span><br>
+      <span class="neon">Always peaking.</span>
+    </p>
+  </div>
+
+  <!-- Built By -->
+  <div class="text-center text-sm text-gray-400 mb-8">
+    <p>Built solo by <a href="https://instagram.com/vegetarianhulk" target="_blank" class="neon hover:underline">Sebi</a> · <a href="https://instagram.com/peakingworld" target="_blank" class="neon hover:underline">@peakingworld</a></p>
+  </div>
+
+  <!-- Nav -->
+  <div class="text-center text-xs text-gray-500">
+    <a href="/welcome" class="hover:text-white">← Welcome</a> ·
+    <a href="/" class="hover:text-white">Login</a> ·
+    <a href="/links" class="hover:text-white">Links</a>
+  </div>
+
+</div>
+
+</body>
+</html>
