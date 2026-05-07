@@ -288,17 +288,28 @@
     🤷 Kein Modul gefunden für „<span id="searchTerm"></span>"
   </div>
 
-  <!-- Säulen-Balance -->
-  <div class="glass rounded-3xl p-5 mb-6">
-    <h2 class="text-lg font-bold mb-4">⚖️ Säulen-Balance</h2>
+  <!-- Brand-Section-Divider mit Sunrise-Strich (klare Visual-Trennung Module ↔ Account-Daten) -->
+  <div class="flex items-center gap-3 mt-8 mb-4">
+    <div style="height: 2px; flex: 1; background: linear-gradient(90deg, transparent, rgba(255, 169, 77, 0.4), transparent);"></div>
+    <span class="text-xs uppercase tracking-wider font-bold text-sunrise">⛰️ Account-Übersicht</span>
+    <div style="height: 2px; flex: 1; background: linear-gradient(90deg, transparent, rgba(255, 169, 77, 0.4), transparent);"></div>
+  </div>
+
+  <!-- Säulen-Balance (Account-spezifisch, KEIN PEAKING-Brand-Token) -->
+  <div class="glass rounded-3xl p-5 mb-4" style="border: 1px solid rgba(255, 169, 77, 0.2);">
+    <div class="flex items-baseline justify-between mb-1 flex-wrap gap-2">
+      <h2 class="text-lg font-bold">⚖️ Säulen-Balance <span class="text-xs text-gray-500 font-normal">· <span id="pbAccountLabel">@vegetarianhulk</span></span></h2>
+      <span class="text-[10px] text-gray-500">Pillar-Tokens · NICHT PEAKING-Brand</span>
+    </div>
+    <p class="text-[11px] text-gray-500 mb-3">Färbung der Bars = Account-Pillar-Categorization (z.B. Outdoor-Grün, Gym-Amber). Sunrise ist PEAKING-Brand drüber.</p>
     <div id="pillarBalance" class="space-y-3">
       <!-- Wird via JS gefüllt -->
     </div>
   </div>
 
   <!-- Recent Reels -->
-  <div class="glass rounded-3xl p-5 mb-6">
-    <h2 class="text-lg font-bold mb-4">📝 Letzte Reels</h2>
+  <div class="glass rounded-3xl p-5 mb-6" style="border: 1px solid rgba(255, 169, 77, 0.2);">
+    <h2 class="text-lg font-bold mb-4">📝 Letzte Reels <span class="text-xs text-gray-500 font-normal">· <span id="rrAccountLabel">@vegetarianhulk</span></span></h2>
     <div id="recentReels" class="space-y-2">
       <p class="text-gray-500 italic text-sm">Noch keine Reels getrackt. <a href="modules/tracker.html" class="neon underline">Jetzt starten →</a></p>
     </div>
@@ -355,6 +366,13 @@ document.addEventListener('click', (e) => {
 });
 
 renderAccountSwitcher();
+
+// Account-Labels in den Account-Übersicht-Sections setzen
+const __accLabel = SmashApp.getAccount().handle;
+const __pbLabel = document.getElementById('pbAccountLabel');
+const __rrLabel = document.getElementById('rrAccountLabel');
+if (__pbLabel) __pbLabel.textContent = __accLabel;
+if (__rrLabel) __rrLabel.textContent = __accLabel;
 
 // Today's date
 const today = new Date();
