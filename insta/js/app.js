@@ -269,7 +269,24 @@ const SmashApp = (function() {
   };
 
   function getPillarInfo() {
-    return PILLARS_BY_ACCOUNT[getCurrentAccount()] || PILLARS_BY_ACCOUNT.vegetarianhulk;
+    const acc = getCurrentAccount();
+    const custom = getData('customPillars', null);
+    if (custom && typeof custom === 'object' && Object.keys(custom).length) return custom;
+    return PILLARS_BY_ACCOUNT[acc] || PILLARS_BY_ACCOUNT.vegetarianhulk;
+  }
+
+  function getPillarInfoForAccount(accountKey) {
+    const custom = getDataForAccount(accountKey, 'customPillars', null);
+    if (custom && typeof custom === 'object' && Object.keys(custom).length) return custom;
+    return PILLARS_BY_ACCOUNT[accountKey] || PILLARS_BY_ACCOUNT.vegetarianhulk;
+  }
+
+  function setCustomPillars(pillarsObj) {
+    return setData('customPillars', pillarsObj);
+  }
+
+  function resetPillarsToDefault() {
+    removeData('customPillars');
   }
 
   // ============ POSTING PLANS (Account-Aware) ============
@@ -289,7 +306,17 @@ const SmashApp = (function() {
   };
 
   function getPostingPlan() {
+    const custom = getData('customPostingPlan', null);
+    if (custom && typeof custom === 'object' && Object.keys(custom).length) return custom;
     return POSTING_PLANS_BY_ACCOUNT[getCurrentAccount()] || POSTING_PLANS_BY_ACCOUNT.vegetarianhulk;
+  }
+
+  function setCustomPostingPlan(planObj) {
+    return setData('customPostingPlan', planObj);
+  }
+
+  function resetPostingPlanToDefault() {
+    removeData('customPostingPlan');
   }
 
   // ============ HELPERS ============
@@ -424,8 +451,13 @@ const SmashApp = (function() {
     get PILLAR_INFO() { return getPillarInfo(); },
     PILLARS_BY_ACCOUNT,
     getPillarInfo,
+    getPillarInfoForAccount,
+    setCustomPillars,
+    resetPillarsToDefault,
     POSTING_PLANS_BY_ACCOUNT,
     getPostingPlan,
+    setCustomPostingPlan,
+    resetPostingPlanToDefault,
     formatNumber,
     formatDate,
     getDayOfWeek,

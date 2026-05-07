@@ -91,6 +91,14 @@
 </head>
 <body class="p-4 md:p-6 bg-depth">
 
+<!-- Beta-Banner (toggle in Settings) -->
+<div id="betaBanner" style="display:none; position:sticky; top:0; z-index:40; background:linear-gradient(90deg, #FFA94D, #FF6B6B); color:#0f172a; text-align:center; font-size:11px; font-weight:700; padding:6px 12px; letter-spacing:0.5px; text-transform:uppercase;">
+  ⚡ Beta v1.4 · Always peaking. Sebi-Build, läuft live.
+</div>
+
+<!-- Account-Tint Top-Border (toggle in Settings) -->
+<div id="accountTintBar" style="display:none; height:3px; background:#FFA94D; box-shadow: 0 0 18px currentColor;"></div>
+
 <div class="max-w-6xl mx-auto">
   
   <!-- Header -->
@@ -329,6 +337,28 @@
 <script src="js/app.js"></script>
 <script>
 SmashApp.requireAuth();
+
+// ============ UI PREFS (apply early) ============
+(function applyUIPrefs() {
+  function pref(k, def) { try { return JSON.parse(localStorage.getItem('smash:pref:'+k)) ?? def; } catch(e){ return def; } }
+  if (pref('betaBanner', false)) {
+    const b = document.getElementById('betaBanner');
+    if (b) b.style.display = 'block';
+  }
+  if (pref('accountTint', true)) {
+    const tint = document.getElementById('accountTintBar');
+    const acc = SmashApp.getAccount();
+    if (tint && acc) {
+      tint.style.display = 'block';
+      tint.style.background = acc.color || '#FFA94D';
+      tint.style.color = acc.color || '#FFA94D';
+    }
+  }
+  if (pref('reducedMotion', false)) {
+    document.documentElement.style.setProperty('--peaking-pulse-duration', '0s');
+    document.querySelectorAll('.peaking-pulse, .logo-glow-strong').forEach(el => el.style.animation = 'none');
+  }
+})();
 
 // ============ ACCOUNT-SWITCHER ============
 function renderAccountSwitcher() {

@@ -90,6 +90,63 @@
     <div class="space-y-3" id="accountsList"></div>
   </div>
 
+  <!-- Pillar-Editor (account-spezifisch) -->
+  <div class="glass rounded-3xl p-5 mb-5 float-in">
+    <h2 class="text-lg font-bold mb-1">🎨 Pillars editieren <span class="text-xs neon font-normal" id="pillarAccountLabel">@—</span></h2>
+    <p class="text-xs text-gray-400 mb-4">Content-Pillars pro Account. Emoji · Name · Color · Target-%. Werden in Tracker, Calendar, Analytics und Cross-Post benutzt.</p>
+    <div id="pillarsList" class="space-y-2 mb-3"></div>
+    <div class="flex gap-2 flex-wrap">
+      <button onclick="addPillar()" class="px-3 py-2 rounded-lg text-sm bg-slate-700/60 hover:bg-slate-600/60">+ Pillar hinzufügen</button>
+      <button onclick="savePillars()" class="btn-primary px-4 py-2 rounded-lg text-sm">💾 Speichern</button>
+      <button onclick="resetPillars()" class="px-3 py-2 rounded-lg text-sm bg-slate-700/40 border border-white/10 hover:bg-slate-600/40">↺ Auf Default</button>
+    </div>
+  </div>
+
+  <!-- Posting-Plan-Editor (account-spezifisch) -->
+  <div class="glass rounded-3xl p-5 mb-5 float-in">
+    <h2 class="text-lg font-bold mb-1">📅 Posting-Plan <span class="text-xs neon font-normal" id="planAccountLabel">@—</span></h2>
+    <p class="text-xs text-gray-400 mb-4">Welcher Tag = welcher Pillar. Leer-lassen = Off-Day. Wird im Calendar + Dashboard benutzt.</p>
+    <div id="planList" class="space-y-2 mb-3"></div>
+    <div class="flex gap-2 flex-wrap">
+      <button onclick="savePlan()" class="btn-primary px-4 py-2 rounded-lg text-sm">💾 Speichern</button>
+      <button onclick="resetPlan()" class="px-3 py-2 rounded-lg text-sm bg-slate-700/40 border border-white/10 hover:bg-slate-600/40">↺ Auf Default</button>
+    </div>
+  </div>
+
+  <!-- UI / Theme -->
+  <div class="glass rounded-3xl p-5 mb-5 float-in">
+    <h2 class="text-lg font-bold mb-1">🌅 UI / Theme</h2>
+    <p class="text-xs text-gray-400 mb-4">Visuelle Helfer — Brand bleibt Sunrise, aber Account-Tint markiert wo du bist.</p>
+    <label class="flex items-center justify-between p-3 rounded-xl bg-slate-900/40 mb-2 cursor-pointer">
+      <div>
+        <div class="font-bold text-sm">Account-Tint Header</div>
+        <div class="text-xs text-gray-400">Top-Border in Account-Color (vegetarianhulk = grün, peakingworld = sunrise)</div>
+      </div>
+      <input type="checkbox" id="prefAccountTint" class="w-5 h-5 accent-orange-400" onchange="savePref('accountTint', this.checked)">
+    </label>
+    <label class="flex items-center justify-between p-3 rounded-xl bg-slate-900/40 mb-2 cursor-pointer">
+      <div>
+        <div class="font-bold text-sm">Beta-Banner anzeigen</div>
+        <div class="text-xs text-gray-400">Sticky-Banner oben „Beta v0.x" — sichtbar auf Stage-Pages</div>
+      </div>
+      <input type="checkbox" id="prefBetaBanner" class="w-5 h-5 accent-orange-400" onchange="savePref('betaBanner', this.checked)">
+    </label>
+    <label class="flex items-center justify-between p-3 rounded-xl bg-slate-900/40 cursor-pointer">
+      <div>
+        <div class="font-bold text-sm">Animations dezenter</div>
+        <div class="text-xs text-gray-400">Reduziert Glow + Pulse-Loops (für Power-User-Modus)</div>
+      </div>
+      <input type="checkbox" id="prefReducedMotion" class="w-5 h-5 accent-orange-400" onchange="savePref('reducedMotion', this.checked)">
+    </label>
+  </div>
+
+  <!-- Admin-Panel-Link -->
+  <div class="glass rounded-3xl p-5 mb-5 float-in" style="border-color: rgba(255, 169, 77, 0.3);">
+    <h2 class="text-lg font-bold mb-1">👑 Admin-Panel</h2>
+    <p class="text-xs text-gray-400 mb-3">Sebi-only Backstage: Ideen-Sammlung · Brain-Dump · Activity-Feed · Tech-Status. Gleicher Login.</p>
+    <a href="../admin.html" class="btn-primary inline-block px-4 py-2 rounded-xl text-sm">→ Admin öffnen</a>
+  </div>
+
   <!-- Cross-Account Compare -->
   <div class="glass rounded-3xl p-5 mb-5 float-in">
     <h2 class="text-lg font-bold mb-1">📊 Cross-Account-Compare</h2>
@@ -159,9 +216,136 @@ SmashApp.requireAuth();
 // ============ INIT ============
 function init() {
   renderAccounts();
+  renderPillars();
+  renderPlan();
+  renderPrefs();
   renderCompare();
   renderTechInfo();
 }
+
+// ============ PILLAR-EDITOR ============
+let pillarsDraft = {};
+const DAY_KEYS = ['Mo','Di','Mi','Do','Fr','Sa','So'];
+
+function renderPillars() {
+  const acc = SmashApp.getCurrentAccount();
+  const accInfo = SmashApp.getAccount();
+  document.getElementById('pillarAccountLabel').textContent = '@' + acc;
+  pillarsDraft = JSON.parse(JSON.stringify(SmashApp.getPillarInfo()));
+  const list = document.getElementById('pillarsList');
+  list.innerHTML = Object.entries(pillarsDraft).map(([key, p]) => `
+    <div class="flex items-center gap-2 p-2 rounded-lg bg-slate-900/40" data-pillar-key="${key}">
+      <input type="text" value="${escapeAttr(p.emoji||'📍')}" maxlength="3" class="w-12 text-center bg-slate-800 rounded p-1 text-sm" data-field="emoji" oninput="updatePillarField('${key}','emoji',this.value)">
+      <input type="text" value="${escapeAttr(p.name||'')}" placeholder="Name" class="flex-1 bg-slate-800 rounded p-1 text-sm px-2" data-field="name" oninput="updatePillarField('${key}','name',this.value)">
+      <input type="color" value="${p.color||'#FFA94D'}" class="w-10 h-8 rounded bg-transparent cursor-pointer" oninput="updatePillarField('${key}','color',this.value)">
+      <input type="number" value="${p.target||0}" min="0" max="100" class="w-14 text-center bg-slate-800 rounded p-1 text-sm" oninput="updatePillarField('${key}','target',Number(this.value))" title="Target-%">
+      <button onclick="removePillar('${key}')" class="text-red-400 hover:text-red-300 px-2" title="Entfernen">×</button>
+    </div>
+  `).join('');
+}
+
+function updatePillarField(key, field, value) {
+  if (pillarsDraft[key]) pillarsDraft[key][field] = value;
+}
+
+function addPillar() {
+  const key = 'p' + Date.now().toString(36);
+  pillarsDraft[key] = { emoji: '📍', name: 'Neuer Pillar', color: '#FFA94D', target: 10 };
+  renderPillarsFromDraft();
+}
+
+function removePillar(key) {
+  if (Object.keys(pillarsDraft).length <= 1) {
+    showToast('⚠️ Mindestens 1 Pillar nötig');
+    return;
+  }
+  delete pillarsDraft[key];
+  renderPillarsFromDraft();
+}
+
+function renderPillarsFromDraft() {
+  const list = document.getElementById('pillarsList');
+  list.innerHTML = Object.entries(pillarsDraft).map(([key, p]) => `
+    <div class="flex items-center gap-2 p-2 rounded-lg bg-slate-900/40" data-pillar-key="${key}">
+      <input type="text" value="${escapeAttr(p.emoji||'📍')}" maxlength="3" class="w-12 text-center bg-slate-800 rounded p-1 text-sm" oninput="updatePillarField('${key}','emoji',this.value)">
+      <input type="text" value="${escapeAttr(p.name||'')}" placeholder="Name" class="flex-1 bg-slate-800 rounded p-1 text-sm px-2" oninput="updatePillarField('${key}','name',this.value)">
+      <input type="color" value="${p.color||'#FFA94D'}" class="w-10 h-8 rounded bg-transparent cursor-pointer" oninput="updatePillarField('${key}','color',this.value)">
+      <input type="number" value="${p.target||0}" min="0" max="100" class="w-14 text-center bg-slate-800 rounded p-1 text-sm" oninput="updatePillarField('${key}','target',Number(this.value))">
+      <button onclick="removePillar('${key}')" class="text-red-400 hover:text-red-300 px-2">×</button>
+    </div>
+  `).join('');
+}
+
+function savePillars() {
+  if (Object.keys(pillarsDraft).length === 0) { showToast('⚠️ Mindestens 1 Pillar'); return; }
+  SmashApp.setCustomPillars(pillarsDraft);
+  showToast('✅ Pillars gespeichert');
+}
+
+function resetPillars() {
+  if (!confirm('Pillars auf Default zurücksetzen?')) return;
+  SmashApp.resetPillarsToDefault();
+  renderPillars();
+  showToast('↺ Pillars zurückgesetzt');
+}
+
+// ============ POSTING-PLAN-EDITOR ============
+let planDraft = {};
+
+function renderPlan() {
+  const acc = SmashApp.getCurrentAccount();
+  document.getElementById('planAccountLabel').textContent = '@' + acc;
+  planDraft = JSON.parse(JSON.stringify(SmashApp.getPostingPlan()));
+  const pillars = SmashApp.getPillarInfo();
+  const list = document.getElementById('planList');
+  list.innerHTML = DAY_KEYS.map(day => {
+    const slot = planDraft[day] || { emoji: '', name: '', pillar: '' };
+    const opts = '<option value="">Off</option>' + Object.entries(pillars).map(([k, p]) =>
+      `<option value="${k}" ${slot.pillar === k ? 'selected' : ''}>${p.emoji} ${p.name}</option>`
+    ).join('');
+    return `
+      <div class="flex items-center gap-2 p-2 rounded-lg bg-slate-900/40">
+        <span class="w-8 text-xs text-gray-400 font-bold">${day}</span>
+        <input type="text" value="${escapeAttr(slot.emoji||'')}" maxlength="3" placeholder="🛠️" class="w-12 text-center bg-slate-800 rounded p-1 text-sm" oninput="planDraft['${day}'] = planDraft['${day}']||{};planDraft['${day}'].emoji=this.value">
+        <input type="text" value="${escapeAttr(slot.name||'')}" placeholder="Reel-Type (leer = Off)" class="flex-1 bg-slate-800 rounded p-1 text-sm px-2" oninput="planDraft['${day}']=planDraft['${day}']||{};planDraft['${day}'].name=this.value">
+        <select class="bg-slate-800 rounded p-1 text-sm" onchange="planDraft['${day}']=planDraft['${day}']||{};planDraft['${day}'].pillar=this.value">${opts}</select>
+      </div>
+    `;
+  }).join('');
+}
+
+function savePlan() {
+  // Strip empty days (no name AND no pillar)
+  const clean = {};
+  Object.entries(planDraft).forEach(([day, s]) => {
+    if (s && (s.name || s.pillar)) clean[day] = s;
+  });
+  SmashApp.setCustomPostingPlan(clean);
+  showToast('✅ Posting-Plan gespeichert');
+}
+
+function resetPlan() {
+  if (!confirm('Posting-Plan auf Default zurücksetzen?')) return;
+  SmashApp.resetPostingPlanToDefault();
+  renderPlan();
+  showToast('↺ Plan zurückgesetzt');
+}
+
+// ============ UI PREFERENCES ============
+function getPref(key, def) {
+  try { return JSON.parse(localStorage.getItem('smash:pref:' + key)) ?? def; } catch (e) { return def; }
+}
+function savePref(key, value) {
+  localStorage.setItem('smash:pref:' + key, JSON.stringify(value));
+  showToast('✓ ' + key + ' = ' + value);
+}
+function renderPrefs() {
+  document.getElementById('prefAccountTint').checked = getPref('accountTint', true);
+  document.getElementById('prefBetaBanner').checked = getPref('betaBanner', false);
+  document.getElementById('prefReducedMotion').checked = getPref('reducedMotion', false);
+}
+
+function escapeAttr(s) { return String(s||'').replace(/"/g, '&quot;'); }
 
 // ============ ACCOUNTS ============
 function renderAccounts() {
