@@ -281,6 +281,28 @@ Latest stat: 0 Follower. Genau der Anfang.
     <div class="space-y-3 stagger" id="reelIdeasList"></div>
   </div>
 
+  <!-- NEW: 30-Tage-Bootstrap-Plan (Day-by-Day für @peakingworld 0→100) -->
+  <div class="glass rounded-3xl p-5 mb-5 float-in" style="background: linear-gradient(135deg, rgba(255, 107, 107, 0.08), rgba(255, 212, 59, 0.08)); border-color: rgba(255, 169, 77, 0.3);">
+    <div class="flex items-baseline justify-between mb-2 flex-wrap gap-2">
+      <h2 class="text-lg font-bold">📅 30-Tage-Bootstrap-Plan (0 → 100 Follower)</h2>
+      <span class="text-xs neon" id="bootstrapStats">0/30 done</span>
+    </div>
+    <p class="text-xs text-gray-400 mb-4">
+      Verifizierter Day-by-Day-Plan aus 2026-Growth-Research für @peakingworld Bootstrap. Realistic: 100 Follower in 2-4 Wochen wenn 1-2 Reels &gt;1k Views machen.
+    </p>
+
+    <div class="flex gap-2 mb-4">
+      <button onclick="startBootstrap()" id="bootstrapStartBtn" class="btn-primary px-4 py-2 rounded-xl text-sm">▶ Plan starten</button>
+      <button onclick="resetBootstrap()" id="bootstrapResetBtn" class="hidden px-4 py-2 rounded-xl text-sm bg-slate-700/40 hover:bg-slate-600/40">↻ Reset</button>
+    </div>
+
+    <div class="series-progress-bar mb-4 hidden" id="bootstrapProgressBar" style="height: 6px; background: rgba(15, 23, 42, 0.6); border-radius: 999px; overflow: hidden;">
+      <div id="bootstrapProgressFill" style="height: 100%; width: 0%; background: linear-gradient(90deg, #FFA94D, #FF6B6B); transition: width 0.4s ease;"></div>
+    </div>
+
+    <div id="bootstrapList" class="space-y-2"></div>
+  </div>
+
   <!-- 5. POSTING-PLAN (4 Wochen) -->
   <div class="glass rounded-3xl p-5 mb-5 float-in">
     <h2 class="text-lg font-bold mb-1">📅 4-Wochen-Posting-Plan (3 Reels/Woche)</h2>
@@ -420,6 +442,123 @@ function renderPostingPlan() {
   container.innerHTML = html;
 }
 renderPostingPlan();
+
+// ============ 30-DAY BOOTSTRAP-PLAN ============
+const BOOTSTRAP_PLAN = [
+  { day: 1, type: 'reel', pillar: 'bip', title: 'Plot-Twist: Mein 2. Insta-Account', hook: 'Plot Twist: Mein 2. Account. Hier baue ich PEAKING in Public.' },
+  { day: 2, type: 'carousel', pillar: 'tools', title: 'Mein 2026 Tool-Stack', hook: 'Carousel: Die 7 Tools mit denen ich PEAKING gebaut hab.' },
+  { day: 3, type: 'reel', pillar: 'bip', title: 'Day 1/100: Building PEAKING (Stat-Hook)', hook: 'Day 1 of 100: Building PEAKING in public — Heute: 0 Users, 1 Live-Tool.' },
+  { day: 5, type: 'reel', pillar: 'bip', title: 'Loss-Hook: $0 MRR — der Plan', hook: '$0 MRR. 0 Followers. Hier ist der 90-Tage-Plan, ehrlich.' },
+  { day: 7, type: 'story', pillar: 'bts', title: 'Week 1 Recap + Cross-Mention vegetarianhulk', hook: 'Story-Recap Week 1 + 1× Cross-Mention auf @vegetarianhulk.' },
+  { day: 8, type: 'reel', pillar: 'tools', title: 'Tutorial: 1 Feature in 1 Tag', hook: 'POV: Du baust 1 Feature pro Tag. Tag 8 — heute: [FEATURE].' },
+  { day: 10, type: 'reel', pillar: 'marketing', title: 'Contrarian: Warum kein Twitter', hook: 'Contrarian: Warum ich KEIN Twitter mache als BIP-Founder. Hier warum.' },
+  { day: 12, type: 'reel', pillar: 'bts', title: 'BTS-Reel: Setup am Mac', hook: 'BTS: Mein Workspace mit dem ich PEAKING gebaut hab. Code im Hintergrund.' },
+  { day: 14, type: 'story', pillar: 'bts', title: 'Story-Recap Week 2', hook: 'Story: Was Week 2 brachte. Stat-Update + Lessons.' },
+  { day: 15, type: 'reel', pillar: 'bip', title: 'Stat-Reveal: 47 Users, 0 Paying', hook: '47 Users, 0 Paying — was ich draus gelernt hab.' },
+  { day: 17, type: 'carousel', pillar: 'tools', title: 'Tools-Stack V2 (Update)', hook: 'Carousel: Tools-Stack-Update — 2 weg, 3 neu dazu.' },
+  { day: 19, type: 'reel', pillar: 'bip', title: 'Failure-Reel: Mein größter Fehler', hook: 'Failure-Reel: Diese eine Sache hab ich verkackt. Hier was ich gelernt hab.' },
+  { day: 21, type: 'reel', pillar: 'marketing', title: 'Cross-Promo-Reel auf @vegetarianhulk', hook: 'POV: Du betreibst 2 Insta-Accounts solo. Hier wie ich Cross-Promo mache.' },
+  { day: 22, type: 'reel', pillar: 'bip', title: 'Series-Recap: Day 22 of 30', hook: 'Day 22/30: 3 Wochen Building. Stand der Dinge.' },
+  { day: 24, type: 'reel', pillar: 'tools', title: 'Demo-Reel: PEAKING in Action', hook: 'POV: Du nutzt PEAKING zum 1. Mal — hier was passiert.' },
+  { day: 26, type: 'reel', pillar: 'bts', title: 'Behind-Code: Wie eine Idee → Feature wird', hook: 'BTS: Von Sebi-Idee → Live-Feature in 6h. Behind the Code.' },
+  { day: 28, type: 'reel', pillar: 'marketing', title: 'Lesson: Was 4 Wochen BIP gelehrt hat', hook: 'Diese 5 Lessons hab ich nach 4 Wochen Building-in-Public gelernt.' },
+  { day: 30, type: 'carousel', pillar: 'bip', title: 'Carousel: 30-Tage-Recap mit allen Stats', hook: '30 Tage Building-in-Public: Stats, Lessons, Next.' }
+];
+
+function getBootstrap() {
+  return SmashApp.getData('bootstrapPlan', null);
+}
+
+function startBootstrap() {
+  const data = { startDate: new Date().toISOString().split('T')[0], items: {} };
+  SmashApp.setData('bootstrapPlan', data);
+  renderBootstrap();
+  showToast('🚀 Bootstrap-Plan gestartet — Tag 1 wartet');
+}
+
+function resetBootstrap() {
+  if (!confirm('Bootstrap-Plan wirklich zurücksetzen? Deine Status-Marks gehen verloren.')) return;
+  SmashApp.removeData('bootstrapPlan');
+  renderBootstrap();
+  showToast('↻ Plan zurückgesetzt');
+}
+
+function toggleBootstrapItem(day) {
+  const data = getBootstrap();
+  if (!data) return;
+  const cur = data.items[day] || 'todo';
+  const next = cur === 'todo' ? 'done' : cur === 'done' ? 'skipped' : 'todo';
+  data.items[day] = next;
+  if (next === 'done') data.items[day + '_date'] = new Date().toISOString().split('T')[0];
+  SmashApp.setData('bootstrapPlan', data);
+  renderBootstrap();
+}
+
+function renderBootstrap() {
+  const data = getBootstrap();
+  const list = document.getElementById('bootstrapList');
+  const startBtn = document.getElementById('bootstrapStartBtn');
+  const resetBtn = document.getElementById('bootstrapResetBtn');
+  const progBar = document.getElementById('bootstrapProgressBar');
+
+  if (!data) {
+    list.innerHTML = '<p class="text-sm text-gray-500 italic text-center py-6">Tap „▶ Plan starten" um den 30-Tage-Bootstrap zu beginnen.</p>';
+    startBtn.classList.remove('hidden');
+    resetBtn.classList.add('hidden');
+    progBar.classList.add('hidden');
+    return;
+  }
+
+  startBtn.classList.add('hidden');
+  resetBtn.classList.remove('hidden');
+  progBar.classList.remove('hidden');
+
+  const items = data.items || {};
+  const done = Object.values(items).filter(v => v === 'done').length;
+  const total = BOOTSTRAP_PLAN.length;
+  const pct = (done / total) * 100;
+  document.getElementById('bootstrapProgressFill').style.width = pct + '%';
+  document.getElementById('bootstrapStats').textContent = `${done}/${total} done · ${Math.round(pct)}%`;
+
+  // Find next undone item
+  const nextItem = BOOTSTRAP_PLAN.find(it => (items[it.day] || 'todo') === 'todo');
+
+  const typeLabels = { reel: '🎬 Reel', carousel: '📸 Carousel', story: '⚡ Story' };
+  const pillarColors = { tools: '#FFA94D', bip: '#FF6B6B', marketing: '#FFD43B', bts: '#a78bfa' };
+
+  list.innerHTML = BOOTSTRAP_PLAN.map(it => {
+    const status = items[it.day] || 'todo';
+    const isNext = nextItem && nextItem.day === it.day;
+    const statusEmoji = status === 'done' ? '✓' : status === 'skipped' ? '⏭' : (isNext ? '→' : '○');
+    const statusColor = status === 'done' ? '#10b981' : status === 'skipped' ? '#94a3b8' : (isNext ? '#FFA94D' : '#475569');
+    const opacity = status === 'done' || status === 'skipped' ? '0.55' : '1';
+    return `
+      <div onclick="toggleBootstrapItem(${it.day})" style="cursor: pointer; opacity: ${opacity}; ${isNext ? 'border: 1px solid rgba(255, 169, 77, 0.5); background: rgba(255, 169, 77, 0.05);' : 'border: 1px solid rgba(255,255,255,0.05);'}" class="rounded-xl p-3 hover:border-orange-400/30 transition-all">
+        <div class="flex items-center gap-3">
+          <div style="width: 28px; height: 28px; border-radius: 50%; background: ${statusColor}; color: #0f172a; font-weight: 900; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0;">${statusEmoji}</div>
+          <div style="width: 36px; flex-shrink: 0;">
+            <div class="text-xs text-gray-500">DAY</div>
+            <div class="text-base font-black ${isNext ? 'neon' : ''}">${it.day}</div>
+          </div>
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center gap-2 mb-1 flex-wrap">
+              <span class="text-[10px] font-bold uppercase" style="color: ${pillarColors[it.pillar]}">${typeLabels[it.type]}</span>
+              ${isNext ? '<span class="text-[10px] neon font-bold">⚡ NEXT UP</span>' : ''}
+            </div>
+            <div class="text-sm font-bold leading-tight">${escapeHtml(it.title)}</div>
+            <div class="text-xs text-gray-400 mt-1 leading-snug">${escapeHtml(it.hook)}</div>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function escapeHtml(s) {
+  return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+renderBootstrap();
 
 // ============ TOAST ============
 let toastTimer;
