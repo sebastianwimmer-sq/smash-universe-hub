@@ -136,13 +136,26 @@
   </div>
 
   <!-- Algorithm-Tip -->
-  <div class="glass rounded-2xl p-4 mb-5 float-in" style="background: linear-gradient(135deg, rgba(255, 107, 107, 0.08), rgba(255, 212, 59, 0.08)); border-color: rgba(255, 169, 77, 0.3);">
+  <div class="glass rounded-2xl p-4 mb-4 float-in" style="background: linear-gradient(135deg, rgba(255, 107, 107, 0.08), rgba(255, 212, 59, 0.08)); border-color: rgba(255, 169, 77, 0.3);">
     <div class="text-xs text-gray-400 uppercase tracking-wider mb-1 font-bold">⚡ 2026 Algo-Reality</div>
     <p class="text-sm leading-relaxed">
       <b class="neon">Hook = 80% des Reach-Erfolgs.</b> Die ersten 2 Sekunden entscheiden ob dein Reel 5-10× weiter reicht.
       Ziel: <b class="neon">Sends-per-Reach &gt;1%</b> + <b class="neon">2s-Hold-Rate &gt;60%</b>. Loss-Hooks performen 2-3× besser als Win-Hooks.
     </p>
   </div>
+
+  <!-- 🔥 Top für deinen Account heute -->
+  <div class="glass rounded-2xl p-5 mb-5 float-in" style="border: 1px solid rgba(255, 169, 77, 0.3);">
+    <div class="flex items-center justify-between gap-2 flex-wrap mb-1">
+      <h2 class="text-lg font-bold">🔥 Top für <span class="text-sunrise" id="recAccountLabel">@—</span></h2>
+      <span class="text-xs text-gray-500" id="recReason">—</span>
+    </div>
+    <p class="text-xs text-gray-400 mb-3">Smart-Pick basierend auf deinem Account-Pillar-Mix + Win-Rate-Daten + Loss-Hook-Bonus.</p>
+    <div id="topRecs" class="grid grid-cols-1 md:grid-cols-3 gap-2"></div>
+  </div>
+
+  <!-- Insights-Banner -->
+  <div id="insightsBanner" class="glass rounded-2xl p-3 mb-4 float-in text-sm" style="display:none;"></div>
 
   <!-- Search -->
   <div class="mb-3">
@@ -168,7 +181,9 @@
   <!-- Sort -->
   <div class="mb-2 text-xs text-gray-500 font-bold uppercase tracking-wider">Sort</div>
   <div class="filter-scroll flex gap-2 mb-5 overflow-x-auto pb-1" id="sortFilter">
-    <button class="chip active" data-sort="winrate">⚡ Best Win-Rate</button>
+    <button class="chip active" data-sort="recommended">🔥 Smart</button>
+    <button class="chip" data-sort="winrate">⚡ Win-Rate</button>
+    <button class="chip" data-sort="recent">⏱️ Zuletzt benutzt</button>
     <button class="chip" data-sort="latest">🆕 Latest</button>
     <button class="chip" data-sort="alphabet">A-Z</button>
   </div>
@@ -199,7 +214,10 @@
     <div id="useVars" class="space-y-2 mb-4"></div>
     <div class="text-xs text-gray-500 mb-2 font-bold uppercase tracking-wider">Live-Preview</div>
     <div id="usePreview" class="rounded-xl p-3 bg-slate-800/60 border border-orange-500/20 text-sm font-medium leading-snug whitespace-pre-line min-h-[60px] mb-4"></div>
-    <button onclick="copyPreview()" class="btn-primary w-full p-3 rounded-xl">📋 Hook kopieren</button>
+    <div class="flex gap-2 flex-wrap">
+      <button onclick="copyPreview()" class="btn-primary flex-1 p-3 rounded-xl">📋 Kopieren</button>
+      <button onclick="saveAsIdea()" class="p-3 rounded-xl bg-slate-700/60 hover:bg-slate-600/60 text-sm" title="Als Idee in aktuellem Account speichern">💡 → Idea</button>
+    </div>
   </div>
 </div>
 
@@ -311,16 +329,155 @@ const SEED_HOOKS = [
 let hooks = [];
 let editingId = null;
 let usingHook = null;
-let filters = { format: 'all', sort: 'winrate' };
+let filters = { format: 'all', sort: 'recommended' };
 let reelsForWinRate = [];
+let hookUsage = {};  // { hookId: { count, lastUsed } }
+
+// Pillar → Best-Format-Affinity (welche Hook-Formate performen für welche Pillar am besten)
+// Account-aware: vegetarianhulk-Pillars vs peakingworld-Pillars
+const PILLAR_FORMAT_AFFINITY = {
+  // vegetarianhulk
+  outdoor:    ['story', 'pov', 'comparison', 'twist'],
+  gym:        ['stat', 'comparison', 'mistake', 'loss'],
+  mindset:    ['quote', 'curiosity', 'mistake', 'twist'],
+  plantbased: ['stat', 'curiosity', 'comparison', 'loss'],
+  // peakingworld
+  tools:      ['stat', 'loss', 'curiosity', 'comparison'],
+  bip:        ['stat', 'loss', 'mistake', 'story'],
+  marketing:  ['curiosity', 'stat', 'twist', 'loss'],
+  bts:        ['pov', 'story', 'mistake', 'twist']
+};
+
+// Account-Specific Format-Bias (general hint when no pillar context)
+const ACCOUNT_FORMAT_BIAS = {
+  vegetarianhulk: ['story', 'mindset', 'comparison'],
+  peakingworld:   ['stat', 'loss', 'curiosity']
+};
 
 // ============ INIT ============
 function init() {
   const customs = SmashApp.getData('customHooks', []);
   hooks = [...SEED_HOOKS, ...customs];
   reelsForWinRate = SmashApp.getData('reels', []);
+  hookUsage = SmashApp.getData('hookUsage', {}) || {};
   bindFilters();
+  renderRecommendations();
+  renderInsights();
   render();
+}
+
+// ============ RECOMMENDATIONS ============
+function renderRecommendations() {
+  const acc = SmashApp.getCurrentAccount();
+  const accInfo = SmashApp.getAccount();
+  document.getElementById('recAccountLabel').textContent = '@' + acc;
+
+  // Score each hook for current account context
+  const scored = hooks.map(h => {
+    let score = 0;
+    let reasons = [];
+
+    // 1. Win-Rate-Daten (heavy weight)
+    const wr = computeWinRate(h);
+    if (wr) {
+      score += wr.score * 0.6;
+      reasons.push('Win-Rate ' + wr.score);
+    }
+
+    // 2. Account-Format-Bias
+    const bias = ACCOUNT_FORMAT_BIAS[acc] || [];
+    if (bias.includes(h.format)) {
+      score += 20;
+      reasons.push('Account-Match');
+    }
+
+    // 3. Pillar-Affinity (any current pillar matches)
+    const pillars = SmashApp.getPillarInfo ? Object.keys(SmashApp.getPillarInfo()) : [];
+    let pillarHit = false;
+    pillars.forEach(p => {
+      if ((PILLAR_FORMAT_AFFINITY[p] || []).includes(h.format)) {
+        if (!pillarHit) { score += 15; reasons.push('Pillar-Affinity'); pillarHit = true; }
+      }
+    });
+
+    // 4. Loss-Hook-Bonus (per Greg Isenberg 2-3× besser)
+    if (h.format === 'loss') {
+      score += 25;
+      reasons.push('Loss-Bonus');
+    }
+
+    // 5. Penalize recently used (within 3 days)
+    const usage = hookUsage[h.id];
+    if (usage && usage.lastUsed) {
+      const hoursAgo = (Date.now() - usage.lastUsed) / (1000 * 3600);
+      if (hoursAgo < 72) score -= 30;
+    }
+
+    return { hook: h, score, reasons };
+  });
+
+  scored.sort((a, b) => b.score - a.score);
+  const top3 = scored.slice(0, 3);
+
+  document.getElementById('recReason').textContent =
+    `${ACCOUNT_FORMAT_BIAS[acc]?.map(f => FORMAT_LABELS[f]?.split(' ')[1] || f).join(' · ')} bevorzugt`;
+
+  document.getElementById('topRecs').innerHTML = top3.map(({ hook: h, reasons }) => {
+    const text = h.text.length > 90 ? h.text.slice(0, 90) + '…' : h.text;
+    return `
+      <div class="hook-card" style="border: 1px solid rgba(255, 169, 77, 0.25); cursor:pointer;" onclick="useHook(${h.id})">
+        <div class="flex items-center justify-between mb-1 gap-1">
+          <span class="format-tag fmt-${h.format} text-[10px]">${FORMAT_LABELS[h.format]}</span>
+          ${h.format === 'loss' ? '<span class="text-[10px] neon">⚡ 2-3×</span>' : ''}
+        </div>
+        <p class="text-xs leading-snug">${escapeHtml(text)}</p>
+        <div class="text-[10px] text-gray-500 mt-2">${reasons.slice(0, 2).join(' · ')}</div>
+      </div>
+    `;
+  }).join('');
+}
+
+// ============ INSIGHTS ============
+function renderInsights() {
+  const banner = document.getElementById('insightsBanner');
+  // Show insight if Sebi hasn't used Loss-Hooks much
+  const lossUsageCount = Object.entries(hookUsage).reduce((sum, [id, u]) => {
+    const h = SEED_HOOKS.find(x => x.id == id);
+    return h?.format === 'loss' ? sum + (u.count || 0) : sum;
+  }, 0);
+  const totalUsageCount = Object.values(hookUsage).reduce((sum, u) => sum + (u.count || 0), 0);
+  const lossRatio = totalUsageCount > 0 ? lossUsageCount / totalUsageCount : 0;
+
+  if (totalUsageCount >= 3 && lossRatio < 0.2) {
+    banner.style.display = 'block';
+    banner.innerHTML = `
+      <span class="neon font-bold">💡 Insight:</span>
+      Du nutzt Loss-Hooks nur in <b>${(lossRatio * 100).toFixed(0)}%</b> deiner Hook-Picks. Loss-Format performt im 2026-Algo <b>2-3× besser</b> als Win-Hooks (Greg Isenberg). Probier eins bei deinem nächsten Reel.
+    `;
+    banner.style.borderLeft = '3px solid #FFA94D';
+  } else if (totalUsageCount >= 5) {
+    const formatCounts = {};
+    Object.entries(hookUsage).forEach(([id, u]) => {
+      const h = hooks.find(x => x.id == id);
+      if (h) formatCounts[h.format] = (formatCounts[h.format] || 0) + (u.count || 0);
+    });
+    const topFormat = Object.entries(formatCounts).sort((a, b) => b[1] - a[1])[0];
+    if (topFormat) {
+      banner.style.display = 'block';
+      banner.innerHTML = `
+        <span class="neon font-bold">📊 Pattern:</span>
+        Dein meistgenutztes Format ist <b>${FORMAT_LABELS[topFormat[0]] || topFormat[0]}</b> (${topFormat[1]}× verwendet). Variation hilft Algo-Diversität.
+      `;
+      banner.style.borderLeft = '3px solid #FFA94D';
+    }
+  }
+}
+
+function trackHookUsage(id) {
+  hookUsage[id] = hookUsage[id] || { count: 0, lastUsed: 0 };
+  hookUsage[id].count++;
+  hookUsage[id].lastUsed = Date.now();
+  SmashApp.setData('hookUsage', hookUsage);
 }
 
 function bindFilters() {
@@ -389,8 +546,22 @@ function render() {
   filtered = filtered.map(h => ({ ...h, winRate: computeWinRate(h) }));
 
   // Sort
-  if (filters.sort === 'winrate') {
+  if (filters.sort === 'recommended') {
+    const acc = SmashApp.getCurrentAccount();
+    const bias = ACCOUNT_FORMAT_BIAS[acc] || [];
+    filtered.sort((a, b) => {
+      const sa = (a.winRate?.score || 0) * 0.6
+                + (bias.includes(a.format) ? 20 : 0)
+                + (a.format === 'loss' ? 25 : 0);
+      const sb = (b.winRate?.score || 0) * 0.6
+                + (bias.includes(b.format) ? 20 : 0)
+                + (b.format === 'loss' ? 25 : 0);
+      return sb - sa;
+    });
+  } else if (filters.sort === 'winrate') {
     filtered.sort((a, b) => (b.winRate?.score || -1) - (a.winRate?.score || -1));
+  } else if (filters.sort === 'recent') {
+    filtered.sort((a, b) => (hookUsage[b.id]?.lastUsed || 0) - (hookUsage[a.id]?.lastUsed || 0));
   } else if (filters.sort === 'latest') {
     filtered.sort((a, b) => b.id - a.id);
   } else if (filters.sort === 'alphabet') {
@@ -424,11 +595,17 @@ function renderCard(h) {
   const highlighted = escapeHtml(h.text).replace(/\[([A-ZÄÖÜ_-]+)\]/g, '<span class="var-highlight">[$1]</span>');
   const wr = h.winRate;
   const wrPill = wr ? `<span class="win-rate-pill">⚡ ${wr.score} · ${wr.uses}×</span>` : '';
+  const usage = hookUsage[h.id];
+  const usagePill = usage?.count > 0 ? `<span class="text-[10px] text-gray-500">↻ ${usage.count}×</span>` : '';
+  const lossBoost = h.format === 'loss' ? 'style="border-color: rgba(255, 169, 77, 0.4); background: linear-gradient(135deg, rgba(255, 107, 107, 0.06), rgba(255, 169, 77, 0.04));"' : '';
+  const lossBadge = h.format === 'loss' ? '<span class="text-[10px] neon font-bold" title="Loss-Hooks performen 2-3× besser">⚡ 2-3× ALGO</span>' : '';
   return `
-    <div class="hook-card">
+    <div class="hook-card" ${lossBoost}>
       <div class="flex items-center justify-between mb-2 gap-2 flex-wrap">
         <span class="format-tag fmt-${h.format}">${FORMAT_LABELS[h.format] || h.format}</span>
         ${wrPill}
+        ${lossBadge}
+        ${usagePill}
         ${h.custom ? '<span class="text-xs neon">⭐</span>' : ''}
       </div>
       <p class="text-sm leading-snug mb-3 whitespace-pre-line">${highlighted}</p>
@@ -481,12 +658,40 @@ function updateUsePreview() {
 
 function closeUseModal() { document.getElementById('useModal').classList.add('hidden'); usingHook = null; }
 
+function saveAsIdea() {
+  if (!usingHook) return;
+  const text = document.getElementById('usePreview').textContent;
+  const ideas = SmashApp.getData('ideas', []) || [];
+  const acc = SmashApp.getCurrentAccount();
+  ideas.unshift({
+    id: 'h-' + Date.now(),
+    title: text.split('\n')[0].slice(0, 80),
+    hook: text,
+    format: 'reel',
+    pillar: Object.keys(SmashApp.getPillarInfo())[0],
+    status: 'idea',
+    source: 'hook-library',
+    sourceHookId: usingHook.id,
+    createdAt: new Date().toISOString()
+  });
+  SmashApp.setData('ideas', ideas);
+  trackHookUsage(usingHook.id);
+  showToast('💡 Als Idee in @' + acc + ' gespeichert');
+  closeUseModal();
+  renderRecommendations();
+  render();
+}
+
 async function copyPreview() {
   const text = document.getElementById('usePreview').textContent;
   try {
     await navigator.clipboard.writeText(text);
-    showToast('✓ Hook kopiert');
+    if (usingHook) trackHookUsage(usingHook.id);
+    showToast('✓ Hook kopiert · gemerkt für Recently-Used');
     closeUseModal();
+    renderRecommendations();
+    renderInsights();
+    render();
   } catch (e) { showToast('⚠️ Copy failed'); }
 }
 
@@ -495,7 +700,11 @@ async function quickCopy(id) {
   if (!h) return;
   try {
     await navigator.clipboard.writeText(h.text);
-    showToast('✓ Hook-Pattern kopiert');
+    trackHookUsage(id);
+    showToast('✓ Hook-Pattern kopiert · gemerkt');
+    renderRecommendations();
+    renderInsights();
+    render();
   } catch (e) { showToast('⚠️ Copy failed'); }
 }
 
