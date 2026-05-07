@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <title>PEAKING Logo V3-D Still — 3D Pyramide Frozen-Mid-Rotation</title>
+  <defs>
+    <linearGradient id="pdFrontD" x1="50%" y1="0%" x2="50%" y2="100%">
+      <stop offset="0%" stop-color="#FFE066"/>
+      <stop offset="50%" stop-color="#FFA94D"/>
+      <stop offset="100%" stop-color="#FF8E5A"/>
+    </linearGradient>
+    <linearGradient id="pdRightD" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FF6B6B"/>
+      <stop offset="100%" stop-color="#7A2828"/>
+    </linearGradient>
+    <linearGradient id="pdLeftD" x1="100%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#FFA94D"/>
+      <stop offset="100%" stop-color="#C73E3E"/>
+    </linearGradient>
+    <radialGradient id="pdGroundD" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#FFA94D" stop-opacity="0.5"/>
+      <stop offset="60%" stop-color="#FFA94D" stop-opacity="0.15"/>
+      <stop offset="100%" stop-color="transparent"/>
+    </radialGradient>
+    <filter id="pdGlowD" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="0.6" result="glow"/>
+      <feMerge><feMergeNode in="glow"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  <!-- Ground glow ellipse -->
+  <ellipse cx="32" cy="58" rx="22" ry="3.2" fill="url(#pdGroundD)"/>
+  <g filter="url(#pdGlowD)">
+    <!-- Right Face (back-tilted, dark) -->
+    <path d="M 32 6 L 56 50 L 38 56 Z" fill="url(#pdRightD)"/>
+    <!-- Left Face (front-light) -->
+    <path d="M 32 6 L 8 50 L 26 56 Z" fill="url(#pdLeftD)"/>
+    <!-- Front Face (visible mid-rotation, brightest) -->
+    <path d="M 32 6 L 26 56 L 38 56 Z" fill="url(#pdFrontD)"/>
+    <!-- Top Apex highlight -->
+    <circle cx="32" cy="6" r="1.2" fill="#FFE066" opacity="0.9"/>
+  </g>
+</svg>

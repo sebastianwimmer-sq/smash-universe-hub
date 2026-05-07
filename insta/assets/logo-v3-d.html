@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<title>PEAKING Logo V3-D · 3D Rotating Pyramide</title>
+<style>
+  body {
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    min-height: 100dvh;
+    color: white;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+    text-align: center;
+  }
+
+  /* ============ V3-D · 3D-PYRAMIDE (4 Faces) ============ */
+  .peaking-pyramid {
+    width: 200px;
+    height: 200px;
+    perspective: 1000px;
+    margin: 30px auto;
+    display: inline-block;
+  }
+  .peaking-pyramid-rot {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    transform-style: preserve-3d;
+    animation: pyramid-spin 8s linear infinite;
+  }
+  @keyframes pyramid-spin {
+    from { transform: rotateX(-15deg) rotateY(0deg); }
+    to   { transform: rotateX(-15deg) rotateY(360deg); }
+  }
+  .pyramid-face {
+    position: absolute;
+    left: 50%;
+    bottom: 25%;
+    width: 0;
+    height: 0;
+    border-left: 70px solid transparent;
+    border-right: 70px solid transparent;
+    border-bottom: 130px solid;
+    margin-left: -70px;
+    transform-origin: 50% 100%;
+    backface-visibility: visible;
+    filter: drop-shadow(0 0 12px rgba(255, 169, 77, 0.3));
+  }
+  /* 4 Faces — rotated around Y-Axis at 0/90/180/270deg */
+  .pf-front { border-bottom-color: #FFD43B; transform: translateZ(50px); }
+  .pf-right { border-bottom-color: #FFA94D; transform: rotateY(90deg) translateZ(50px); }
+  .pf-back  { border-bottom-color: #FF6B6B; transform: rotateY(180deg) translateZ(50px); }
+  .pf-left  { border-bottom-color: #C73E3E; transform: rotateY(270deg) translateZ(50px); }
+
+  /* Pulsing glow under pyramid */
+  .pyramid-shadow {
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    width: 120px;
+    height: 14px;
+    margin-left: -60px;
+    background: radial-gradient(ellipse, rgba(255, 169, 77, 0.6), transparent 70%);
+    filter: blur(8px);
+    animation: shadow-pulse 4s ease-in-out infinite;
+  }
+  @keyframes shadow-pulse {
+    0%, 100% { transform: scaleX(1); opacity: 0.8; }
+    50% { transform: scaleX(1.2); opacity: 0.5; }
+  }
+
+  /* ============ V3-E · TILTED-TRIANGLE (für kleine Sizes) ============ */
+  .peaking-tilt {
+    width: 140px;
+    height: 140px;
+    perspective: 800px;
+    margin: 20px auto;
+    display: inline-block;
+  }
+  .peaking-tilt-rot {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    transform-style: preserve-3d;
+    animation: tilt-spin 6s linear infinite;
+  }
+  @keyframes tilt-spin {
+    from { transform: rotateX(-10deg) rotateY(0deg); }
+    to   { transform: rotateX(-10deg) rotateY(360deg); }
+  }
+  .tilt-face {
+    position: absolute;
+    inset: 0;
+    clip-path: polygon(50% 8%, 92% 92%, 8% 92%);
+    backface-visibility: visible;
+  }
+  .tilt-face.front {
+    background: linear-gradient(135deg, #FF6B6B, #FFA94D 50%, #FFD43B);
+    transform: translateZ(8px);
+  }
+  .tilt-face.back {
+    background: linear-gradient(135deg, #C73E3E, #7A2828);
+    transform: translateZ(-8px) rotateY(180deg);
+  }
+  .tilt-face.edge {
+    background: rgba(255, 169, 77, 0.2);
+    transform: translateZ(0px);
+  }
+
+  h1 {
+    font-size: 32px;
+    font-weight: 800;
+    background: linear-gradient(135deg, #FF6B6B, #FFA94D, #FFD43B);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 4px;
+  }
+  .sub { color: #94a3b8; font-size: 14px; margin-bottom: 40px; }
+  .label { color: #FFA94D; font-weight: 700; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; margin-top: 30px; }
+  .desc { color: #cbd5e1; font-size: 13px; margin-top: 8px; max-width: 400px; line-height: 1.6; }
+  .controls { margin-top: 30px; }
+  .ctrl-btn {
+    background: rgba(15, 23, 42, 0.6);
+    border: 1px solid rgba(255, 169, 77, 0.3);
+    color: white;
+    padding: 8px 14px;
+    border-radius: 12px;
+    cursor: pointer;
+    font-size: 12px;
+    margin: 0 4px;
+  }
+  .ctrl-btn:hover { background: rgba(255, 169, 77, 0.1); }
+  .back-link { color: #FFA94D; font-size: 12px; text-decoration: none; margin-top: 40px; display: inline-block; }
+  .back-link:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+
+<h1>PEAKING — 3D Animated Logo</h1>
+<p class="sub">Pure CSS-3D · keine Lib · funktioniert offline</p>
+
+<!-- V3-D · 4-Side Pyramide -->
+<div>
+  <div class="peaking-pyramid">
+    <div class="peaking-pyramid-rot" id="pyramid">
+      <div class="pyramid-face pf-back"></div>
+      <div class="pyramid-face pf-left"></div>
+      <div class="pyramid-face pf-right"></div>
+      <div class="pyramid-face pf-front"></div>
+    </div>
+  </div>
+  <div class="pyramid-shadow"></div>
+  <div class="label">V3-D · 4-Sided Pyramide</div>
+  <div class="desc">Echte 3D-Pyramide mit 4 Faces (vorne/rechts/hinten/links). Jede Face Sunrise-Gradient. Dreht 8s um Y-Axis. Tilted -15° für Drama.</div>
+</div>
+
+<!-- V3-E · Tilted Triangle (small-size friendly) -->
+<div style="margin-top: 50px;">
+  <div class="peaking-tilt">
+    <div class="peaking-tilt-rot">
+      <div class="tilt-face back"></div>
+      <div class="tilt-face front"></div>
+    </div>
+  </div>
+  <div class="label">V3-E · Tilted Triangle</div>
+  <div class="desc">Flacher Triangle mit Y-Axis-Rotation + minimaler Z-Tiefe (Front-Sunrise + Back-Dark). Cleaner für kleine Sizes (Favicon, Header). 6s pro Umdrehung.</div>
+</div>
+
+<div class="controls">
+  <button class="ctrl-btn" onclick="speed(1)">1× Speed</button>
+  <button class="ctrl-btn" onclick="speed(2)">2× Speed</button>
+  <button class="ctrl-btn" onclick="speed(0.3)">0.3× Slow</button>
+  <button class="ctrl-btn" onclick="toggle()">⏸ Pause / ▶ Play</button>
+</div>
+
+<a href="logo-v3-preview.html" class="back-link">← Zurück zum Picker</a>
+
+<script>
+let speedFactor = 1;
+let paused = false;
+function speed(f) {
+  speedFactor = f;
+  applyAnim();
+}
+function toggle() {
+  paused = !paused;
+  applyAnim();
+}
+function applyAnim() {
+  document.querySelectorAll('.peaking-pyramid-rot, .peaking-tilt-rot').forEach(el => {
+    el.style.animationDuration = paused ? null : (8 / speedFactor) + 's';
+    el.style.animationPlayState = paused ? 'paused' : 'running';
+  });
+}
+</script>
+
+</body>
+</html>
