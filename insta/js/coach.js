@@ -286,6 +286,49 @@ const Coach = (function() {
     return best;
   }
 
+  // Full 24h Hour-Distribution + 7×24 Day×Hour Heatmap-Data
+  function getPostingHeatmap() {
+    const reels = _reels();
+    const hours = Array.from({length: 24}, (_, h) => ({ hour: h, count: 0, totalER: 0 }));
+    const grid = Array.from({length: 7}, () => Array.from({length: 24}, () => ({ count: 0, totalER: 0 })));
+
+    reels.forEach(r => {
+      const t = r.date || r.postedAt;
+      if (!t) return;
+      const d = new Date(t);
+      const h = d.getHours();
+      const wd = d.getDay(); // 0=So..6=Sa
+      const er = _er(r);
+      hours[h].count++;
+      hours[h].totalER += er;
+      grid[wd][h].count++;
+      grid[wd][h].totalER += er;
+    });
+
+    // Compute averages
+    const hoursAvg = hours.map(b => ({
+      hour: b.hour,
+      count: b.count,
+      avgER: b.count > 0 ? b.totalER / b.count : 0
+    }));
+
+    const gridAvg = grid.map(row => row.map(cell => ({
+      count: cell.count,
+      avgER: cell.count > 0 ? cell.totalER / cell.count : 0
+    })));
+
+    const maxER = Math.max(...hoursAvg.map(h => h.avgER), 0.01);
+    const totalReels = reels.length;
+
+    return {
+      ready: totalReels >= 5,
+      total: totalReels,
+      hours: hoursAvg,
+      grid: gridAvg,
+      maxER
+    };
+  }
+
   function _topPerformerPattern(reels) {
     if (reels.length < 5) return null;
     const sorted = reels.slice().sort((a, b) => (Number(b.plays)||0) - (Number(a.plays)||0));
@@ -466,6 +509,7 @@ const Coach = (function() {
     completeStep,
     getPillarHealth,
     getPostingPatterns,
+    getPostingHeatmap,
     getMastermindToday,
     getAllMastermindTruths,
     getNext3Steps,

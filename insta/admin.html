@@ -153,9 +153,33 @@
 
   <!-- BRAIN TAB -->
   <div class="tab-pane" data-pane="brain">
+
+    <!-- 🚀 Capture-Inbox (Quick-Add für Ideen unterwegs) -->
+    <div class="glass rounded-3xl p-5 mb-4" style="border: 1px solid rgba(255, 169, 77, 0.3);">
+      <div class="flex items-center justify-between mb-2 flex-wrap gap-2">
+        <h2 class="text-lg font-bold">🚀 Capture-Inbox</h2>
+        <span class="text-xs text-gray-500" id="captureCount">0 Items</span>
+      </div>
+      <p class="text-xs text-gray-400 mb-3">Quick-Add unterwegs (Bus, Hike, Dusche). 1-Tap save → später zur Idea promovieren.</p>
+      <div class="flex gap-2 mb-3 flex-wrap">
+        <input type="text" id="captureInput" placeholder="Was ist dir grad eingefallen?" class="flex-1 min-w-[200px] bg-slate-800 rounded-lg p-3 text-sm" onkeydown="if(event.key==='Enter') addCapture()">
+        <select id="captureType" class="bg-slate-800 rounded-lg p-2 text-sm">
+          <option value="hook">🪝 Hook</option>
+          <option value="reel">🎬 Reel</option>
+          <option value="bip">📊 BIP</option>
+          <option value="brand">💼 Brand-Deal</option>
+          <option value="general">💡 General</option>
+        </select>
+        <button onclick="addCapture()" class="px-4 py-2 rounded-lg bg-gradient-to-br from-orange-400 to-red-400 text-slate-900 font-bold text-sm">+ Capture</button>
+      </div>
+      <div id="captureList" class="space-y-2"></div>
+      <div id="captureEmpty" class="text-gray-500 text-sm text-center py-4 hidden">Noch nix gecapturet — schreib oben einfach was rein.</div>
+    </div>
+
+    <!-- Brain-Dump (long-form) -->
     <div class="glass rounded-3xl p-5 mb-4">
-      <h2 class="text-lg font-bold mb-2">🧠 Brain-Dump</h2>
-      <p class="text-xs text-gray-400 mb-4">Notizen, Reminder, lose Gedanken. Auto-save nach 1s. Markdown-friendly.</p>
+      <h2 class="text-lg font-bold mb-2">🧠 Brain-Dump · long-form</h2>
+      <p class="text-xs text-gray-400 mb-4">Notizen, Reminder, längere Gedanken. Auto-save nach 1s. Markdown-friendly.</p>
       <textarea id="brainText" rows="14" placeholder="# Heute&#10;&#10;- Was hab ich gelernt&#10;- Was hat sich angefühlt&#10;- Was als Nächstes" class="w-full bg-slate-800 rounded-xl p-4 text-sm font-mono leading-relaxed border border-white/10 focus:border-orange-400/40 outline-none"></textarea>
       <div class="flex justify-between items-center mt-2 text-xs text-gray-500">
         <span id="brainSaveStatus">—</span>
@@ -460,6 +484,7 @@ document.getElementById('tabBar').addEventListener('click', e => {
   if (tab === 'activity') renderActivity();
   if (tab === 'tech') renderTech();
   if (tab === 'assets') renderAssets();
+  if (tab === 'brain') renderCaptures();
 });
 
 // ============ BRAND-ASSETS TAB ============
@@ -648,6 +673,94 @@ function renderIdeas() {
 
 function statusLabel(s) {
   return ({idea:'💡 Idea', doing:'⚡ Doing', done:'✓ Done', backlog:'📦 Backlog', killed:'✕ Killed'})[s] || s;
+}
+
+// ============ CAPTURE-INBOX ============
+const CAPTURE_KEY = 'admin:captureInbox';
+const CAPTURE_TYPE_LABELS = {
+  hook: '🪝 Hook', reel: '🎬 Reel', bip: '📊 BIP', brand: '💼 Brand-Deal', general: '💡 General'
+};
+
+function getCaptures() {
+  try { return JSON.parse(localStorage.getItem('smash:' + CAPTURE_KEY)) || []; } catch (e) { return []; }
+}
+function saveCaptures(arr) {
+  localStorage.setItem('smash:' + CAPTURE_KEY, JSON.stringify(arr));
+}
+
+function addCapture() {
+  const input = document.getElementById('captureInput');
+  const type = document.getElementById('captureType').value;
+  const text = input.value.trim();
+  if (!text) return;
+  const items = getCaptures();
+  items.unshift({
+    id: 'c' + Date.now(),
+    text,
+    type,
+    createdAt: new Date().toISOString()
+  });
+  saveCaptures(items);
+  input.value = '';
+  renderCaptures();
+  showToast('🚀 Captured');
+}
+
+function deleteCapture(id) {
+  saveCaptures(getCaptures().filter(c => c.id !== id));
+  renderCaptures();
+}
+
+function promoteCapture(id) {
+  const items = getCaptures();
+  const c = items.find(x => x.id === id);
+  if (!c) return;
+  // Save as Idea in current account
+  const ideas = SmashApp.getData('ideas', []) || [];
+  ideas.unshift({
+    id: 'cap-' + Date.now(),
+    title: c.text.slice(0, 80),
+    hook: c.type === 'hook' ? c.text : '',
+    pillar: Object.keys(SmashApp.getPillarInfo())[0],
+    format: c.type === 'reel' ? 'reel' : 'reel',
+    status: 'idea',
+    source: 'capture-inbox',
+    captureType: c.type,
+    captureText: c.text,
+    createdAt: new Date().toISOString()
+  });
+  SmashApp.setData('ideas', ideas);
+  // Remove from capture-inbox
+  saveCaptures(items.filter(x => x.id !== id));
+  renderCaptures();
+  const acc = SmashApp.getCurrentAccount();
+  showToast('💡 Als Idee in @' + acc + ' gespeichert');
+}
+
+function renderCaptures() {
+  const items = getCaptures();
+  document.getElementById('captureCount').textContent = items.length + ' Item' + (items.length === 1 ? '' : 's');
+  const list = document.getElementById('captureList');
+  const empty = document.getElementById('captureEmpty');
+  if (!items.length) {
+    list.innerHTML = '';
+    empty.classList.remove('hidden');
+    return;
+  }
+  empty.classList.add('hidden');
+  list.innerHTML = items.map(c => `
+    <div style="background: rgba(15, 23, 42, 0.5); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 12px;">
+      <div class="flex items-start gap-3">
+        <span class="text-xs font-bold whitespace-nowrap" style="color:#FFA94D; padding:2px 8px; background: rgba(255, 169, 77, 0.15); border-radius: 999px;">${CAPTURE_TYPE_LABELS[c.type] || c.type}</span>
+        <div class="flex-1 text-sm leading-relaxed">${escapeHTML(c.text)}</div>
+        <span class="text-[10px] text-gray-500 whitespace-nowrap">${timeAgo(c.createdAt)}</span>
+      </div>
+      <div class="flex gap-2 mt-2 text-xs">
+        <button onclick="promoteCapture('${c.id}')" class="px-3 py-1 rounded-lg bg-gradient-to-br from-orange-400 to-red-400 text-slate-900 font-bold">→ als Idea</button>
+        <button onclick="deleteCapture('${c.id}')" class="ml-auto px-2 py-1 rounded text-red-400 hover:text-red-300">🗑️</button>
+      </div>
+    </div>
+  `).join('');
 }
 
 // ============ BRAIN ============
@@ -842,6 +955,7 @@ function showToast(msg) {
 // ============ INIT ============
 renderIdeas();
 loadBrain();
+renderCaptures();
 </script>
 
 </body>

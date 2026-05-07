@@ -218,6 +218,23 @@
     <div id="topPatternBox" class="mt-4"></div>
   </div>
 
+  <!-- ⏱️ Best-Time Hour-Heatmap -->
+  <div class="glass rounded-3xl p-5 mb-6">
+    <div class="flex items-center justify-between mb-3 flex-wrap gap-2">
+      <h2 class="text-lg font-bold">⏱️ Best-Time-Heatmap</h2>
+      <span class="text-sm text-gray-400" id="heatmapSummary">—</span>
+    </div>
+    <p class="text-xs text-gray-400 mb-4">Average Engagement-Rate pro Stunde + 7×24 Day×Hour-Grid. Dunkel = wenig Reach, Sunrise = Top-Time bei dir.</p>
+
+    <!-- 24h Hour-Bar -->
+    <div id="hourBars" class="mb-5"></div>
+
+    <!-- 7×24 Day-Hour-Grid -->
+    <div id="dayHourGrid" class="overflow-x-auto"></div>
+
+    <div id="heatmapEmpty" class="text-sm text-gray-400 italic text-center py-6 hidden">Brauche min. 5 getrackte Reels für Heatmap-Insights.</div>
+  </div>
+
   <!-- 5. MASTERMIND-REMINDER -->
   <div class="glass rounded-3xl p-5 mb-6" style="background: linear-gradient(135deg, rgba(168, 139, 250, 0.06), rgba(255, 169, 77, 0.04));">
     <div class="flex items-center justify-between mb-2 flex-wrap gap-2">
@@ -469,11 +486,93 @@ function showToast(msg) {
   toastTimer = setTimeout(() => t.classList.remove('show'), 1800);
 }
 
+// ============ HEATMAP ============
+function renderHeatmap() {
+  const data = Coach.getPostingHeatmap();
+  const summary = document.getElementById('heatmapSummary');
+  const hoursEl = document.getElementById('hourBars');
+  const gridEl = document.getElementById('dayHourGrid');
+  const emptyEl = document.getElementById('heatmapEmpty');
+
+  if (!data.ready) {
+    summary.textContent = data.total + ' / 5 Reels';
+    hoursEl.innerHTML = '';
+    gridEl.innerHTML = '';
+    emptyEl.classList.remove('hidden');
+    return;
+  }
+  emptyEl.classList.add('hidden');
+  summary.textContent = data.total + ' Reels analysiert';
+
+  // 24h Hour-Bars
+  hoursEl.innerHTML = `
+    <div class="text-xs text-gray-500 font-bold uppercase tracking-wider mb-2">24h Hour-Distribution (avg ER)</div>
+    <div class="flex items-end gap-1" style="height: 80px;">
+      ${data.hours.map(h => {
+        const intensity = data.maxER > 0 ? h.avgER / data.maxER : 0;
+        const heightPct = Math.max(intensity * 100, 4);
+        const bg = h.count === 0 ? 'rgba(255,255,255,0.05)' :
+          \`linear-gradient(180deg, #FFD43B \${100 - intensity*40}%, #FFA94D \${100 - intensity*20}%, #FF6B6B 100%)\`;
+        return \`
+          <div class="flex-1 group relative" title="\${String(h.hour).padStart(2,'0')}:00 · \${h.avgER.toFixed(1)}% ER · \${h.count} Reels">
+            <div style="height: \${heightPct}%; background: \${bg}; border-radius: 3px 3px 0 0; transition: opacity 0.2s;"></div>
+            \${h.count > 0 ? \`<div class="absolute -top-5 left-1/2 -translate-x-1/2 text-[9px] text-gray-400 opacity-0 group-hover:opacity-100 whitespace-nowrap">\${h.avgER.toFixed(1)}%</div>\` : ''}
+          </div>
+        \`;
+      }).join('')}
+    </div>
+    <div class="flex justify-between text-[10px] text-gray-500 mt-1">
+      <span>00</span><span>06</span><span>12</span><span>18</span><span>23</span>
+    </div>
+  `;
+
+  // 7×24 Day×Hour-Grid (Wochentag-Heatmap)
+  const days = ['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'];
+  gridEl.innerHTML = `
+    <div class="text-xs text-gray-500 font-bold uppercase tracking-wider mb-2 mt-4">7×24 Day-Hour-Heatmap</div>
+    <table style="border-collapse: separate; border-spacing: 2px; min-width: 100%;">
+      <thead>
+        <tr>
+          <td style="width: 24px;"></td>
+          \${Array.from({length: 24}, (_, h) => \`<td class="text-center text-[9px] text-gray-500" style="width: 12px;">\${h % 6 === 0 ? String(h).padStart(2,'0') : ''}</td>\`).join('')}
+        </tr>
+      </thead>
+      <tbody>
+        \${data.grid.map((row, di) => \`
+          <tr>
+            <td class="text-xs text-gray-400 font-bold pr-2">\${days[di]}</td>
+            \${row.map((cell, h) => {
+              const intensity = data.maxER > 0 && cell.count > 0 ? cell.avgER / data.maxER : 0;
+              const opacity = cell.count > 0 ? 0.3 + intensity * 0.7 : 0.05;
+              const bg = cell.count > 0
+                ? \`hsla(\${20 + intensity * 30}, 90%, 55%, \${opacity})\`
+                : 'rgba(255,255,255,0.04)';
+              return \`<td title="\${days[di]} \${String(h).padStart(2,'0')}:00 · \${cell.count} Reels · \${cell.avgER.toFixed(1)}% ER"
+                style="width: 12px; height: 14px; background: \${bg}; border-radius: 2px; cursor: \${cell.count > 0 ? 'help' : 'default'};"></td>\`;
+            }).join('')}
+          </tr>
+        \`).join('')}
+      </tbody>
+    </table>
+    <div class="flex items-center gap-3 mt-3 text-[10px] text-gray-500">
+      <span>weniger ER</span>
+      <div class="flex gap-0.5">
+        <div style="width:14px; height:10px; background:rgba(255,255,255,0.05); border-radius:2px;"></div>
+        <div style="width:14px; height:10px; background:hsla(25, 90%, 55%, 0.3); border-radius:2px;"></div>
+        <div style="width:14px; height:10px; background:hsla(35, 90%, 55%, 0.6); border-radius:2px;"></div>
+        <div style="width:14px; height:10px; background:hsla(45, 90%, 55%, 0.9); border-radius:2px;"></div>
+      </div>
+      <span>mehr ER</span>
+    </div>
+  `;
+}
+
 // ============ INIT ============
 renderDailyCard();
 renderSetup();
 renderPillarHealth();
 renderPostingInsights();
+renderHeatmap();
 renderMastermind();
 renderNextSteps();
 </script>
