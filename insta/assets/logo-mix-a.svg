@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 280 320" fill="none">
+  <title>PEAKING Logo Mix-A — Pyramide + Sunrise-Halo + Wordmark Stacked</title>
+  <defs>
+    <radialGradient id="haloA" cx="50%" cy="40%" r="55%">
+      <stop offset="0%" stop-color="#FFD43B" stop-opacity="0.4"/>
+      <stop offset="40%" stop-color="#FFA94D" stop-opacity="0.2"/>
+      <stop offset="80%" stop-color="#FF6B6B" stop-opacity="0.05"/>
+      <stop offset="100%" stop-color="transparent"/>
+    </radialGradient>
+    <linearGradient id="pyrTopA" x1="50%" y1="0%" x2="50%" y2="100%">
+      <stop offset="0%" stop-color="#FFE066"/>
+      <stop offset="100%" stop-color="#FFA94D"/>
+    </linearGradient>
+    <linearGradient id="pyrLeftA" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FF8E5A"/>
+      <stop offset="100%" stop-color="#C73E3E"/>
+    </linearGradient>
+    <linearGradient id="pyrRightA" x1="100%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#7A2828"/>
+      <stop offset="100%" stop-color="#3F1414"/>
+    </linearGradient>
+    <linearGradient id="wordmarkA" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#FF6B6B"/>
+      <stop offset="50%" stop-color="#FFA94D"/>
+      <stop offset="100%" stop-color="#FFD43B"/>
+    </linearGradient>
+    <radialGradient id="groundShadowA" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#000" stop-opacity="0.4"/>
+      <stop offset="100%" stop-color="#000" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <!-- Sunrise-Halo Background -->
+  <circle cx="140" cy="125" r="115" fill="url(#haloA)"/>
+  <!-- Ground-Shadow -->
+  <ellipse cx="140" cy="220" rx="58" ry="6" fill="url(#groundShadowA)"/>
+  <!-- 3D Isometric Pyramide -->
+  <g transform="translate(140 50)">
+    <!-- Right Face (darkest, depth) -->
+    <path d="M 0 0 L 60 165 L 0 195 Z" fill="url(#pyrRightA)"/>
+    <!-- Left Face (mid) -->
+    <path d="M 0 0 L -60 165 L 0 195 Z" fill="url(#pyrLeftA)"/>
+    <!-- Center-Spine Highlight -->
+    <path d="M 0 0 L 0 195" stroke="#FFD43B" stroke-width="1.5" stroke-opacity="0.85" stroke-linecap="round"/>
+    <!-- Snowy Top -->
+    <path d="M 0 0 L -10 24 L 10 24 Z" fill="url(#pyrTopA)"/>
+    <!-- Apex Sparkle -->
+    <circle cx="0" cy="0" r="3" fill="#FFE066" opacity="0.9"/>
+  </g>
+  <!-- Wordmark "PEAKING" -->
+  <text x="140" y="270" text-anchor="middle" font-family="-apple-system, system-ui, sans-serif" font-size="38" font-weight="900" fill="url(#wordmarkA)" letter-spacing="3">PEAKING</text>
+  <!-- Sub-Tagline -->
+  <text x="140" y="295" text-anchor="middle" font-family="-apple-system, system-ui, sans-serif" font-size="11" font-weight="500" fill="#FFA94D" letter-spacing="4" opacity="0.7">ALWAYS PEAKING.</text>
+</svg>

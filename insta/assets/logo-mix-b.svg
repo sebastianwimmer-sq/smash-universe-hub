@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 280" fill="none">
+  <title>PEAKING Logo Mix-B — Mountain-Range Sunrise + Wordmark Right</title>
+  <defs>
+    <radialGradient id="sunriseB" cx="30%" cy="35%" r="55%">
+      <stop offset="0%" stop-color="#FFE066" stop-opacity="0.55"/>
+      <stop offset="50%" stop-color="#FFA94D" stop-opacity="0.25"/>
+      <stop offset="100%" stop-color="transparent"/>
+    </radialGradient>
+    <linearGradient id="peakBackB" x1="50%" y1="0%" x2="50%" y2="100%">
+      <stop offset="0%" stop-color="#FFD43B"/>
+      <stop offset="100%" stop-color="#FFA94D"/>
+    </linearGradient>
+    <linearGradient id="peakMidB" x1="50%" y1="0%" x2="50%" y2="100%">
+      <stop offset="0%" stop-color="#FFA94D"/>
+      <stop offset="100%" stop-color="#FF6B6B"/>
+    </linearGradient>
+    <linearGradient id="peakFrontB" x1="50%" y1="0%" x2="50%" y2="100%">
+      <stop offset="0%" stop-color="#FF6B6B"/>
+      <stop offset="100%" stop-color="#7A2828"/>
+    </linearGradient>
+    <linearGradient id="peakSmallB" x1="50%" y1="0%" x2="50%" y2="100%">
+      <stop offset="0%" stop-color="#FFE066"/>
+      <stop offset="100%" stop-color="#FFA94D"/>
+    </linearGradient>
+    <linearGradient id="wordmarkB" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#FFD43B"/>
+      <stop offset="50%" stop-color="#FFA94D"/>
+      <stop offset="100%" stop-color="#FF6B6B"/>
+    </linearGradient>
+  </defs>
+  <!-- Sunrise-Background-Halo (top-left, behind range) -->
+  <circle cx="100" cy="80" r="120" fill="url(#sunriseB)"/>
+  <!-- Mountain-Range (4 peaks, back-to-front depth, like the V3-D bug aber bewusst) -->
+  <!-- Far-Back (bright, smallest) -->
+  <path d="M 168 200 L 192 80 L 216 200 Z" fill="url(#peakSmallB)" opacity="0.85"/>
+  <!-- Back-Right (mid-bright) -->
+  <path d="M 80 200 L 130 50 L 180 200 Z" fill="url(#peakBackB)"/>
+  <!-- Mid (orange) -->
+  <path d="M 30 200 L 90 70 L 150 200 Z" fill="url(#peakMidB)"/>
+  <!-- Front (largest, deepest red) -->
+  <path d="M 0 200 L 75 30 L 150 200 Z" fill="url(#peakFrontB)"/>
+  <!-- Center-spine highlights on largest peak -->
+  <path d="M 75 30 L 75 200" stroke="#FFD43B" stroke-width="1.2" stroke-opacity="0.6" stroke-linecap="round"/>
+  <!-- Ground baseline -->
+  <line x1="0" y1="200" x2="220" y2="200" stroke="#FFA94D" stroke-width="0.5" stroke-opacity="0.3"/>
+
+  <!-- Wordmark Right Side -->
+  <text x="240" y="120" font-family="-apple-system, system-ui, sans-serif" font-size="48" font-weight="900" fill="url(#wordmarkB)" letter-spacing="3">PEAKING</text>
+  <text x="240" y="148" font-family="-apple-system, system-ui, sans-serif" font-size="13" font-weight="500" fill="#FFA94D" letter-spacing="6" opacity="0.75">ALWAYS PEAKING.</text>
+  <!-- Sub-Subline -->
+  <text x="240" y="172" font-family="-apple-system, system-ui, sans-serif" font-size="11" font-weight="400" fill="#94a3b8" letter-spacing="2">From climb to peak.</text>
+</svg>

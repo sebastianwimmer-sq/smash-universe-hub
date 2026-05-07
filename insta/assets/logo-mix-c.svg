@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 120" fill="none">
+  <title>PEAKING Logo Mix-C — Wordmark Banner mit 3D-Pyramide als Letter-Replacement</title>
+  <defs>
+    <linearGradient id="wordmarkC" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#FF6B6B"/>
+      <stop offset="50%" stop-color="#FFA94D"/>
+      <stop offset="100%" stop-color="#FFD43B"/>
+    </linearGradient>
+    <linearGradient id="pyrLightC" x1="50%" y1="0%" x2="50%" y2="100%">
+      <stop offset="0%" stop-color="#FFE066"/>
+      <stop offset="100%" stop-color="#FFA94D"/>
+    </linearGradient>
+    <linearGradient id="pyrLeftC" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FF8E5A"/>
+      <stop offset="100%" stop-color="#C73E3E"/>
+    </linearGradient>
+    <linearGradient id="pyrRightC" x1="100%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#7A2828"/>
+      <stop offset="100%" stop-color="#3F1414"/>
+    </linearGradient>
+    <radialGradient id="haloC" cx="50%" cy="50%" r="60%">
+      <stop offset="0%" stop-color="#FFA94D" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="transparent"/>
+    </radialGradient>
+    <filter id="glowC" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="2" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  <!-- Subtle Halo behind pyramide -->
+  <circle cx="56" cy="60" r="50" fill="url(#haloC)"/>
+  <!-- 3D Pyramide (replaces 'A' position visually but it's standalone left of wordmark) -->
+  <g transform="translate(56 25)" filter="url(#glowC)">
+    <!-- Right Face (dark) -->
+    <path d="M 0 0 L 32 64 L 0 76 Z" fill="url(#pyrRightC)"/>
+    <!-- Left Face (mid) -->
+    <path d="M 0 0 L -32 64 L 0 76 Z" fill="url(#pyrLeftC)"/>
+    <!-- Center spine -->
+    <path d="M 0 0 L 0 76" stroke="#FFD43B" stroke-width="0.9" stroke-opacity="0.85" stroke-linecap="round"/>
+    <!-- Snowy peak -->
+    <path d="M 0 0 L -5 12 L 5 12 Z" fill="url(#pyrLightC)"/>
+    <!-- Apex -->
+    <circle cx="0" cy="0" r="1.5" fill="#FFE066" opacity="0.9"/>
+  </g>
+  <!-- Wordmark "PEAKING" -->
+  <text x="118" y="68" font-family="-apple-system, system-ui, sans-serif" font-size="46" font-weight="900" fill="url(#wordmarkC)" letter-spacing="2">PEAKING</text>
+  <!-- Sub-Tagline below wordmark -->
+  <text x="118" y="92" font-family="-apple-system, system-ui, sans-serif" font-size="11" font-weight="500" fill="#FFA94D" letter-spacing="6" opacity="0.75">ALWAYS PEAKING.</text>
+</svg>
