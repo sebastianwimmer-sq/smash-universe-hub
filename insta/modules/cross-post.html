@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cross-Posting Helper · PEAKING</title>
+<link rel="icon" href="../assets/logo.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/effects.css">
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  body {
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    min-height: 100dvh;
+    color: white;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+  .glass {
+    background: rgba(30, 41, 59, 0.6);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+  .text-sunrise {
+    background: linear-gradient(135deg, #FF6B6B, #FFA94D, #FFD43B);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+  }
+  .neon { color: #FFA94D; }
+  .reel-card {
+    transition: all 0.2s;
+    cursor: pointer;
+  }
+  .reel-card:hover {
+    border-color: rgba(255, 169, 77, 0.4);
+    transform: translateY(-2px);
+  }
+  .pillar-pill {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .modal-bg {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.75);
+    backdrop-filter: blur(8px);
+    z-index: 50;
+    display: none;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 2vh 1rem;
+    overflow-y: auto;
+  }
+  .modal-bg.active { display: flex; }
+  .modal-card {
+    background: linear-gradient(135deg, #1e293b, #0f172a);
+    border: 1px solid rgba(255, 169, 77, 0.3);
+    border-radius: 24px;
+    padding: 24px;
+    max-width: 640px;
+    width: 100%;
+    max-height: 96vh;
+    overflow-y: auto;
+  }
+  .reframe-tile {
+    background: rgba(15, 23, 42, 0.5);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 14px;
+    padding: 14px;
+  }
+  .reframe-tile h4 {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #FFA94D;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+  .copy-btn {
+    background: rgba(255, 169, 77, 0.15);
+    border: 1px solid rgba(255, 169, 77, 0.3);
+    color: #FFA94D;
+    padding: 4px 10px;
+    border-radius: 8px;
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
+    margin-left: 6px;
+  }
+  .copy-btn:hover { background: rgba(255, 169, 77, 0.25); }
+  .btn-primary {
+    background: linear-gradient(135deg, #FFA94D, #FF6B6B);
+    color: #0f172a;
+    font-weight: 700;
+    padding: 12px 20px;
+    border-radius: 14px;
+    border: none;
+    cursor: pointer;
+    transition: transform 0.15s;
+  }
+  .btn-primary:hover { transform: translateY(-1px); }
+  .btn-secondary {
+    background: rgba(15, 23, 42, 0.6);
+    border: 1px solid rgba(255, 169, 77, 0.3);
+    color: white;
+    padding: 12px 20px;
+    border-radius: 14px;
+    cursor: pointer;
+  }
+</style>
+</head>
+<body>
+
+<header class="px-5 py-4 border-b border-white/10 flex items-center gap-3 max-w-5xl mx-auto">
+  <a href="../dashboard.html" class="neon hover:underline">← Dashboard</a>
+  <h1 class="text-xl font-bold">🔄 Cross-Posting Helper</h1>
+</header>
+
+<main class="px-5 py-6 max-w-5xl mx-auto">
+
+  <!-- Direction-Banner -->
+  <div class="glass rounded-2xl p-5 mb-5" style="border: 1px solid rgba(255, 169, 77, 0.3);">
+    <div class="flex items-center justify-between gap-3 flex-wrap">
+      <div>
+        <div class="text-xs uppercase tracking-wider text-gray-500 font-bold mb-1">Re-Cut-Direction</div>
+        <div class="text-lg font-bold" id="directionLabel">Lade …</div>
+        <div class="text-xs text-gray-400 mt-1">Wähle einen Reel des Source-Accounts → ich generiere Re-Cut-Vorschläge für Target.</div>
+      </div>
+      <button id="swapBtn" class="btn-secondary text-sm">🔁 Direction tauschen</button>
+    </div>
+  </div>
+
+  <!-- Source-Account Reels -->
+  <div class="mb-3 flex items-center justify-between">
+    <h2 class="text-lg font-bold">📥 Reels von <span class="text-sunrise" id="sourceLabel">@…</span></h2>
+    <span class="text-xs text-gray-500" id="reelCount">0 Reels</span>
+  </div>
+
+  <div id="reelsList" class="space-y-3 mb-6">
+    <div class="text-center text-gray-500 py-8">Lade Reels …</div>
+  </div>
+
+  <!-- Empty-State -->
+  <div id="emptyState" class="hidden glass rounded-2xl p-8 text-center">
+    <div class="text-4xl mb-3">📭</div>
+    <h3 class="font-bold mb-2">Noch keine Reels im Source-Account</h3>
+    <p class="text-sm text-gray-400 mb-4">Trage erst Reels im Tracker ein — dann kannst du sie hier cross-posten.</p>
+    <a href="tracker.html" class="btn-primary inline-block">→ Zum Tracker</a>
+  </div>
+
+  <!-- Cross-Post-Log -->
+  <div class="mt-8 glass rounded-2xl p-5">
+    <h3 class="font-bold mb-3">🗂️ Cross-Post-Log</h3>
+    <div id="crossPostLog" class="space-y-2 text-sm text-gray-400">Noch keine Cross-Posts geloggt.</div>
+  </div>
+
+  <!-- WHY -->
+  <div class="mt-8 glass rounded-2xl p-5">
+    <h3 class="font-bold mb-2 text-sunrise">⛰️ Warum Cross-Posten?</h3>
+    <ul class="text-sm text-gray-300 space-y-1 leading-relaxed">
+      <li>• <b>Hebel pro Idee</b>: 1 Reel → 2 Audiences. ROI verdoppelt ohne Doppel-Aufwand.</li>
+      <li>• <b>Pillar-Switch</b>: Outdoor-Story wird zur Tool-Story-Lens (oder umgekehrt). Andere Audience sieht andere Wahrheit.</li>
+      <li>• <b>+48-72h Window</b>: Algo-tauglich (kein Doppel-Punish), Original hat Reach-Peak schon hinter sich.</li>
+      <li>• <b>BIP-Effekt</b>: Cross-Post auf @peakingworld zeigt „so denke ich Marketing" → Magnet für Indie-Builder.</li>
+    </ul>
+  </div>
+
+</main>
+
+<!-- Re-Cut Modal -->
+<div id="reCutModal" class="modal-bg" onclick="if(event.target.id==='reCutModal') closeModal()">
+  <div class="modal-card">
+    <div class="flex items-start justify-between mb-3">
+      <div>
+        <div class="text-xs uppercase tracking-wider text-gray-500 font-bold mb-1">Re-Cut für</div>
+        <h2 class="text-xl font-bold" id="modalTargetLabel">@…</h2>
+      </div>
+      <button onclick="closeModal()" class="text-gray-400 hover:text-white text-2xl leading-none">×</button>
+    </div>
+
+    <!-- Original -->
+    <div class="reframe-tile mb-4">
+      <h4>📌 Original</h4>
+      <div class="text-sm text-gray-300" id="origHook">—</div>
+      <div class="text-xs text-gray-500 mt-2" id="origMeta">—</div>
+    </div>
+
+    <!-- Hook-Translation -->
+    <div class="reframe-tile mb-4">
+      <h4>🪝 Hook-Translation (3 Vorschläge)</h4>
+      <div id="hookSuggestions" class="space-y-2"></div>
+    </div>
+
+    <!-- Caption-Reframe -->
+    <div class="reframe-tile mb-4">
+      <h4>✍️ Caption-Reframe-Template</h4>
+      <textarea id="captionReframe" class="w-full bg-slate-900 text-gray-200 text-sm p-3 rounded-lg border border-white/10" rows="6"></textarea>
+      <button class="copy-btn mt-2" onclick="copyText(document.getElementById('captionReframe').value, this)">Copy</button>
+    </div>
+
+    <!-- Hashtag-Switch -->
+    <div class="reframe-tile mb-4">
+      <h4>🏷️ Hashtag-Switch (Target-Pillar)</h4>
+      <div id="hashtagSet" class="text-sm text-gray-300 leading-relaxed"></div>
+      <button class="copy-btn mt-2" onclick="copyHashtags(this)">Copy</button>
+    </div>
+
+    <!-- Optimal Window -->
+    <div class="reframe-tile mb-5">
+      <h4>⏱️ Cross-Post-Window</h4>
+      <div class="text-sm text-gray-300" id="postWindow">—</div>
+    </div>
+
+    <div class="flex gap-2 flex-wrap">
+      <button onclick="saveAsIdea()" class="btn-primary flex-1">💾 In <span id="targetIdeaLabel">@…</span> als Idee speichern</button>
+      <button onclick="closeModal()" class="btn-secondary">Schließen</button>
+    </div>
+  </div>
+</div>
+
+<script src="../js/app.js"></script>
+<script>
+  SmashApp.requireAuth();
+
+  const ACCOUNTS = SmashApp.ACCOUNTS;
+  const PILLARS = SmashApp.PILLARS_BY_ACCOUNT;
+  const ALL_KEYS = Object.keys(ACCOUNTS);
+
+  // ============ Direction-State ============
+  // source = current account, target = the other one
+  let SOURCE = SmashApp.getCurrentAccount();
+  let TARGET = ALL_KEYS.find(k => k !== SOURCE) || ALL_KEYS[0];
+
+  function renderDirection() {
+    const src = ACCOUNTS[SOURCE], tgt = ACCOUNTS[TARGET];
+    document.getElementById('directionLabel').innerHTML =
+      `${src.emoji} <b>@${SOURCE}</b> → ${tgt.emoji} <b>@${TARGET}</b>`;
+    document.getElementById('sourceLabel').textContent = '@' + SOURCE;
+  }
+
+  document.getElementById('swapBtn').addEventListener('click', () => {
+    [SOURCE, TARGET] = [TARGET, SOURCE];
+    renderDirection();
+    renderReels();
+    renderLog();
+  });
+
+  // ============ Reel-Liste ============
+  function getReels(account) {
+    return SmashApp.getDataForAccount(account, 'reels', []) || [];
+  }
+
+  function renderReels() {
+    const reels = getReels(SOURCE)
+      .slice()
+      .sort((a, b) => new Date(b.date || 0) - new Date(a.date || 0))
+      .slice(0, 30);
+
+    const list = document.getElementById('reelsList');
+    const empty = document.getElementById('emptyState');
+    document.getElementById('reelCount').textContent = reels.length + ' Reels';
+
+    if (!reels.length) {
+      list.innerHTML = '';
+      empty.classList.remove('hidden');
+      return;
+    }
+    empty.classList.add('hidden');
+
+    list.innerHTML = reels.map(r => {
+      const pillarInfo = PILLARS[SOURCE]?.[r.pillar] || { emoji: '📍', name: r.pillar || 'Other', color: '#888' };
+      const plays = SmashApp.formatNumber(r.plays || 0);
+      const er = r.plays > 0 ? ((((r.likes||0)+(r.comments||0)+(r.saves||0)+(r.shares||0)) / r.plays) * 100).toFixed(1) : '0.0';
+      return `
+        <div class="glass reel-card rounded-2xl p-4" onclick="openReCut('${r.id}')">
+          <div class="flex items-start gap-3">
+            <span class="pillar-pill" style="background:${pillarInfo.color}22; color:${pillarInfo.color}; border:1px solid ${pillarInfo.color}55;">
+              ${pillarInfo.emoji} ${pillarInfo.name}
+            </span>
+            <span class="text-xs text-gray-500 ml-auto">${SmashApp.formatDate ? SmashApp.formatDate(r.date) : (r.date || '')}</span>
+          </div>
+          <div class="font-bold mt-2 text-sm">${escapeHTML(r.hook || r.title || 'Ohne Hook')}</div>
+          <div class="text-xs text-gray-400 mt-1">▶ ${plays} · ER ${er}%</div>
+          <div class="text-xs neon mt-2">→ Re-Cut für @${TARGET}</div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  function escapeHTML(s) { return String(s||'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+  // ============ Re-Cut Logic ============
+
+  // Hook-Templates per Target-Pillar — 3 Variations
+  const HOOK_TRANSLATIONS = {
+    // peakingworld pillars (Tools/BIP/Marketing/BTS) — for hooks coming FROM vegetarianhulk
+    tools:     ["Das Tool das mir HEUTE [X] erspart hat:", "Die 1 App die mein [X] revolutioniert:", "Stack-Update: warum ich [X] jetzt anders mache."],
+    bip:       ["Tag X von 1000: was ich heute über [X] gelernt hab.", "Building in Public — Update zu [X]:", "Niemand sagt's: aber [X] ist Wahrheit hinter Solo-Founder-Life."],
+    marketing: ["Diese 1 Algo-Insight zu [X] hab niemand gewusst:", "Why [X] performt jetzt anders auf Insta 2026:", "Marketing-Lehre aus meinem letzten [X]-Reel:"],
+    bts:       ["Behind the Scenes: wie ich heute [X] gemacht hab.", "Real-Setup-Tour: [X] vom Editor bis Publish.", "Mein [X]-Workflow ungeschönt:"],
+    // vegetarianhulk pillars (Outdoor/Gym/Mindset/Plantbased) — for hooks coming FROM peakingworld
+    outdoor:    ["Was die Berge mir über [X] beigebracht haben:", "1 Lehre aus dem letzten Hike, die [X] angeht:", "Outdoor-Wahrheit: warum [X] funktioniert."],
+    gym:        ["Was [X] mit Gym-Disziplin gemeinsam hat:", "Gym-Lehre: warum [X] Wiederholung braucht.", "1 Set, 1 Lehre — wie [X] sich auf Training überträgt."],
+    mindset:    ["Mindset-Reframe für [X]:", "Was ich heute über [X] gelernt hab — als Mindset-Lehre:", "1 Satz der mein [X]-Mindset gekippt hat:"],
+    plantbased: ["Plant-Based-Lehre die auf [X] passt:", "Wie ich [X] mit Pflanzen-Logik denke:", "Vegan + [X] = unerwarteter Sweet-Spot."]
+  };
+
+  // Caption-Reframe-Templates per Target-Pillar
+  const CAPTION_REFRAMES = {
+    tools:     `[Tool/AI-Hook für peakingworld]\n\nVom @vegetarianhulk-Originalpost recyclet — andere Lens:\nStatt Outdoor-Erlebnis ist es jetzt die Tool-Lehre die zählt.\n\nWelches Tool hat dich zuletzt fucking überrascht? Drop it in den Kommentaren ⛰️\n\n#aitools #buildinginpublic #soloFounder`,
+    bip:       `Tag X von 1000.\n\nOriginal-Reel war auf @vegetarianhulk — heute teile ich die BIP-Lens dazu:\n[Was die Erfahrung über mein Building gelehrt hat]\n\nUpdates daily auf @peakingworld. Kein Hype. Real progress.\n\n#buildinginpublic #indiehacker #soloFounder`,
+    marketing: `Marketing-Insight aus meinem letzten @vegetarianhulk-Reel:\n\n[Was hat performt? Warum? Hook-Pattern? CTA-Design?]\n\nWenn du Insta 2026 wirklich verstehen willst: studier deine eigenen Stats brutal ehrlich.\n\n#instagramgrowth #algorithmupdate #creators`,
+    bts:       `Behind the Scenes vom Original-Reel:\n\n[Setup, Tools, Workflow, was schiefging, was funktionierte]\n\nFolge @peakingworld für mehr unaufgeräumte Tour durchs Solo-Building.\n\n#bts #soloFounder #realtalk`,
+    outdoor:    `Was die letzte BIP-Lehre auf @peakingworld mir über das Bergsteigen gesagt hat:\n\n[Zieh die Brücke — Disziplin, Schritt-für-Schritt, Peak-Mentalität]\n\nThe climb is the peak. ⛰️\n\n#outdoor #mindset #climbing`,
+    gym:        `Vom Tool-Reel auf @peakingworld zur Gym-Lehre:\n\n[Übertrage die Insight auf Training — Wiederholung, Progress, kein Quick-Win]\n\nReps schlagen Talent. Always.\n\n#gym #fitness #disziplin`,
+    mindset:    `Mindset-Übertrag von meinem @peakingworld-Post:\n\n[Welche Marketing/Tool-Lehre hat auch Mindset-Implikationen?]\n\nDu wirst was du täglich tust. Auch im Kopf.\n\n#mindset #personalgrowth #disziplin`,
+    plantbased: `Vegan-Lens auf die letzte BIP-Lehre:\n\n[Plant-Based + Solo-Founder-Wahrheit verknüpfen — Energie, Klarheit, Disziplin]\n\nWas du isst entscheidet was du baust.\n\n#plantbased #vegan #mindset`
+  };
+
+  // Hashtag-Sets per pillar
+  const HASHTAG_SETS = {
+    tools:      "#aitools #buildinginpublic #claudecode #indiehacker #productivity #soloFounder #insta2026",
+    bip:        "#buildinginpublic #indiehacker #soloFounder #startuplife #buildersjourney #realtalk #insta2026",
+    marketing:  "#instagramgrowth #algorithmupdate #creators #marketingtips #insta2026 #reelsstrategy",
+    bts:        "#bts #behindthescenes #soloFounder #buildersjourney #realtalk",
+    outdoor:    "#outdoor #climbing #mountains #hiking #fitness #naturetherapy",
+    gym:        "#gym #fitness #disziplin #training #strengthtraining #mindset",
+    mindset:    "#mindset #personalgrowth #disziplin #selfimprovement #motivation",
+    plantbased: "#plantbased #vegan #plantpowered #vegetarian #healthyfood"
+  };
+
+  // Pick best target-pillar based on source-pillar (heuristic mapping)
+  const PILLAR_BRIDGE = {
+    // veg→peak
+    outdoor:    'bts',         // Berg-Erlebnis → BTS-Setup
+    gym:        'marketing',   // Gym-Disziplin → Marketing-Disziplin
+    mindset:    'bip',         // Mindset → BIP-Identity
+    plantbased: 'tools',       // Plant-Based-Routine → Tool-Routine
+    // peak→veg
+    tools:      'plantbased',  // Tool-Stack → Plant-Stack
+    bip:        'mindset',     // BIP → Mindset-Lehre
+    marketing:  'gym',         // Marketing-Disziplin → Gym-Disziplin
+    bts:        'outdoor'      // BTS → Outdoor-Real
+  };
+
+  let currentReel = null;
+  let currentTargetPillar = null;
+  let currentHooks = [];
+  let currentHashtags = '';
+
+  function openReCut(reelId) {
+    const reels = getReels(SOURCE);
+    const r = reels.find(x => String(x.id) === String(reelId));
+    if (!r) return;
+    currentReel = r;
+
+    // Decide target pillar
+    currentTargetPillar = PILLAR_BRIDGE[r.pillar] || Object.keys(PILLARS[TARGET])[0];
+
+    // Modal labels
+    const tgtAcc = ACCOUNTS[TARGET];
+    const tgtPillar = PILLARS[TARGET][currentTargetPillar];
+    document.getElementById('modalTargetLabel').textContent = `@${TARGET} · ${tgtPillar.emoji} ${tgtPillar.name}`;
+    document.getElementById('targetIdeaLabel').textContent = '@' + TARGET;
+
+    // Original
+    document.getElementById('origHook').textContent = r.hook || r.title || '(kein Hook)';
+    const srcPillar = PILLARS[SOURCE][r.pillar] || { name: r.pillar };
+    document.getElementById('origMeta').textContent =
+      `${srcPillar.emoji||'📍'} ${srcPillar.name||'Other'} · ▶ ${SmashApp.formatNumber(r.plays||0)} · @${SOURCE}`;
+
+    // Hook-Translations (replace [X] placeholder with extracted topic)
+    const topic = extractTopic(r.hook || r.title || '');
+    currentHooks = (HOOK_TRANSLATIONS[currentTargetPillar] || []).map(t => t.replace(/\[X\]/g, topic));
+    document.getElementById('hookSuggestions').innerHTML = currentHooks.map((h, i) => `
+      <div class="flex items-center gap-2">
+        <span class="text-xs neon font-bold w-5">${i+1}.</span>
+        <span class="text-sm flex-1">${escapeHTML(h)}</span>
+        <button class="copy-btn" onclick="copyText('${escapeAttr(h)}', this)">Copy</button>
+      </div>
+    `).join('');
+
+    // Caption-Reframe
+    document.getElementById('captionReframe').value = CAPTION_REFRAMES[currentTargetPillar] || '';
+
+    // Hashtags
+    currentHashtags = HASHTAG_SETS[currentTargetPillar] || '';
+    document.getElementById('hashtagSet').textContent = currentHashtags;
+
+    // Window
+    document.getElementById('postWindow').innerHTML =
+      `Original gepostet: <b>${r.date || '—'}</b><br>` +
+      `Empfohlen: Cross-Post in <b class="neon">+48 bis +72h</b> (Algo-tauglich, kein Doppel-Punish, Original hat Reach-Peak hinter sich).`;
+
+    document.getElementById('reCutModal').classList.add('active');
+  }
+
+  function escapeAttr(s) { return String(s||'').replace(/'/g, "\\'").replace(/\n/g, '\\n'); }
+
+  function extractTopic(hook) {
+    // Take first 3-5 words as topic — quick heuristic
+    const words = String(hook||'').replace(/[?!.,]/g,'').trim().split(/\s+/).slice(0, 4).join(' ');
+    return words || 'das';
+  }
+
+  function closeModal() {
+    document.getElementById('reCutModal').classList.remove('active');
+    currentReel = null;
+  }
+
+  function copyText(text, btn) {
+    navigator.clipboard.writeText(text).then(() => {
+      const orig = btn.textContent;
+      btn.textContent = '✓';
+      setTimeout(() => btn.textContent = orig, 1200);
+    }).catch(() => alert('Copy fehlgeschlagen — manuell auswählen.'));
+  }
+
+  function copyHashtags(btn) {
+    copyText(currentHashtags, btn);
+  }
+
+  // ============ Save as Idea (cross-account write) ============
+  function saveAsIdea() {
+    if (!currentReel) return;
+    const tgtIdeas = SmashApp.getDataForAccount(TARGET, 'ideas', []) || [];
+    const newIdea = {
+      id: 'cp-' + Date.now(),
+      title: currentHooks[0] || ('Cross-Post von @' + SOURCE),
+      hook: currentHooks[0] || '',
+      caption: document.getElementById('captionReframe').value,
+      hashtags: currentHashtags,
+      pillar: currentTargetPillar,
+      format: 'reel',
+      status: 'idea',
+      source: 'cross-post',
+      crossPostFrom: { account: SOURCE, reelId: currentReel.id, hook: currentReel.hook },
+      createdAt: new Date().toISOString()
+    };
+    tgtIdeas.unshift(newIdea);
+    const ok = SmashApp.setDataForAccount(TARGET, 'ideas', tgtIdeas);
+
+    if (ok) {
+      // Log it
+      const log = SmashApp.getData('crossPostLog', []) || [];
+      log.unshift({
+        from: SOURCE, to: TARGET,
+        sourceReelId: currentReel.id,
+        sourceHook: currentReel.hook,
+        targetIdeaId: newIdea.id,
+        date: new Date().toISOString()
+      });
+      SmashApp.setData('crossPostLog', log.slice(0, 50));
+
+      closeModal();
+      renderLog();
+      // Toast
+      const toast = document.createElement('div');
+      toast.style.cssText = 'position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,#FFA94D,#FF6B6B);color:#0f172a;padding:12px 24px;border-radius:14px;font-weight:700;z-index:100;box-shadow:0 12px 32px rgba(255,169,77,0.4);';
+      toast.innerHTML = `✓ Idee gespeichert in @${TARGET}`;
+      document.body.appendChild(toast);
+      setTimeout(() => toast.remove(), 2200);
+    } else {
+      alert('Speichern fehlgeschlagen.');
+    }
+  }
+
+  function renderLog() {
+    const log = SmashApp.getData('crossPostLog', []) || [];
+    const relevant = log.filter(l => l.from === SOURCE && l.to === TARGET).slice(0, 5);
+    const div = document.getElementById('crossPostLog');
+    if (!relevant.length) {
+      div.innerHTML = `<div class="text-gray-500 text-sm">Noch keine Cross-Posts ${SOURCE} → ${TARGET}.</div>`;
+      return;
+    }
+    div.innerHTML = relevant.map(l => {
+      const date = new Date(l.date);
+      const ago = timeAgo(date);
+      return `
+        <div class="flex items-start gap-2 text-sm">
+          <span class="text-xs text-gray-500 w-20 flex-shrink-0">${ago}</span>
+          <span class="text-gray-300 flex-1 truncate">${escapeHTML(l.sourceHook || '(ohne Hook)')}</span>
+        </div>
+      `;
+    }).join('');
+  }
+
+  function timeAgo(d) {
+    const s = Math.floor((Date.now() - d.getTime())/1000);
+    if (s < 60) return 'gerade';
+    if (s < 3600) return Math.floor(s/60) + 'min';
+    if (s < 86400) return Math.floor(s/3600) + 'h';
+    return Math.floor(s/86400) + 'd';
+  }
+
+  // ============ Init ============
+  renderDirection();
+  renderReels();
+  renderLog();
+</script>
+
+</body>
+</html>

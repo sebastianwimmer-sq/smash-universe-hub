@@ -237,6 +237,18 @@ const SmashApp = (function() {
     }
   }
 
+  // Write data to a SPECIFIC account (for cross-posting from one account into another's data)
+  function setDataForAccount(accountKey, key, value) {
+    if (!ACCOUNTS[accountKey]) return false;
+    if (GLOBAL_KEYS.includes(key)) return setData(key, value);
+    try {
+      localStorage.setItem(STORAGE_PREFIX + accountKey + ':' + key, JSON.stringify(value));
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
   // ============ PILLARS (Account-Aware) ============
   // PILLAR_INFO ist ein dynamischer Getter (returns pillars for currently active account)
   // SmashApp.PILLAR_INFO[r.pillar] returns immer die richtige Account-spezifische Definition
@@ -400,6 +412,7 @@ const SmashApp = (function() {
     setData,
     removeData,
     getDataForAccount,
+    setDataForAccount,
 
     // Multi-Account
     ACCOUNTS,
