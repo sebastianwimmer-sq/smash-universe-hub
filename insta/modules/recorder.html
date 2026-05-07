@@ -604,7 +604,20 @@ function updateTimer() {
   const elapsed = Math.floor((Date.now() - recordingStartTime) / 1000);
   const m = String(Math.floor(elapsed / 60)).padStart(2, '0');
   const s = String(elapsed % 60).padStart(2, '0');
-  document.getElementById('timerText').textContent = `${m}:${s}`;
+  const txt = document.getElementById('timerText');
+  txt.textContent = `${m}:${s}`;
+
+  // 2026-Algo-Warnung: Reels >90s = Reach-Drop
+  const timer = document.getElementById('recTimer');
+  if (elapsed >= 90 && !timer.dataset.warned) {
+    timer.dataset.warned = '1';
+    showToast('⚠️ 90s+ = Reach-Drop. 7-30s ist sweet-spot.');
+    txt.style.color = '#fca5a5';
+  }
+  // Sweet-Spot-Indicator
+  if (elapsed === 30) {
+    showToast('✓ 30s — sweet-spot Reach erreicht. Stop wenn Hook done.');
+  }
 }
 
 // ============ RESULT ============

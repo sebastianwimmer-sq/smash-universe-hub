@@ -188,10 +188,11 @@ const SmashApp = (function() {
   // ============ POSTING PLANS (Account-Aware) ============
   const POSTING_PLANS_BY_ACCOUNT = {
     vegetarianhulk: {
+      // 2026-Algo-Update: Cluster Mo/Mi/Fr/Sa (Sa statt So — Algo-Studie 2026)
       Mo: { emoji: '💪', name: 'Gym-Reel',              pillar: 'gym' },
       Mi: { emoji: '🏔️', name: 'Outdoor-Reel',          pillar: 'outdoor' },
       Fr: { emoji: '🧠', name: 'Mindset-Reel',          pillar: 'mindset' },
-      So: { emoji: '🌿', name: 'Plant-Based / Outdoor', pillar: 'plantbased' }
+      Sa: { emoji: '🌿', name: 'Plant-Based / Outdoor', pillar: 'plantbased' }
     },
     peakingworld: {
       Di: { emoji: '🛠️', name: 'Tools-Reel',     pillar: 'tools' },

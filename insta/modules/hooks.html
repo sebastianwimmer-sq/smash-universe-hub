@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+<title>🪝 Hook Library — PEAKING</title>
+<link rel="icon" href="../assets/logo.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../assets/logo.svg">
+<link rel="manifest" href="../manifest.json">
+<meta name="theme-color" content="#FFA94D">
+<link rel="stylesheet" href="../assets/effects.css">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="../js/app.js"></script>
+<style>
+  body {
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    min-height: 100dvh;
+    color: white;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+  .glass {
+    background: rgba(30, 41, 59, 0.6);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+  .neon { color: #FFA94D; }
+  .btn-primary {
+    background: linear-gradient(135deg, #FFA94D, #FF6B6B);
+    color: #0f172a;
+    font-weight: bold;
+    transition: all 0.2s;
+  }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(255, 169, 77, 0.4); }
+  input, select, textarea { background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(255,255,255,0.15); color: white; }
+  input:focus, select:focus, textarea:focus { outline: none; border-color: #FFA94D; }
+  .modal-bg { background: rgba(0,0,0,0.7); backdrop-filter: blur(4px); }
+  .toast {
+    position: fixed; bottom: 24px; left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    background: #FFA94D; color: #0f172a;
+    padding: 12px 24px; border-radius: 999px; font-weight: bold;
+    box-shadow: 0 8px 24px rgba(255, 169, 77, 0.4);
+    transition: transform 0.3s ease; z-index: 100;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 12px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+    border: 1px solid rgba(255,255,255,0.15);
+    background: rgba(15, 23, 42, 0.6);
+    color: #cbd5e1;
+    cursor: pointer;
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+  .chip:hover { border-color: rgba(255, 169, 77, 0.5); }
+  .chip.active {
+    background: linear-gradient(135deg, #FFA94D, #FF6B6B);
+    color: #0f172a;
+    border-color: #FFA94D;
+  }
+  .filter-scroll::-webkit-scrollbar { display: none; }
+  .filter-scroll { -ms-overflow-style: none; scrollbar-width: none; }
+  .hook-card {
+    background: rgba(15, 23, 42, 0.4);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 14px;
+    padding: 14px;
+    transition: all 0.2s;
+  }
+  .hook-card:hover { border-color: rgba(255, 169, 77, 0.3); transform: translateY(-2px); }
+  .format-tag {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .fmt-loss { background: rgba(239, 68, 68, 0.2); color: #fca5a5; }
+  .fmt-twist { background: rgba(168, 85, 247, 0.2); color: #c084fc; }
+  .fmt-stat { background: rgba(255, 169, 77, 0.2); color: #FFA94D; }
+  .fmt-mistake { background: rgba(245, 158, 11, 0.2); color: #fbbf24; }
+  .fmt-curiosity { background: rgba(59, 130, 246, 0.2); color: #93c5fd; }
+  .fmt-pov { background: rgba(20, 184, 166, 0.2); color: #5eead4; }
+  .fmt-comparison { background: rgba(236, 72, 153, 0.2); color: #f9a8d4; }
+  .fmt-story { background: rgba(132, 204, 22, 0.2); color: #bef264; }
+  .fmt-quote { background: rgba(100, 116, 139, 0.2); color: #cbd5e1; }
+  .fmt-question { background: rgba(255, 107, 107, 0.2); color: #FF6B6B; }
+  .win-rate-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 700;
+    background: linear-gradient(135deg, #FFA94D, #FF6B6B);
+    color: #0f172a;
+  }
+  .fab {
+    position: fixed; bottom: 20px; right: 20px;
+    width: 56px; height: 56px; border-radius: 999px;
+    background: linear-gradient(135deg, #FFA94D, #FF6B6B);
+    color: #0f172a; font-size: 28px; font-weight: bold;
+    box-shadow: 0 8px 24px rgba(255, 169, 77, 0.4);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; z-index: 50; border: none;
+  }
+  .var-highlight {
+    background: rgba(255, 169, 77, 0.15);
+    color: #FFA94D;
+    padding: 1px 4px;
+    border-radius: 4px;
+    font-weight: 700;
+  }
+</style>
+</head>
+<body class="p-4 md:p-6 pb-24 bg-depth">
+
+<div class="max-w-5xl mx-auto">
+
+  <!-- Header -->
+  <div class="flex justify-between items-center mb-4">
+    <div>
+      <a href="../dashboard.html" class="text-xs text-gray-400 hover:text-white">← Dashboard</a>
+      <h1 class="text-2xl md:text-3xl font-bold mt-1">🪝 <span class="text-sunrise">Hook Library</span></h1>
+      <p class="text-gray-400 text-sm" id="hookStats">0 Hooks · 0 mit Win-Rate-Daten</p>
+    </div>
+    <button onclick="SmashApp.logout()" class="text-sm text-gray-400 hover:text-white">🔒</button>
+  </div>
+
+  <!-- Algorithm-Tip -->
+  <div class="glass rounded-2xl p-4 mb-5 float-in" style="background: linear-gradient(135deg, rgba(255, 107, 107, 0.08), rgba(255, 212, 59, 0.08)); border-color: rgba(255, 169, 77, 0.3);">
+    <div class="text-xs text-gray-400 uppercase tracking-wider mb-1 font-bold">⚡ 2026 Algo-Reality</div>
+    <p class="text-sm leading-relaxed">
+      <b class="neon">Hook = 80% des Reach-Erfolgs.</b> Die ersten 2 Sekunden entscheiden ob dein Reel 5-10× weiter reicht.
+      Ziel: <b class="neon">Sends-per-Reach &gt;1%</b> + <b class="neon">2s-Hold-Rate &gt;60%</b>. Loss-Hooks performen 2-3× besser als Win-Hooks.
+    </p>
+  </div>
+
+  <!-- Search -->
+  <div class="mb-3">
+    <input type="text" id="searchInput" placeholder="🔍 Hook suchen…" class="w-full p-3 rounded-xl text-sm" oninput="render()">
+  </div>
+
+  <!-- Format Filter -->
+  <div class="mb-2 text-xs text-gray-500 font-bold uppercase tracking-wider">Format</div>
+  <div class="filter-scroll flex gap-2 mb-3 overflow-x-auto pb-1" id="formatFilter">
+    <button class="chip active" data-fmt="all">Alle</button>
+    <button class="chip" data-fmt="loss">💸 Loss</button>
+    <button class="chip" data-fmt="twist">🔀 Plot-Twist</button>
+    <button class="chip" data-fmt="stat">📊 Stat-Reveal</button>
+    <button class="chip" data-fmt="mistake">⚠️ Mistake</button>
+    <button class="chip" data-fmt="curiosity">🧐 Curiosity-Gap</button>
+    <button class="chip" data-fmt="pov">👀 POV</button>
+    <button class="chip" data-fmt="comparison">⚖️ Comparison</button>
+    <button class="chip" data-fmt="story">📖 Story</button>
+    <button class="chip" data-fmt="question">❓ Question</button>
+    <button class="chip" data-fmt="quote">💬 Quote</button>
+  </div>
+
+  <!-- Sort -->
+  <div class="mb-2 text-xs text-gray-500 font-bold uppercase tracking-wider">Sort</div>
+  <div class="filter-scroll flex gap-2 mb-5 overflow-x-auto pb-1" id="sortFilter">
+    <button class="chip active" data-sort="winrate">⚡ Best Win-Rate</button>
+    <button class="chip" data-sort="latest">🆕 Latest</button>
+    <button class="chip" data-sort="alphabet">A-Z</button>
+  </div>
+
+  <!-- Hooks List -->
+  <div id="hooksList" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
+
+  <div id="emptyState" class="hidden text-center py-12 text-gray-500">
+    <div class="text-5xl mb-3">🪝</div>
+    <p>Keine Hooks mit diesen Filtern.</p>
+  </div>
+
+  <div class="text-center text-gray-500 text-xs mt-12">
+    🪝 PEAKING · Hook Library · Hook = 80% des Reach-Erfolgs
+  </div>
+</div>
+
+<!-- FAB -->
+<button class="fab" onclick="openAddModal()" title="Eigenen Hook adden">+</button>
+
+<!-- Use Modal -->
+<div id="useModal" class="hidden fixed inset-0 modal-bg z-50 flex items-center justify-center p-4">
+  <div class="glass rounded-3xl p-6 w-full max-w-lg max-h-[90vh] overflow-y-auto">
+    <div class="flex justify-between items-center mb-4">
+      <h2 class="text-xl font-bold">🪝 Hook anpassen</h2>
+      <button onclick="closeUseModal()" class="text-gray-400 hover:text-white text-2xl">×</button>
+    </div>
+    <div id="useVars" class="space-y-2 mb-4"></div>
+    <div class="text-xs text-gray-500 mb-2 font-bold uppercase tracking-wider">Live-Preview</div>
+    <div id="usePreview" class="rounded-xl p-3 bg-slate-800/60 border border-orange-500/20 text-sm font-medium leading-snug whitespace-pre-line min-h-[60px] mb-4"></div>
+    <button onclick="copyPreview()" class="btn-primary w-full p-3 rounded-xl">📋 Hook kopieren</button>
+  </div>
+</div>
+
+<!-- Add/Edit Modal -->
+<div id="addModal" class="hidden fixed inset-0 modal-bg z-50 flex items-center justify-center p-4">
+  <div class="glass rounded-3xl p-6 w-full max-w-md max-h-[90vh] overflow-y-auto">
+    <div class="flex justify-between items-center mb-4">
+      <h2 class="text-xl font-bold" id="addTitle">+ Eigener Hook</h2>
+      <button onclick="closeAddModal()" class="text-gray-400 hover:text-white text-2xl">×</button>
+    </div>
+    <div class="space-y-3">
+      <div>
+        <label class="block text-xs text-gray-400 mb-1">Hook-Pattern * <span class="text-gray-500">([VARIABLEN] in GROSSBUCHSTABEN)</span></label>
+        <textarea id="hookText" rows="3" class="w-full p-3 rounded-xl text-sm" placeholder="z.B. Plot Twist: [UNEXPECTED]. Hier was passiert ist:"></textarea>
+      </div>
+      <div>
+        <label class="block text-xs text-gray-400 mb-1">Format</label>
+        <select id="hookFormat" class="w-full p-3 rounded-xl text-sm">
+          <option value="loss">💸 Loss-Hook</option>
+          <option value="twist">🔀 Plot-Twist</option>
+          <option value="stat">📊 Stat-Reveal</option>
+          <option value="mistake">⚠️ Mistake-Confession</option>
+          <option value="curiosity">🧐 Curiosity-Gap</option>
+          <option value="pov">👀 POV</option>
+          <option value="comparison">⚖️ Comparison</option>
+          <option value="story">📖 Story</option>
+          <option value="question">❓ Question</option>
+          <option value="quote">💬 Quote</option>
+        </select>
+      </div>
+      <div>
+        <label class="block text-xs text-gray-400 mb-1">Notes (optional)</label>
+        <textarea id="hookNotes" rows="2" class="w-full p-3 rounded-xl text-sm" placeholder="z.B. funktioniert besonders gut bei BIP-Audience"></textarea>
+      </div>
+      <button onclick="saveHook()" class="btn-primary w-full p-3 rounded-xl">💾 Speichern</button>
+      <button id="deleteBtn" onclick="deleteHook()" class="hidden w-full p-2 text-sm text-red-400 hover:text-red-300">🗑️ Löschen</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast" class="toast">✓</div>
+
+<script>
+SmashApp.requireAuth();
+
+// ============ SEED HOOKS (verifizierte 2026-Patterns) ============
+const SEED_HOOKS = [
+  // LOSS-HOOKS (2-3x besser als Win-Hooks per Greg Isenberg)
+  { id: 4001, format: 'loss', text: "Ich hab $[BETRAG] für [DING] verbrannt. Hier ist was ich falsch gemacht hab:" },
+  { id: 4002, format: 'loss', text: "[ZEIT] Wochen, kein Progress. Das hat es blockiert:" },
+  { id: 4003, format: 'loss', text: "Mein erster [VERSUCH] war ein Disaster. Hier sind die 3 Lessons:" },
+  { id: 4004, format: 'loss', text: "[BETRAG]€ verloren in [ZEIT]. Was ich daraus gelernt hab:" },
+  { id: 4005, format: 'loss', text: "Ich hab [ZEIT] verschwendet weil ich [BELIEF] geglaubt hab." },
+
+  // PLOT-TWIST
+  { id: 4101, format: 'twist', text: "Plot Twist: [UNEXPECTED]. Hier ist was passiert ist:" },
+  { id: 4102, format: 'twist', text: "Was ich dachte: [ASSUMPTION]\nWas wirklich passierte: [REALITY]" },
+  { id: 4103, format: 'twist', text: "Niemand redet darüber, aber: [HIDDEN_TRUTH]" },
+  { id: 4104, format: 'twist', text: "Ich war [ZEIT] überzeugt von [BELIEF]. Heute sehe ich's anders:" },
+  { id: 4105, format: 'twist', text: "POV: Du dachtest [ASSUMPTION] — bis [TRIGGER]." },
+
+  // STAT-REVEAL (für BIP-Audience besonders stark)
+  { id: 4201, format: 'stat', text: "$[BETRAG] in [ZEIT] mit [PROJEKT]. Hier ist mein genaues Setup:" },
+  { id: 4202, format: 'stat', text: "Day [N] of [TOTAL]: [METRIC]. Heute gelernt:" },
+  { id: 4203, format: 'stat', text: "[ZAHL] Followers in [ZEIT]. Diese 3 Sachen haben's getriggert:" },
+  { id: 4204, format: 'stat', text: "Mein Reel hat [VIEWS] gemacht. Das war der Hook:" },
+  { id: 4205, format: 'stat', text: "0 → [METRIC] in [ZEIT]. Public-Build dokumentiert:" },
+
+  // MISTAKE-CONFESSION
+  { id: 4301, format: 'mistake', text: "Ich hab [ZEIT] gelogen — auch zu mir selbst. Hier was ich gemerkt hab:" },
+  { id: 4302, format: 'mistake', text: "Mein größter Fehler in [BEREICH]: [MISTAKE]" },
+  { id: 4303, format: 'mistake', text: "Ich war wrong about [TOPIC]. Hier was ich jetzt sehe:" },
+  { id: 4304, format: 'mistake', text: "Diese eine Sache habe ich [ZEIT] verpasst — dabei lag sie offen vor mir:" },
+
+  // CURIOSITY-GAP
+  { id: 4401, format: 'curiosity', text: "Die unbequeme Wahrheit über [TOPIC] die niemand sagt:" },
+  { id: 4402, format: 'curiosity', text: "[X] hat eigentlich nichts mit [Y] zu tun. Hier warum:" },
+  { id: 4403, format: 'curiosity', text: "Was [TOP-CREATOR] dir nicht über [TOPIC] sagt:" },
+  { id: 4404, format: 'curiosity', text: "Diese 1 Sache hat alles geändert. Klingt klein. Ist es nicht:" },
+  { id: 4405, format: 'curiosity', text: "Warum [COMMON-BELIEF] eigentlich falsch ist:" },
+
+  // POV
+  { id: 4501, format: 'pov', text: "POV: Du [SITUATION], aber [TWIST]." },
+  { id: 4502, format: 'pov', text: "POV: 6 AM, alle schlafen, du [ACTION]." },
+  { id: 4503, format: 'pov', text: "POV: [SCENARIO] — und du weißt nicht ob's gut oder schlecht ist." },
+  { id: 4504, format: 'pov', text: "POV: Du bist Solo-Creator, [STRUGGLE]. Heute kommt der Wendepunkt." },
+
+  // COMPARISON
+  { id: 4601, format: 'comparison', text: "[X] vs [Y] — welcher hits härter?" },
+  { id: 4602, format: 'comparison', text: "Vorher: [BEFORE]\nNachher: [AFTER]\nWas ich gemacht hab: [TRIGGER]" },
+  { id: 4603, format: 'comparison', text: "Was ich mit [ALTER_1] glaubte vs Was ich mit [ALTER_2] weiß:" },
+  { id: 4604, format: 'comparison', text: "5 AM vs 9 AM — welcher Lifestyle baut den stärkeren [TRAIT]?" },
+
+  // STORY (3-Sek-Hook-Story-Pattern)
+  { id: 4701, format: 'story', text: "Vor [ZEIT] saß ich [SITUATION]. Heute [STATUS]. So bin ich da hingekommen:" },
+  { id: 4702, format: 'story', text: "Letzten [TAG]: [EVENT]. Was ich daraus mitnehme:" },
+  { id: 4703, format: 'story', text: "Es war [ZEIT] morgens, ich [ACTION] — und plötzlich [TRIGGER]." },
+
+  // QUESTION (Engagement-Trigger)
+  { id: 4801, format: 'question', text: "Frage: Was ist deine [PERSONAL]?\n\nIch sammle die besten — drop's." },
+  { id: 4802, format: 'question', text: "Wenn du [TIME] zurück könntest — was würdest du anders machen?" },
+  { id: 4803, format: 'question', text: "Was ist die EINE Sache die [TOPIC] blockiert?" },
+
+  // QUOTE (saves > likes 2026)
+  { id: 4901, format: 'quote', text: "[QUOTE].\n\n— Manchmal braucht's 6 Wörter um's zu kapieren." },
+  { id: 4902, format: 'quote', text: "„[STATEMENT]"\n\nLies es nochmal." }
+];
+
+let hooks = [];
+let editingId = null;
+let usingHook = null;
+let filters = { format: 'all', sort: 'winrate' };
+let reelsForWinRate = [];
+
+// ============ INIT ============
+function init() {
+  const customs = SmashApp.getData('customHooks', []);
+  hooks = [...SEED_HOOKS, ...customs];
+  reelsForWinRate = SmashApp.getData('reels', []);
+  bindFilters();
+  render();
+}
+
+function bindFilters() {
+  document.querySelectorAll('#formatFilter .chip').forEach(c => {
+    c.onclick = () => {
+      filters.format = c.dataset.fmt;
+      document.querySelectorAll('#formatFilter .chip').forEach(b => b.classList.remove('active'));
+      c.classList.add('active');
+      render();
+    };
+  });
+  document.querySelectorAll('#sortFilter .chip').forEach(c => {
+    c.onclick = () => {
+      filters.sort = c.dataset.sort;
+      document.querySelectorAll('#sortFilter .chip').forEach(b => b.classList.remove('active'));
+      c.classList.add('active');
+      render();
+    };
+  });
+}
+
+// ============ WIN-RATE ============
+// Match Reels via fuzzy text-similarity to hooks. Compute avg sends-per-reach + 2s-hold for matched reels.
+function computeWinRate(hook) {
+  // Strip [VARIABLES] für fuzzy match
+  const pattern = hook.text.replace(/\[[A-ZÄÖÜ_-]+\]/g, '').toLowerCase().trim();
+  const tokens = pattern.split(/\s+/).filter(t => t.length > 4);
+  if (tokens.length === 0) return null;
+
+  const matches = reelsForWinRate.filter(r => {
+    const title = (r.title || '').toLowerCase();
+    const matchCount = tokens.filter(t => title.includes(t)).length;
+    return matchCount >= Math.min(2, tokens.length); // at least 2 tokens or all tokens
+  });
+
+  if (matches.length === 0) return null;
+
+  const sprs = matches.map(r => {
+    const reach = Number(r.reach) || Number(r.views) || 0;
+    const sends = Number(r.sends) || 0;
+    return reach > 0 ? (sends / reach) * 100 : 0;
+  });
+  const holds = matches.filter(r => r.hookHold2s != null).map(r => Number(r.hookHold2s));
+
+  const avgSPR = sprs.reduce((a, b) => a + b, 0) / sprs.length;
+  const avgHold = holds.length > 0 ? holds.reduce((a, b) => a + b, 0) / holds.length : null;
+
+  // Composite Win-Rate-Score: 60% SPR + 40% Hold-Rate (skaliert auf 100)
+  let score = avgSPR * 30; // SPR 0-3% scaled to 0-90
+  if (avgHold !== null) {
+    score = score * 0.6 + avgHold * 0.4;
+  }
+  return { score: Math.min(100, Math.round(score)), uses: matches.length, spr: avgSPR.toFixed(2), hold: avgHold };
+}
+
+// ============ RENDER ============
+function render() {
+  const search = document.getElementById('searchInput').value.toLowerCase().trim();
+  let filtered = hooks.filter(h => {
+    if (filters.format !== 'all' && h.format !== filters.format) return false;
+    if (search && !h.text.toLowerCase().includes(search)) return false;
+    return true;
+  });
+
+  // Compute win-rates
+  filtered = filtered.map(h => ({ ...h, winRate: computeWinRate(h) }));
+
+  // Sort
+  if (filters.sort === 'winrate') {
+    filtered.sort((a, b) => (b.winRate?.score || -1) - (a.winRate?.score || -1));
+  } else if (filters.sort === 'latest') {
+    filtered.sort((a, b) => b.id - a.id);
+  } else if (filters.sort === 'alphabet') {
+    filtered.sort((a, b) => a.text.localeCompare(b.text));
+  }
+
+  const withData = hooks.filter(h => computeWinRate(h) !== null).length;
+  document.getElementById('hookStats').textContent =
+    `${hooks.length} Hooks · ${withData} mit Win-Rate-Daten · ${hooks.filter(h => h.custom).length} eigene`;
+
+  const list = document.getElementById('hooksList');
+  const empty = document.getElementById('emptyState');
+
+  if (filtered.length === 0) {
+    list.innerHTML = '';
+    empty.classList.remove('hidden');
+    return;
+  }
+  empty.classList.add('hidden');
+
+  list.innerHTML = filtered.map(h => renderCard(h)).join('');
+}
+
+const FORMAT_LABELS = {
+  loss: '💸 Loss-Hook', twist: '🔀 Plot-Twist', stat: '📊 Stat-Reveal',
+  mistake: '⚠️ Mistake', curiosity: '🧐 Curiosity-Gap', pov: '👀 POV',
+  comparison: '⚖️ Comparison', story: '📖 Story', quote: '💬 Quote', question: '❓ Question'
+};
+
+function renderCard(h) {
+  const highlighted = escapeHtml(h.text).replace(/\[([A-ZÄÖÜ_-]+)\]/g, '<span class="var-highlight">[$1]</span>');
+  const wr = h.winRate;
+  const wrPill = wr ? `<span class="win-rate-pill">⚡ ${wr.score} · ${wr.uses}×</span>` : '';
+  return `
+    <div class="hook-card">
+      <div class="flex items-center justify-between mb-2 gap-2 flex-wrap">
+        <span class="format-tag fmt-${h.format}">${FORMAT_LABELS[h.format] || h.format}</span>
+        ${wrPill}
+        ${h.custom ? '<span class="text-xs neon">⭐</span>' : ''}
+      </div>
+      <p class="text-sm leading-snug mb-3 whitespace-pre-line">${highlighted}</p>
+      ${h.notes ? `<p class="text-[11px] text-gray-500 italic mb-3">${escapeHtml(h.notes)}</p>` : ''}
+      <div class="flex gap-2">
+        <button onclick="useHook(${h.id})" class="btn-primary text-xs px-3 py-2 rounded-lg flex-1">▶ Anpassen</button>
+        <button onclick="quickCopy(${h.id})" class="text-xs px-3 py-2 rounded-lg bg-slate-700/40 hover:bg-slate-600/40">📋</button>
+        ${h.custom ? `<button onclick="openEdit(${h.id})" class="text-xs px-3 py-2 rounded-lg bg-slate-700/40 hover:bg-slate-600/40">✏️</button>` : ''}
+      </div>
+    </div>
+  `;
+}
+
+function escapeHtml(s) {
+  return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+// ============ USE ============
+function extractVars(text) {
+  const matches = text.match(/\[([A-ZÄÖÜ_-]+)\]/g) || [];
+  return [...new Set(matches.map(m => m.slice(1, -1)))];
+}
+
+function useHook(id) {
+  const h = hooks.find(x => x.id === id);
+  if (!h) return;
+  usingHook = h;
+  const vars = extractVars(h.text);
+  const inputs = document.getElementById('useVars');
+  if (vars.length === 0) {
+    inputs.innerHTML = '<p class="text-xs text-gray-500 italic">Keine Variablen — direkt kopierbar.</p>';
+  } else {
+    inputs.innerHTML = '<div class="text-xs text-gray-500 font-bold uppercase tracking-wider mb-2">Variablen ausfüllen</div>' +
+      vars.map(v => `<div><label class="block text-xs text-gray-400 mb-1">[${v}]</label><input type="text" data-var="${v}" placeholder="…" class="w-full p-2 rounded-lg text-sm" oninput="updateUsePreview()"></div>`).join('');
+  }
+  updateUsePreview();
+  document.getElementById('useModal').classList.remove('hidden');
+}
+
+function updateUsePreview() {
+  if (!usingHook) return;
+  let result = usingHook.text;
+  document.querySelectorAll('#useVars input[data-var]').forEach(input => {
+    const v = input.dataset.var;
+    const val = input.value || `[${v}]`;
+    result = result.replaceAll(`[${v}]`, val);
+  });
+  document.getElementById('usePreview').textContent = result;
+}
+
+function closeUseModal() { document.getElementById('useModal').classList.add('hidden'); usingHook = null; }
+
+async function copyPreview() {
+  const text = document.getElementById('usePreview').textContent;
+  try {
+    await navigator.clipboard.writeText(text);
+    showToast('✓ Hook kopiert');
+    closeUseModal();
+  } catch (e) { showToast('⚠️ Copy failed'); }
+}
+
+async function quickCopy(id) {
+  const h = hooks.find(x => x.id === id);
+  if (!h) return;
+  try {
+    await navigator.clipboard.writeText(h.text);
+    showToast('✓ Hook-Pattern kopiert');
+  } catch (e) { showToast('⚠️ Copy failed'); }
+}
+
+// ============ ADD/EDIT ============
+function openAddModal() {
+  editingId = null;
+  document.getElementById('addTitle').textContent = '+ Eigener Hook';
+  document.getElementById('hookText').value = '';
+  document.getElementById('hookFormat').value = 'twist';
+  document.getElementById('hookNotes').value = '';
+  document.getElementById('deleteBtn').classList.add('hidden');
+  document.getElementById('addModal').classList.remove('hidden');
+}
+
+function openEdit(id) {
+  const h = hooks.find(x => x.id === id);
+  if (!h || !h.custom) return;
+  editingId = id;
+  document.getElementById('addTitle').textContent = '✏️ Hook bearbeiten';
+  document.getElementById('hookText').value = h.text;
+  document.getElementById('hookFormat').value = h.format;
+  document.getElementById('hookNotes').value = h.notes || '';
+  document.getElementById('deleteBtn').classList.remove('hidden');
+  document.getElementById('addModal').classList.remove('hidden');
+}
+
+function closeAddModal() { document.getElementById('addModal').classList.add('hidden'); editingId = null; }
+
+function saveHook() {
+  const text = document.getElementById('hookText').value.trim();
+  if (!text) { showToast('⚠️ Hook fehlt'); return; }
+  const data = {
+    text,
+    format: document.getElementById('hookFormat').value,
+    notes: document.getElementById('hookNotes').value.trim(),
+    custom: true
+  };
+  const customs = SmashApp.getData('customHooks', []);
+  if (editingId) {
+    const idx = customs.findIndex(c => c.id === editingId);
+    if (idx >= 0) customs[idx] = { ...customs[idx], ...data };
+    showToast('💾 Aktualisiert');
+  } else {
+    customs.push({ id: Date.now(), ...data });
+    showToast('💾 Hook gespeichert');
+  }
+  SmashApp.setData('customHooks', customs);
+  hooks = [...SEED_HOOKS, ...customs];
+  closeAddModal();
+  render();
+}
+
+function deleteHook() {
+  if (!editingId) return;
+  if (!confirm('Eigenen Hook wirklich löschen?')) return;
+  let customs = SmashApp.getData('customHooks', []);
+  customs = customs.filter(c => c.id !== editingId);
+  SmashApp.setData('customHooks', customs);
+  hooks = [...SEED_HOOKS, ...customs];
+  closeAddModal();
+  render();
+  showToast('🗑️ Gelöscht');
+}
+
+// ============ TOAST ============
+let toastTimer;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 1500);
+}
+
+document.getElementById('useModal').addEventListener('click', e => { if (e.target.id === 'useModal') closeUseModal(); });
+document.getElementById('addModal').addEventListener('click', e => { if (e.target.id === 'addModal') closeAddModal(); });
+
+init();
+</script>
+
+</body>
+</html>
