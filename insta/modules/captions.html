@@ -169,6 +169,7 @@
       <button class="chip" data-filter="func" data-value="cta">📢 CTA</button>
       <button class="chip" data-filter="func" data-value="question">❓ Frage</button>
       <button class="chip" data-filter="func" data-value="quote">💬 Quote</button>
+      <button class="chip" data-filter="func" data-value="loss">💸 Loss-Hook</button>
     </div>
 
     <div id="templatesList" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
@@ -312,7 +313,20 @@ const SEED_TEMPLATES = [
   { id: 2032, pillar: 'bts', func: 'story', text: "Heute: [TÄTIGKEIT].\nGedanken: [INSIGHT].\nNext-Step: [NEXT]." },
   { id: 2033, pillar: 'bts', func: 'cta', text: "Such mein full Stack? Link in Bio.\n[TOOL_1] · [TOOL_2] · [TOOL_3] — alles was ich nutze." },
   { id: 2034, pillar: 'bts', func: 'question', text: "Frage: Was ist deine #1-Daily-Routine als Solo-Creator?\n\nIch übernehme die besten." },
-  { id: 2035, pillar: 'bts', func: 'quote', text: "Built solo. Done daily. ⛰️" }
+  { id: 2035, pillar: 'bts', func: 'quote', text: "Built solo. Done daily. ⛰️" },
+
+  // ============ LOSS-HOOKS (verifiziert 2-3x besser als Win-Hooks per Greg Isenberg) ============
+  // VEGETARIANHULK
+  { id: 3001, pillar: 'outdoor', func: 'loss', text: "Ich hab [BETRAG]€ für [BERG-EQUIPMENT] verbrannt.\n\nHier die 3 Fehler die ich gemacht hab:\n1. [FEHLER_1]\n2. [FEHLER_2]\n3. [FEHLER_3]\n\nLerne aus meinem Stack. ⛰️" },
+  { id: 3002, pillar: 'gym', func: 'loss', text: "[WOCHEN] Wochen ohne Muskel-Progress.\n\nDas hat's blockiert: [REASON].\n\nDiese eine Anpassung hat alles geändert: [FIX]." },
+  { id: 3003, pillar: 'mindset', func: 'loss', text: "Ich hab [ZEIT] gelogen — auch zu mir selbst.\n\nWas ich gemerkt hab: [INSIGHT].\n\nBrutal. Aber befreiend. 🧠" },
+  { id: 3004, pillar: 'plantbased', func: 'loss', text: "[ZEIT] hardcore plant-based — KEIN Muskel-Wachstum.\n\nHier was ich falsch gemacht hab:\n[FEHLER]\n\nFix: [LÖSUNG]." },
+
+  // PEAKINGWORLD
+  { id: 3011, pillar: 'tools', func: 'loss', text: "Ich hab $[BETRAG] für [TOOL/AI-CREDITS] verbrannt.\n\nHier was ich SOFORT gestoppt hab:\n1. [STOP_1]\n2. [STOP_2]\n3. [STOP_3]\n\nSpar dir mein Lehrgeld." },
+  { id: 3012, pillar: 'bip', func: 'loss', text: "[ZEIT] Build-in-Public. Stand: [METRIC].\n\nMy biggest mistake: [FEHLER].\n\nWas ich jetzt anders mache: [FIX]." },
+  { id: 3013, pillar: 'marketing', func: 'loss', text: "Mein 1. Reel: [VIEWS] Views.\n\nAlle 5 Fehler die ich gemacht hab:\n1. [F1]\n2. [F2]\n3. [F3]\n4. [F4]\n5. [F5]\n\nHook ist 80% — Rest ist 20%." },
+  { id: 3014, pillar: 'bts', func: 'loss', text: "Mein erstes Setup: [BESCHREIBUNG] — chaotisch.\n\nWas ich entfernt hab:\n[ENTFERNT]\n\nBessere Output, weniger Tools." }
 ];
 
 // ============ HASHTAG SETS (Account-Aware) ============
@@ -337,7 +351,8 @@ const FUNC_LABELS = {
   story: '📖 Story',
   cta: '📢 CTA',
   question: '❓ Frage',
-  quote: '💬 Quote'
+  quote: '💬 Quote',
+  loss: '💸 Loss-Hook'
 };
 
 let templates = [];

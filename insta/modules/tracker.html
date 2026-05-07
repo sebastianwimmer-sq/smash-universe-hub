@@ -175,7 +175,33 @@
       </div>
 
       <div>
-        <label class="block text-sm text-gray-400 mb-1">Watch Time (Sek)</label>
+        <label class="block text-sm text-gray-400 mb-1">⚡ 2-Sec-Hold-Rate (%) — 2026 Algo-King</label>
+        <input type="number" step="1" id="hookHold2s" min="0" max="100" placeholder="65" class="w-full p-3 rounded-xl">
+      </div>
+
+      <div>
+        <label class="block text-sm text-gray-400 mb-1">📨 Sends (DM-Shares) — 2026 NEW Hero-Metric</label>
+        <input type="number" id="sends" placeholder="3" class="w-full p-3 rounded-xl">
+      </div>
+
+      <div>
+        <label class="block text-sm text-gray-400 mb-1">🎯 Funnel-Layer (3-Layer-Modell 2026)</label>
+        <select id="funnelLayer" class="w-full p-3 rounded-xl">
+          <option value="reach">🎯 Reach (Hook-Reel · Non-Follower)</option>
+          <option value="authority">🧠 Authority (Proof · Teaching)</option>
+          <option value="conversion">⚡ Conversion (Identity-CTA)</option>
+        </select>
+      </div>
+
+      <div>
+        <label class="flex items-center gap-2 cursor-pointer p-3 rounded-xl bg-slate-800/40">
+          <input type="checkbox" id="isTrial" class="w-5 h-5">
+          <span class="text-sm">🧪 Trial-Reel (80% mehr Non-Follower-Reach laut Meta)</span>
+        </label>
+      </div>
+
+      <div>
+        <label class="block text-sm text-gray-400 mb-1">Watch Time (Sek) — gesamt</label>
         <input type="number" step="0.1" id="watchTime" placeholder="4.5" class="w-full p-3 rounded-xl">
       </div>
 
@@ -296,6 +322,10 @@ async function addReel() {
     pillar: document.getElementById('pillar').value,
     hour: parseInt(document.getElementById('hour').value) || 19,
     views: parseInt(document.getElementById('views').value) || 0,
+    hookHold2s: parseInt(document.getElementById('hookHold2s')?.value) || null,
+    sends: parseInt(document.getElementById('sends')?.value) || 0,
+    funnelLayer: document.getElementById('funnelLayer')?.value || 'reach',
+    isTrial: document.getElementById('isTrial')?.checked || false,
     reach: parseInt(document.getElementById('reach').value) || 0,
     watchTime: parseFloat(document.getElementById('watchTime').value) || 0,
     length: parseFloat(document.getElementById('length').value) || 0,
