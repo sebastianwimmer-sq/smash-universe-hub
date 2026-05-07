@@ -11,7 +11,12 @@ const SmashApp = (function() {
   //   console.log(Array.from(new Uint8Array(h)).map(b => b.toString(16).padStart(2,'0')).join('')))
   // !!! CLAUDE CODE: Bitte beim Build neu generieren falls Passwort geändert wird !!!
   const PASSWORD_HASH = "3c1ebcc7778d422c056ee4447d05915087782d1e080c36d399e53227bbc17e0c";
-  
+
+  // Admin-Layer: 2. Passwort fuer /admin Backstage. PW = "peaking-admin-1508!"
+  // Aenderung: PW lokal generieren via SHA-256 + hier eintragen.
+  const ADMIN_PASSWORD_HASH = "21c74da7767acab0b475ab89514860ff7ab7e354733a28f985b4db4aaab738c7";
+  const ADMIN_SESSION_DURATION_MS = 7 * 24 * 60 * 60 * 1000; // 7 Tage
+
   const SESSION_DURATION_MS = 24 * 60 * 60 * 1000; // 24h
   const STORAGE_PREFIX = 'smash:';
 
@@ -197,6 +202,37 @@ const SmashApp = (function() {
     if (!isAuthenticated()) {
       window.location.href = 'index.html';
     }
+  }
+
+  // ============ ADMIN-AUTH (2nd Layer) ============
+
+  async function adminLogin(password) {
+    const hash = await sha256(password);
+    if (hash === ADMIN_PASSWORD_HASH) {
+      localStorage.setItem(STORAGE_PREFIX + 'adminAuth', JSON.stringify({
+        loggedIn: true,
+        expires: Date.now() + ADMIN_SESSION_DURATION_MS
+      }));
+      return true;
+    }
+    return false;
+  }
+
+  function adminLogout() {
+    localStorage.removeItem(STORAGE_PREFIX + 'adminAuth');
+  }
+
+  function isAdminAuthenticated() {
+    try {
+      const auth = JSON.parse(localStorage.getItem(STORAGE_PREFIX + 'adminAuth') || '{}');
+      return auth.loggedIn && auth.expires > Date.now();
+    } catch (e) {
+      return false;
+    }
+  }
+
+  function hasEverBeenAdmin() {
+    return localStorage.getItem(STORAGE_PREFIX + 'adminAuth') !== null;
   }
 
   // ============ STORAGE (Account-aware) ============
@@ -433,6 +469,10 @@ const SmashApp = (function() {
     logout,
     isAuthenticated,
     requireAuth,
+    adminLogin,
+    adminLogout,
+    isAdminAuthenticated,
+    hasEverBeenAdmin,
 
     // Storage
     getData,

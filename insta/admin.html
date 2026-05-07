@@ -109,7 +109,10 @@
       <h1 class="text-2xl md:text-3xl font-bold mt-1">👑 <span class="text-sunrise">Admin</span></h1>
       <p class="text-gray-400 text-sm">Sebi-only Backstage · Web-Only Backlog · Brain · Activity · Tech</p>
     </div>
-    <button onclick="SmashApp.logout()" class="text-sm text-gray-400 hover:text-white">🔒</button>
+    <div class="flex gap-2">
+      <button onclick="adminEnd()" class="text-sm text-gray-400 hover:text-orange-400" title="Admin-Session beenden">🚪 Admin-Logout</button>
+      <button onclick="SmashApp.logout()" class="text-sm text-gray-400 hover:text-white" title="Komplett ausloggen">🔒</button>
+    </div>
   </div>
 
   <!-- Tab-Bar -->
@@ -246,6 +249,82 @@
 
 <script>
 SmashApp.requireAuth();
+
+// ============ ADMIN-AUTH GATE ============
+(async function adminGate() {
+  // 1. URL-Param ?k=PASSWORD → try login
+  const url = new URL(window.location.href);
+  const k = url.searchParams.get('k');
+  if (k) {
+    const ok = await SmashApp.adminLogin(k);
+    // Clear param from URL (security: don't leave PW in history)
+    url.searchParams.delete('k');
+    window.history.replaceState({}, '', url.toString());
+    if (!ok) {
+      blockAdmin('❌ Falsches Admin-Passwort.');
+      return;
+    }
+  }
+
+  // 2. Already authenticated? → through
+  if (SmashApp.isAdminAuthenticated()) return;
+
+  // 3. Show PW-Prompt overlay
+  showAdminPrompt();
+})();
+
+function showAdminPrompt() {
+  const overlay = document.createElement('div');
+  overlay.id = 'adminGate';
+  overlay.style.cssText = 'position:fixed;inset:0;z-index:200;background:rgba(15,23,42,0.95);backdrop-filter:blur(10px);display:flex;align-items:center;justify-content:center;padding:20px;';
+  overlay.innerHTML = `
+    <div style="background:linear-gradient(135deg,#1e293b,#0f172a);border:1px solid rgba(255,169,77,0.3);border-radius:24px;padding:32px;max-width:420px;width:100%;text-align:center;">
+      <div style="font-size:48px;margin-bottom:12px;">👑</div>
+      <h2 style="font-size:20px;font-weight:bold;margin-bottom:6px;">Admin-Backstage</h2>
+      <p style="color:#94a3b8;font-size:13px;margin-bottom:20px;">Sebi-only · 2. Passwort erforderlich</p>
+      <input id="adminPwInput" type="password" placeholder="Admin-Passwort" autofocus
+        style="width:100%;padding:14px;background:#0f172a;border:1px solid rgba(255,255,255,0.1);border-radius:12px;color:white;font-size:14px;margin-bottom:12px;outline:none;"
+        onkeydown="if(event.key==='Enter') submitAdminPw()">
+      <div id="adminPwError" style="color:#f87171;font-size:12px;margin-bottom:12px;display:none;">❌ Falsches Passwort</div>
+      <button onclick="submitAdminPw()" style="background:linear-gradient(135deg,#FFA94D,#FF6B6B);color:#0f172a;font-weight:bold;padding:12px 24px;border-radius:14px;border:none;cursor:pointer;width:100%;">→ Entsperren</button>
+      <button onclick="window.location.href='dashboard.html'" style="background:transparent;color:#94a3b8;border:none;cursor:pointer;margin-top:14px;font-size:12px;">← Zurück zum Dashboard</button>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+  setTimeout(() => document.getElementById('adminPwInput')?.focus(), 50);
+}
+
+async function submitAdminPw() {
+  const input = document.getElementById('adminPwInput');
+  const err = document.getElementById('adminPwError');
+  const ok = await SmashApp.adminLogin(input.value);
+  if (ok) {
+    document.getElementById('adminGate').remove();
+  } else {
+    err.style.display = 'block';
+    input.value = '';
+    input.focus();
+  }
+}
+
+function adminEnd() {
+  if (!confirm('Admin-Session beenden? Du musst beim nächsten Mal das Admin-Passwort wieder eintippen.')) return;
+  SmashApp.adminLogout();
+  showToast('🔒 Admin-Session beendet');
+  setTimeout(() => window.location.href = 'dashboard.html', 800);
+}
+
+function blockAdmin(msg) {
+  document.body.innerHTML = `
+    <div style="position:fixed;inset:0;background:linear-gradient(135deg,#0f172a,#1e293b);display:flex;align-items:center;justify-content:center;text-align:center;color:white;font-family:-apple-system,sans-serif;padding:20px;">
+      <div>
+        <div style="font-size:48px;margin-bottom:16px;">🔒</div>
+        <p style="font-size:18px;font-weight:bold;margin-bottom:12px;">${msg}</p>
+        <a href="dashboard.html" style="color:#FFA94D;text-decoration:underline;">← Dashboard</a>
+      </div>
+    </div>
+  `;
+}
 
 // ============ TAB-SWITCHING ============
 document.getElementById('tabBar').addEventListener('click', e => {
