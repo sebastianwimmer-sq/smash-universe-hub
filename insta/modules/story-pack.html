@@ -7,7 +7,8 @@
 <link rel="icon" href="../assets/logo.svg" type="image/svg+xml">
 <link rel="stylesheet" href="../assets/effects.css">
 <script src="https://cdn.tailwindcss.com"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<!-- html-to-image (bubkoo/html-to-image) — sauberer als html2canvas bei Webfonts/Tailwind/Emojis -->
+<script src="https://cdn.jsdelivr.net/npm/html-to-image@1.11.13/dist/html-to-image.min.js"></script>
 <script src="../js/app.js"></script>
 <style>
   body {
@@ -532,7 +533,7 @@ async function downloadSlide(key) {
   // Temporarily reset transform for full-res capture
   const origTransform = node.style.transform;
   node.style.transform = 'scale(1)';
-  // Hide overflow on parent so html2canvas captures full size
+  // Hide overflow on parent so html-to-image captures full size
   const frame = document.getElementById('frame-' + key);
   const origOverflow = frame.style.overflow;
   const origH = frame.style.height;
@@ -542,16 +543,20 @@ async function downloadSlide(key) {
   frame.style.width = '1080px';
 
   try {
-    const canvas = await html2canvas(node, {
-      width: 1080, height: 1920, scale: 1,
-      backgroundColor: null, useCORS: true, logging: false
+    // Use html-to-image (better webfont/tailwind/emoji rendering than html2canvas)
+    const dataUrl = await htmlToImage.toPng(node, {
+      width: 1080, height: 1920,
+      pixelRatio: 1,
+      cacheBust: true,
+      style: { margin: '0', padding: '0' }
     });
     const link = document.createElement('a');
     link.download = `peaking-story-${key}-${new Date().toISOString().split('T')[0]}.png`;
-    link.href = canvas.toDataURL('image/png');
+    link.href = dataUrl;
     link.click();
     showToast('✓ PNG heruntergeladen');
   } catch (e) {
+    console.warn('html-to-image fail:', e);
     showToast('⚠️ Download fehlgeschlagen');
   } finally {
     node.style.transform = origTransform;
