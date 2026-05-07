@@ -120,6 +120,7 @@
     <button class="tab-btn active" data-tab="ideas">💡 Ideen</button>
     <button class="tab-btn" data-tab="brain">🧠 Brain</button>
     <button class="tab-btn" data-tab="activity">📈 Activity</button>
+    <button class="tab-btn" data-tab="assets">🎨 Brand-Assets</button>
     <button class="tab-btn" data-tab="tech">🔧 Tech</button>
   </div>
 
@@ -190,6 +191,124 @@
       <div id="activityFeed"></div>
       <div id="activityEmpty" class="text-gray-500 text-sm text-center py-6 hidden">Noch keine Activity — track deinen ersten Reel im Tracker.</div>
     </div>
+  </div>
+
+  <!-- 🎨 BRAND-ASSETS TAB -->
+  <div class="tab-pane" data-pane="assets">
+
+    <!-- Logo Downloads -->
+    <div class="glass rounded-3xl p-5 mb-4">
+      <h2 class="text-lg font-bold mb-2">🌅 Logo-Downloads · alle Varianten</h2>
+      <p class="text-xs text-gray-400 mb-4">Download als SVG (skaliert verlustfrei) oder als PNG in 6 Sizes (Favicon → Hero). Right-Click → „Bild speichern" geht auch direkt.</p>
+      <div class="grid grid-cols-2 md:grid-cols-3 gap-4" id="logoGrid"></div>
+    </div>
+
+    <!-- PNG-Multi-Size-Generator -->
+    <div class="glass rounded-3xl p-5 mb-4">
+      <h2 class="text-lg font-bold mb-2">📐 PNG-Multi-Size-Generator</h2>
+      <p class="text-xs text-gray-400 mb-4">Wähle ein Logo + Size. Wird im Browser gerendert + als PNG runtergeladen. Für: Favicon (16/32), Apple-Touch-Icon (180), Insta-Bio (320), OG-Image (1200).</p>
+      <div class="flex gap-2 flex-wrap mb-3">
+        <select id="pngLogo" class="bg-slate-800 rounded-lg p-2 text-sm">
+          <option value="logo.svg">⛰️ Original (Flat-Sunrise)</option>
+          <option value="logo-v3-a.svg">V3-A · Faceted Mountain</option>
+          <option value="logo-v3-b.svg">V3-B · Rising Sun</option>
+          <option value="logo-v3-c.svg">V3-C · Isometric Peak</option>
+          <option value="logo-v3-d-still.svg">V3-D-Still · 3D-Pyramide</option>
+        </select>
+        <select id="pngSize" class="bg-slate-800 rounded-lg p-2 text-sm">
+          <option value="16">16 × 16 (Favicon mini)</option>
+          <option value="32">32 × 32 (Favicon)</option>
+          <option value="64">64 × 64 (App-Icon S)</option>
+          <option value="128">128 × 128 (App-Icon M)</option>
+          <option value="180">180 × 180 (Apple-Touch)</option>
+          <option value="320">320 × 320 (Insta-Bio)</option>
+          <option value="512">512 × 512 (App-Icon XL)</option>
+          <option value="1200">1200 × 1200 (OG-Image)</option>
+        </select>
+        <button onclick="generatePng()" class="px-4 py-2 rounded-lg bg-gradient-to-br from-orange-400 to-red-400 text-slate-900 font-bold text-sm">📥 PNG generieren</button>
+      </div>
+      <div id="pngPreview" class="text-center"></div>
+    </div>
+
+    <!-- Animated Embed-Snippet -->
+    <div class="glass rounded-3xl p-5 mb-4">
+      <h2 class="text-lg font-bold mb-2">🎬 Animated 3D-Logo · Embed-Code</h2>
+      <p class="text-xs text-gray-400 mb-3">Für andere Websites/Tools — iframe-Snippet zum Copy-Pasten. Funktioniert auf jeder HTTPS-Site.</p>
+      <textarea id="embedSnippet" rows="3" readonly class="w-full bg-slate-900 rounded-lg p-3 text-xs font-mono"></textarea>
+      <button onclick="copyEmbed()" class="mt-2 px-4 py-2 rounded-lg bg-slate-700/60 hover:bg-slate-600/60 text-sm">📋 Embed-Code kopieren</button>
+      <a href="assets/logo-v3-d.html" target="_blank" class="ml-2 text-sm neon hover:underline">→ Live-Demo ansehen</a>
+    </div>
+
+    <!-- Brand-Tokens Quick-Ref -->
+    <div class="glass rounded-3xl p-5 mb-4">
+      <h2 class="text-lg font-bold mb-2">🎨 Brand-Tokens · Quick-Reference</h2>
+      <p class="text-xs text-gray-400 mb-3">Sunrise-Brand. Single-Source-of-Truth in <code>assets/BRAND.md</code>. Hier zum Copy-Pasten.</p>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+        <div class="p-3 rounded-lg bg-slate-900/40">
+          <div class="text-xs text-gray-500 font-bold uppercase mb-2">Sunrise-Gradient</div>
+          <div style="height:30px; background: linear-gradient(135deg, #FF6B6B, #FFA94D, #FFD43B); border-radius:8px; margin-bottom:6px;"></div>
+          <div class="text-[10px] font-mono text-gray-400">#FF6B6B · #FFA94D · #FFD43B</div>
+          <button onclick="copyText('linear-gradient(135deg, #FF6B6B, #FFA94D, #FFD43B)', this)" class="mt-2 text-xs neon hover:underline">Copy CSS</button>
+        </div>
+        <div class="p-3 rounded-lg bg-slate-900/40">
+          <div class="text-xs text-gray-500 font-bold uppercase mb-2">Single-Color-Accent</div>
+          <div style="height:30px; background:#FFA94D; border-radius:8px; margin-bottom:6px;"></div>
+          <div class="text-[10px] font-mono text-gray-400">#FFA94D · Sunrise-Orange</div>
+          <button onclick="copyText('#FFA94D', this)" class="mt-2 text-xs neon hover:underline">Copy Hex</button>
+        </div>
+        <div class="p-3 rounded-lg bg-slate-900/40">
+          <div class="text-xs text-gray-500 font-bold uppercase mb-2">Dark-Background</div>
+          <div style="height:30px; background: linear-gradient(135deg, #0f172a, #1e293b); border-radius:8px; margin-bottom:6px;"></div>
+          <div class="text-[10px] font-mono text-gray-400">#0f172a → #1e293b</div>
+          <button onclick="copyText('linear-gradient(135deg, #0f172a, #1e293b)', this)" class="mt-2 text-xs neon hover:underline">Copy CSS</button>
+        </div>
+      </div>
+      <div class="mt-3 grid grid-cols-2 md:grid-cols-4 gap-2 text-xs">
+        <div class="p-2 rounded bg-slate-900/40">
+          <div class="text-gray-500 mb-1">Tagline</div>
+          <div class="font-bold">Always peaking.</div>
+          <button onclick="copyText('Always peaking.', this)" class="text-[10px] neon mt-1">Copy</button>
+        </div>
+        <div class="p-2 rounded bg-slate-900/40">
+          <div class="text-gray-500 mb-1">Sub-Tagline</div>
+          <div class="font-bold">The climb is the peak.</div>
+          <button onclick="copyText('The climb is the peak.', this)" class="text-[10px] neon mt-1">Copy</button>
+        </div>
+        <div class="p-2 rounded bg-slate-900/40">
+          <div class="text-gray-500 mb-1">Insta-Handle</div>
+          <div class="font-bold">@peakingworld</div>
+          <button onclick="copyText('@peakingworld', this)" class="text-[10px] neon mt-1">Copy</button>
+        </div>
+        <div class="p-2 rounded bg-slate-900/40">
+          <div class="text-gray-500 mb-1">Domain</div>
+          <div class="font-bold">peaking.world</div>
+          <button onclick="copyText('peaking.world', this)" class="text-[10px] neon mt-1">Copy</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Direct Links -->
+    <div class="glass rounded-3xl p-5">
+      <h2 class="text-lg font-bold mb-2">🔗 Direkt-Links · Brand-Resources</h2>
+      <div class="space-y-2 text-sm">
+        <a href="assets/logo-v3-preview.html" target="_blank" class="block p-3 rounded-lg bg-slate-900/40 hover:bg-slate-800/60">
+          🎨 <b>Logo-Picker</b> — alle 5 Varianten + Mockup-Tests + Skalierungs-Test
+        </a>
+        <a href="assets/logo-v3-d.html" target="_blank" class="block p-3 rounded-lg bg-slate-900/40 hover:bg-slate-800/60">
+          🎬 <b>Animated 3D-Demo</b> — V3-D Pyramide + V3-E Triangle live mit Speed-Controls
+        </a>
+        <a href="assets/BRAND.md" target="_blank" class="block p-3 rounded-lg bg-slate-900/40 hover:bg-slate-800/60">
+          📄 <b>BRAND.md</b> — Single-Source-of-Truth (Colors · Typography · Voice · Components · Anti-Patterns)
+        </a>
+        <a href="welcome.html" target="_blank" class="block p-3 rounded-lg bg-slate-900/40 hover:bg-slate-800/60">
+          🌅 <b>Welcome-Page</b> — wie sieht's für Public-Visitors aus
+        </a>
+        <a href="changelog.html" target="_blank" class="block p-3 rounded-lg bg-slate-900/40 hover:bg-slate-800/60">
+          📜 <b>Public Changelog</b> — Building-in-Public Build-Log
+        </a>
+      </div>
+    </div>
+
   </div>
 
   <!-- TECH TAB -->
@@ -335,7 +454,101 @@ document.getElementById('tabBar').addEventListener('click', e => {
   document.querySelectorAll('.tab-pane').forEach(p => p.classList.toggle('active', p.dataset.pane === tab));
   if (tab === 'activity') renderActivity();
   if (tab === 'tech') renderTech();
+  if (tab === 'assets') renderAssets();
 });
+
+// ============ BRAND-ASSETS TAB ============
+const LOGOS = [
+  { file: 'logo.svg',          name: 'Original · Flat-Sunrise', desc: '1 Polygon · Sunrise-Gradient' },
+  { file: 'logo-v3-a.svg',     name: 'V3-A · Faceted',          desc: 'Light/Shadow Split · Drama' },
+  { file: 'logo-v3-b.svg',     name: 'V3-B · Rising Sun',       desc: 'Sun + Mountain · Narrativ' },
+  { file: 'logo-v3-c.svg',     name: 'V3-C · Isometric',        desc: '3D-Projection · Modern' },
+  { file: 'logo-v3-d-still.svg', name: 'V3-D · 3D-Pyramide (Still)', desc: 'Frozen mid-rotation · Hero-feel' },
+  { file: 'logo-wordmark.svg', name: 'Wordmark · Triangle + PEAKING', desc: '280×64 · Header-Use' }
+];
+
+function renderAssets() {
+  const grid = document.getElementById('logoGrid');
+  if (!grid) return;
+  grid.innerHTML = LOGOS.map(l => `
+    <div style="background: rgba(15, 23, 42, 0.5); border: 1px solid rgba(255,255,255,0.08); border-radius: 14px; padding: 16px;">
+      <div style="background: linear-gradient(135deg, #0f172a, #1e293b); border-radius: 10px; padding: 20px; min-height: 100px; display: flex; align-items: center; justify-content: center; margin-bottom: 10px;">
+        <img src="assets/${l.file}" alt="${l.name}" style="max-width: 80px; max-height: 80px; filter: drop-shadow(0 4px 16px rgba(255,169,77,0.25));">
+      </div>
+      <div class="font-bold text-sm mb-1">${escapeHTML(l.name)}</div>
+      <div class="text-xs text-gray-500 mb-3">${escapeHTML(l.desc)}</div>
+      <div class="flex gap-1 flex-wrap">
+        <a href="assets/${l.file}" download class="px-2 py-1 rounded text-xs" style="background: linear-gradient(135deg, #FFA94D, #FF6B6B); color: #0f172a; font-weight: 700; text-decoration: none;">📥 SVG</a>
+        <button onclick="copyText('${l.file}', this)" class="px-2 py-1 rounded text-xs" style="background: rgba(15,23,42,0.6); border: 1px solid rgba(255,169,77,0.3); color: white;">📋 Filename</button>
+        <button onclick="copyText(window.location.origin + '/assets/' + '${l.file}', this)" class="px-2 py-1 rounded text-xs" style="background: rgba(15,23,42,0.6); border: 1px solid rgba(255,169,77,0.3); color: white;">🔗 URL</button>
+      </div>
+    </div>
+  `).join('');
+
+  // Pre-fill embed snippet
+  const embedTa = document.getElementById('embedSnippet');
+  if (embedTa) {
+    embedTa.value = `<iframe src="${window.location.origin}/assets/logo-v3-d.html" style="width:200px; height:280px; border:none; background:transparent;" allowtransparency="true"></iframe>`;
+  }
+}
+
+async function generatePng() {
+  const file = document.getElementById('pngLogo').value;
+  const size = Number(document.getElementById('pngSize').value);
+  const preview = document.getElementById('pngPreview');
+  preview.innerHTML = '<div class="text-sm text-gray-400">⏳ Generiere…</div>';
+
+  try {
+    // Load SVG as text
+    const res = await fetch('assets/' + file);
+    const svgText = await res.text();
+    const blob = new Blob([svgText], { type: 'image/svg+xml' });
+    const url = URL.createObjectURL(blob);
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      canvas.width = size;
+      canvas.height = size;
+      const ctx = canvas.getContext('2d');
+      ctx.imageSmoothingEnabled = true;
+      ctx.imageSmoothingQuality = 'high';
+      ctx.drawImage(img, 0, 0, size, size);
+      URL.revokeObjectURL(url);
+      // Trigger download
+      canvas.toBlob(b => {
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(b);
+        a.download = file.replace('.svg', '') + `-${size}x${size}.png`;
+        a.click();
+        URL.revokeObjectURL(a.href);
+        preview.innerHTML = `<div class="text-sm" style="color:#84cc16;">✓ ${a.download} runtergeladen</div><img src="${canvas.toDataURL()}" style="max-width:200px; max-height:200px; margin-top:10px; border-radius:8px; box-shadow: 0 0 24px rgba(255,169,77,0.3);">`;
+      }, 'image/png');
+    };
+    img.onerror = () => {
+      preview.innerHTML = '<div class="text-sm text-red-400">⚠️ SVG-Render fehlgeschlagen</div>';
+    };
+    img.src = url;
+  } catch (e) {
+    preview.innerHTML = '<div class="text-sm text-red-400">⚠️ ' + escapeHTML(e.message) + '</div>';
+  }
+}
+
+function copyEmbed() {
+  const text = document.getElementById('embedSnippet').value;
+  navigator.clipboard.writeText(text).then(() => showToast('📋 Embed-Code kopiert')).catch(() => alert('Copy fehlgeschlagen'));
+}
+
+function copyText(text, btn) {
+  navigator.clipboard.writeText(text).then(() => {
+    if (btn) {
+      const orig = btn.textContent;
+      btn.textContent = '✓';
+      setTimeout(() => btn.textContent = orig, 1200);
+    }
+    showToast('📋 Kopiert');
+  }).catch(() => alert('Copy fehlgeschlagen'));
+}
 
 // ============ IDEAS ============
 const IDEAS_KEY = 'admin:ideas';  // global, not account-specific
