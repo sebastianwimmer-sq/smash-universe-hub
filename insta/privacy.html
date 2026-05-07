@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Privacy — PEAKING</title>
+<meta name="description" content="PEAKING Privacy Policy — DSGVO-konform, alle Daten lokal im Browser.">
+<link rel="icon" href="assets/logo.svg" type="image/svg+xml">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#FFA94D">
+<link rel="stylesheet" href="assets/effects.css">
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  body { background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); min-height: 100dvh; color: white; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+  .glass { background: rgba(30, 41, 59, 0.6); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); }
+  .neon { color: #FFA94D; }
+  .text-sunrise { background: linear-gradient(135deg, #FF6B6B, #FFA94D, #FFD43B); -webkit-background-clip: text; background-clip: text; color: transparent; -webkit-text-fill-color: transparent; }
+  h2 { color: #FFA94D; font-weight: bold; font-size: 1.25rem; margin-top: 2rem; margin-bottom: 0.75rem; }
+  h3 { color: #f1f5f9; font-weight: bold; font-size: 1rem; margin-top: 1.25rem; margin-bottom: 0.5rem; }
+  p, li { color: #cbd5e1; line-height: 1.7; margin-bottom: 0.75rem; font-size: 0.95rem; }
+  ul { padding-left: 1.5rem; list-style-type: disc; }
+  a { color: #FFA94D; text-decoration: underline; }
+  code { background: rgba(15, 23, 42, 0.8); padding: 1px 6px; border-radius: 4px; font-size: 0.85em; color: #FFA94D; }
+</style>
+</head>
+<body class="bg-depth">
+
+<div class="max-w-3xl mx-auto px-5 py-12">
+
+  <div class="text-center mb-10">
+    <img src="assets/logo.svg" alt="PEAKING" class="w-16 h-16 mx-auto mb-3 logo-glow">
+    <h1 class="text-4xl font-black tracking-tight mb-2"><span class="text-sunrise">Privacy Policy</span></h1>
+    <p class="text-sm text-gray-400">Last updated: 7. Mai 2026 · DSGVO-konform</p>
+  </div>
+
+  <div class="glass rounded-3xl p-8">
+
+    <h2>TL;DR (Plain-Speak)</h2>
+    <p>PEAKING speichert <b>alle deine Daten ausschließlich lokal in deinem Browser</b> (localStorage). Wir haben kein Backend, kein Tracking, keine Cookies, keine Analytics, kein Daten-Sharing. Du bist <b class="neon">100% in Control</b> deiner Daten.</p>
+
+    <h2>1. Verantwortlicher</h2>
+    <p>Sebastian Wimmer<br>
+    Email: <a href="mailto:hello@smashuniverse.info">hello@smashuniverse.info</a></p>
+
+    <h2>2. Welche Daten werden verarbeitet?</h2>
+    <h3>Lokal im Browser (localStorage)</h3>
+    <p>Folgende Daten werden ausschließlich in deinem Browser gespeichert (NICHT auf unseren Servern):</p>
+    <ul>
+      <li><code>smash:auth</code> — Login-Status (gehashtes Token, läuft nach 24h ab)</li>
+      <li><code>smash:currentAccount</code> — welcher Account aktuell aktiv ist</li>
+      <li><code>smash:&lt;account&gt;:reels</code> — deine getrackten Insta-Reels</li>
+      <li><code>smash:&lt;account&gt;:ideas</code> — deine Reel-Ideen</li>
+      <li><code>smash:&lt;account&gt;:calendar</code> — dein Posting-Plan</li>
+      <li><code>smash:&lt;account&gt;:bipLogs</code> — deine BIP-Daily-Logs</li>
+      <li><code>smash:&lt;account&gt;:goals</code> — Follower-Ziele</li>
+      <li><code>smash:&lt;account&gt;:achievements</code> — freigeschaltete Badges</li>
+      <li>... weitere modulspezifische Settings</li>
+    </ul>
+    <p>→ Diese Daten verlassen <b>NIEMALS deinen Browser</b>. Wir haben keinen Zugriff darauf.</p>
+
+    <h3>Server-seitig: KEINE Daten</h3>
+    <p>PEAKING ist eine reine Static-HTML/CSS/JavaScript-Anwendung gehostet auf GitHub Pages. Es gibt kein Backend, keine Datenbank, keine Server-Logs auf User-Level.</p>
+
+    <h2>3. Cookies</h2>
+    <p>PEAKING setzt <b>keine Cookies</b>. Wir nutzen ausschließlich localStorage (technisch sind Cookies und localStorage verschiedene Technologien — localStorage triggert keinen Cookie-Banner-Pflicht).</p>
+
+    <h2>4. Externe Dienste</h2>
+    <p>PEAKING lädt 2 externe Ressourcen via CDN für Performance:</p>
+    <ul>
+      <li><b>Tailwind CSS</b> via cdn.tailwindcss.com (CSS-Framework)</li>
+      <li><b>Chart.js</b> via cdn.jsdelivr.net (Chart-Library)</li>
+    </ul>
+    <p>Beide CDNs könnten theoretisch IP-Adressen loggen. Wir empfehlen Browser-Tracking-Blocker für maximale Privacy.</p>
+
+    <h2>5. Hosting</h2>
+    <p>PEAKING ist auf <b>GitHub Pages</b> gehostet (Microsoft, USA). GitHub kann Server-Logs (IP, User-Agent) erstellen. Dies geschieht außerhalb unserer Kontrolle. Mehr Info: <a href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement" target="_blank">GitHub Privacy Statement</a>.</p>
+
+    <h2>6. Instagram-Integration (Future-Phase)</h2>
+    <p>Wenn du PEAKING später mit deinem Instagram-Account via Meta Graph API verbinden solltest:</p>
+    <ul>
+      <li>Authentication via offiziellem Meta OAuth 2.0 Flow</li>
+      <li>Wir speichern Access-Tokens lokal in deinem Browser (NIE auf Server)</li>
+      <li>Pulled Daten: nur deine eigenen Posts, Insights, Account-Info</li>
+      <li>Kein Scraping fremder Accounts, kein Bot-Behavior</li>
+      <li>Du kannst Connection jederzeit in Insta-Settings widerrufen</li>
+    </ul>
+
+    <h2>7. Deine Rechte (DSGVO)</h2>
+    <p>Da wir keine Daten serverseitig speichern, hast du volle Kontrolle:</p>
+    <ul>
+      <li><b>Auskunft:</b> Alle Daten sind in deinem Browser-DevTools → Application → Local Storage</li>
+      <li><b>Löschung:</b> Settings-Modul → „Reset" → wipt alle Daten lokal</li>
+      <li><b>Export:</b> Settings-Modul → „Komplett-Backup" → JSON-Export aller Daten</li>
+      <li><b>Übertragbarkeit:</b> JSON-Export ist Standard-Format, in jedes Tool importierbar</li>
+    </ul>
+
+    <h2>8. Änderungen</h2>
+    <p>Wir können diese Privacy Policy aktualisieren. Bei wesentlichen Änderungen informieren wir via Tool-Banner. Stand: <b>7. Mai 2026</b>.</p>
+
+    <h2>9. Kontakt</h2>
+    <p>Bei Fragen: <a href="mailto:hello@smashuniverse.info">hello@smashuniverse.info</a></p>
+
+  </div>
+
+  <div class="text-center text-xs text-gray-500 mt-8">
+    <a href="/welcome" class="hover:text-white">← Welcome</a> ·
+    <a href="/" class="hover:text-white">Login</a> ·
+    <a href="/terms" class="hover:text-white">Terms</a> ·
+    <a href="/manifest-page.html" class="hover:text-white">Manifest</a>
+  </div>
+
+</div>
+
+</body>
+</html>
