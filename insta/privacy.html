@@ -30,7 +30,7 @@
   <div class="text-center mb-10">
     <img src="assets/logo.svg" alt="PEAKING" class="w-16 h-16 mx-auto mb-3 logo-glow">
     <h1 class="text-4xl font-black tracking-tight mb-2"><span class="text-sunrise">Privacy Policy</span></h1>
-    <p class="text-sm text-gray-400">Last updated: 7. Mai 2026 · DSGVO-konform</p>
+    <p class="text-sm text-gray-400">Last updated: 9. Mai 2026 · DSGVO-konform · Meta-API-konform</p>
   </div>
 
   <div class="glass rounded-3xl p-8">
@@ -75,30 +75,82 @@
     <h2>5. Hosting</h2>
     <p>PEAKING ist auf <b>GitHub Pages</b> gehostet (Microsoft, USA). GitHub kann Server-Logs (IP, User-Agent) erstellen. Dies geschieht außerhalb unserer Kontrolle. Mehr Info: <a href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement" target="_blank">GitHub Privacy Statement</a>.</p>
 
-    <h2>6. Instagram-Integration (Future-Phase)</h2>
-    <p>Wenn du PEAKING später mit deinem Instagram-Account via Meta Graph API verbinden solltest:</p>
+    <h2>6. Meta Graph API / Instagram-Integration</h2>
+    <p>PEAKING bietet eine optionale Integration mit der <b>Meta Graph API</b>, damit du deine eigenen Instagram-Business-Account-Daten direkt in die App importieren kannst (statt manuell einzutragen).</p>
+
+    <h3>6.1 Authentication-Flow</h3>
     <ul>
-      <li>Authentication via offiziellem Meta OAuth 2.0 Flow</li>
-      <li>Wir speichern Access-Tokens lokal in deinem Browser (NIE auf Server)</li>
-      <li>Pulled Daten: nur deine eigenen Posts, Insights, Account-Info</li>
-      <li>Kein Scraping fremder Accounts, kein Bot-Behavior</li>
-      <li>Du kannst Connection jederzeit in Insta-Settings widerrufen</li>
+      <li>Du authentifizierst dich direkt bei Meta via offiziellem <b>OAuth 2.0-Flow</b></li>
+      <li>Wir bekommen <b>keine Login-Credentials</b> (kein Username, kein Passwort)</li>
+      <li>Meta gibt nach erfolgreichem Login einen <b>Access-Token</b> zurück</li>
+      <li>Der Token wird ausschließlich <b>lokal im Browser</b> (localStorage) gespeichert — nie auf einem Server</li>
+    </ul>
+
+    <h3>6.2 Beantragte Permissions (Scopes)</h3>
+    <p>Die App fragt nur die minimal notwendigen Permissions an:</p>
+    <ul>
+      <li><code>instagram_basic</code> — liest dein Profil (Username, Followercount, Media-Count)</li>
+      <li><code>instagram_manage_insights</code> — liest Insights deiner eigenen Posts/Reels (Views, Reach, Engagement)</li>
+      <li><code>pages_show_list</code> — listet die mit dem Insta-Account verknüpfte Facebook-Page</li>
+      <li><code>pages_read_engagement</code> — liest Engagement-Daten der verknüpften Page</li>
+    </ul>
+    <p>Wir fragen <b>NICHT</b> nach: <code>instagram_content_publish</code> (kein Auto-Posten), <code>instagram_manage_messages</code> (kein DM-Zugriff), oder Permissions für fremde Accounts.</p>
+
+    <h3>6.3 Welche Daten werden geladen?</h3>
+    <ul>
+      <li>Deine eigenen Reels/Posts (ID, Caption, Timestamp, Permalink)</li>
+      <li>Insights deiner eigenen Reels/Posts (Views, Reach, Likes, Comments, Saves, Shares)</li>
+      <li>Account-Statistiken (Followercount, aggregierte Engagement-Rate)</li>
+    </ul>
+    <p>→ Es werden <b>ausschließlich Daten deines eigenen Accounts</b> geladen. Kein Scraping fremder Accounts. Kein Bot-Behavior. Keine Inhalte werden ohne deine explizite Bestätigung verändert oder gepostet.</p>
+
+    <h3>6.4 Wie werden die Meta-Daten gespeichert?</h3>
+    <ul>
+      <li>Access-Token: lokal in deinem Browser (<code>smash:meta_token</code>), gültig laut Meta-Standard ~60 Tage, automatisch löschbar via Settings-Modul</li>
+      <li>Geladene Reel/Insight-Daten: lokal in deinem Browser (<code>smash:&lt;account&gt;:reels</code>)</li>
+      <li><b>Keine serverseitige Speicherung</b> — wir haben kein Backend, das Meta-Daten empfängt oder cached</li>
+    </ul>
+
+    <h3>6.5 Compliance</h3>
+    <ul>
+      <li>Vollständige Compliance mit <a href="https://developers.facebook.com/terms/" target="_blank">Meta Platform Terms</a> und <a href="https://developers.facebook.com/devpolicy/" target="_blank">Meta Developer Policies</a></li>
+      <li>Du kannst die Connection jederzeit widerrufen — entweder in der App (Settings → Meta-Connection trennen) oder direkt in deinen Insta-Settings (App-Berechtigungen verwalten)</li>
+      <li>Bei Widerruf wird der Access-Token sofort lokal gelöscht; eine Wiederherstellung ist nur durch erneuten OAuth-Flow möglich</li>
     </ul>
 
     <h2>7. Deine Rechte (DSGVO)</h2>
     <p>Da wir keine Daten serverseitig speichern, hast du volle Kontrolle:</p>
     <ul>
-      <li><b>Auskunft:</b> Alle Daten sind in deinem Browser-DevTools → Application → Local Storage</li>
-      <li><b>Löschung:</b> Settings-Modul → „Reset" → wipt alle Daten lokal</li>
-      <li><b>Export:</b> Settings-Modul → „Komplett-Backup" → JSON-Export aller Daten</li>
-      <li><b>Übertragbarkeit:</b> JSON-Export ist Standard-Format, in jedes Tool importierbar</li>
+      <li><b>Auskunft (Art. 15 DSGVO):</b> Alle Daten sind in deinem Browser-DevTools → Application → Local Storage einsehbar</li>
+      <li><b>Berichtigung (Art. 16):</b> Direkt in der App via jeweiligem Modul</li>
+      <li><b>Löschung (Art. 17):</b> Settings-Modul → „Reset" → wipt alle Daten lokal in &lt;1 Sekunde</li>
+      <li><b>Datenübertragbarkeit (Art. 20):</b> Settings-Modul → „Komplett-Backup" → JSON-Export aller Daten</li>
+      <li><b>Widerspruch (Art. 21):</b> App-Nutzung beenden + Reset durchführen</li>
     </ul>
 
-    <h2>8. Änderungen</h2>
-    <p>Wir können diese Privacy Policy aktualisieren. Bei wesentlichen Änderungen informieren wir via Tool-Banner. Stand: <b>7. Mai 2026</b>.</p>
+    <h2>8. Daten-Löschung (Data Deletion Request)</h2>
+    <p>Da PEAKING keinen Backend-Server hat, kannst du deine Daten zu 100% selbst löschen:</p>
+    <ul>
+      <li><b>Lokal in der App:</b> Settings-Modul → „Reset" → alle Daten werden sofort entfernt</li>
+      <li><b>Meta-Connection trennen:</b> Settings → „Meta-Connection trennen" → Token wird invalidiert + lokal gelöscht; zusätzlich kannst du die App in deinen <a href="https://www.facebook.com/settings?tab=business_tools" target="_blank">Facebook Business-Tools-Einstellungen</a> entfernen</li>
+      <li><b>Per Email-Anfrage:</b> Falls du eine schriftliche Bestätigung möchtest, schicke eine Email an <a href="mailto:info@peaking.world?subject=Data%20Deletion%20Request">info@peaking.world</a> mit Betreff „Data Deletion Request". Antwort innerhalb von 30 Tagen.</li>
+    </ul>
+    <p>Da keine serverseitigen Daten existieren, ist der lokale Reset bereits eine vollständige Löschung im Sinne von Art. 17 DSGVO.</p>
 
-    <h2>9. Kontakt</h2>
-    <p>Bei Fragen: <a href="mailto:info@peaking.world">info@peaking.world</a></p>
+    <h2>9. Daten-Aufbewahrungsdauer (Retention)</h2>
+    <ul>
+      <li><b>localStorage-Daten:</b> bleiben bis zum manuellen Reset oder Browser-Cache-Clear durch den User</li>
+      <li><b>Meta Access-Token:</b> 60 Tage Standard-Gültigkeit (Meta-Policy), dann erneutes OAuth nötig</li>
+      <li><b>Server-Logs (GitHub Pages):</b> außerhalb unserer Kontrolle — siehe <a href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement" target="_blank">GitHub Privacy Statement</a></li>
+    </ul>
+
+    <h2>10. Änderungen</h2>
+    <p>Wir können diese Privacy Policy aktualisieren. Bei wesentlichen Änderungen informieren wir via Tool-Banner. Stand: <b>9. Mai 2026</b>.</p>
+
+    <h2>11. Kontakt</h2>
+    <p>Bei Fragen, Datenschutz-Anfragen oder Data Deletion Requests:<br>
+    Sebastian Wimmer · Burghauser Straße 35 · 84533 Haiming · Deutschland<br>
+    Email: <a href="mailto:info@peaking.world">info@peaking.world</a></p>
 
   </div>
 
