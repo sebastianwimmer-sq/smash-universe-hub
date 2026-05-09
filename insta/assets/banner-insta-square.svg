@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1080" preserveAspectRatio="xMidYMid meet">
+  <title>PEAKING Insta Square-Cover — Always peaking.</title>
+  <defs>
+    <linearGradient id="bgSunrise" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FF6B6B"/>
+      <stop offset="50%" stop-color="#FFA94D"/>
+      <stop offset="100%" stop-color="#FFD43B"/>
+    </linearGradient>
+    <radialGradient id="sunDisk" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#FFFCEC" stop-opacity="0.45"/>
+      <stop offset="50%" stop-color="#FFE066" stop-opacity="0.30"/>
+      <stop offset="100%" stop-color="#FFA94D" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="mtnDark" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#5C1F1F" stop-opacity="0.92"/>
+      <stop offset="100%" stop-color="#2A0E0E" stop-opacity="1"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1080" height="1080" fill="url(#bgSunrise)"/>
+  <circle cx="540" cy="460" r="380" fill="url(#sunDisk)"/>
+
+  <text x="540" y="480" font-family="Inter, -apple-system, system-ui, sans-serif"
+        font-size="170" font-weight="900" fill="#ffffff"
+        text-anchor="middle" letter-spacing="-5">PEAKING</text>
+  <text x="540" y="570" font-family="Inter, -apple-system, system-ui, sans-serif"
+        font-size="52" font-weight="500" font-style="italic"
+        fill="#ffffff" fill-opacity="0.92"
+        text-anchor="middle">Always peaking.</text>
+
+  <path d="M 0 850 L 180 700 L 360 780 L 540 640 L 720 740 L 900 680 L 1080 780 L 1080 1080 L 0 1080 Z"
+        fill="url(#mtnDark)" opacity="0.78"/>
+  <path d="M 0 950 L 140 850 L 320 920 L 480 820 L 640 880 L 820 830 L 1080 920 L 1080 1080 L 0 1080 Z"
+        fill="url(#mtnDark)"/>
+
+  <polygon points="540,640 515,690 565,690" fill="#ffffff" opacity="0.85"/>
+
+  <text x="540" y="1020" font-family="Inter, -apple-system, system-ui, sans-serif"
+        font-size="26" font-weight="700"
+        fill="#ffffff" fill-opacity="0.80"
+        text-anchor="middle" letter-spacing="5">THE CLIMB IS THE PEAK</text>
+</svg>

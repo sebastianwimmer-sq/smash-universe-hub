@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1920" preserveAspectRatio="xMidYMid meet">
+  <title>PEAKING Insta Story-Banner — Always peaking.</title>
+  <defs>
+    <!-- Sunrise-BG: diagonal gradient -->
+    <linearGradient id="bgSunrise" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FF6B6B"/>
+      <stop offset="50%" stop-color="#FFA94D"/>
+      <stop offset="100%" stop-color="#FFD43B"/>
+    </linearGradient>
+    <!-- Sun-Disk hinter Wordmark -->
+    <radialGradient id="sunDisk" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#FFFCEC" stop-opacity="0.45"/>
+      <stop offset="50%" stop-color="#FFE066" stop-opacity="0.30"/>
+      <stop offset="100%" stop-color="#FFA94D" stop-opacity="0"/>
+    </radialGradient>
+    <!-- Mountain-silhouette gradient -->
+    <linearGradient id="mtnDark" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#5C1F1F" stop-opacity="0.92"/>
+      <stop offset="100%" stop-color="#2A0E0E" stop-opacity="1"/>
+    </linearGradient>
+    <linearGradient id="mtnMid" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#7A2C2C" stop-opacity="0.78"/>
+      <stop offset="100%" stop-color="#3D1414" stop-opacity="0.92"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Sunrise Background -->
+  <rect width="1080" height="1920" fill="url(#bgSunrise)"/>
+
+  <!-- Sun-Disk Glow hinter Wordmark -->
+  <circle cx="540" cy="780" r="520" fill="url(#sunDisk)"/>
+
+  <!-- Center Wordmark "PEAKING" -->
+  <text x="540" y="820" font-family="Inter, -apple-system, system-ui, sans-serif"
+        font-size="200" font-weight="900" fill="#ffffff"
+        text-anchor="middle" letter-spacing="-6"
+        style="text-shadow: 0 4px 24px rgba(0,0,0,0.18);">PEAKING</text>
+
+  <!-- Subtitle "Always peaking." italic -->
+  <text x="540" y="930" font-family="Inter, -apple-system, system-ui, sans-serif"
+        font-size="64" font-weight="500" font-style="italic"
+        fill="#ffffff" fill-opacity="0.92"
+        text-anchor="middle" letter-spacing="0.5">Always peaking.</text>
+
+  <!-- Mountain silhouette layers (bottom) -->
+  <!-- Back layer (lighter, taller) -->
+  <path d="M 0 1500 L 180 1280 L 360 1380 L 540 1180 L 720 1320 L 900 1240 L 1080 1380 L 1080 1920 L 0 1920 Z"
+        fill="url(#mtnMid)"/>
+  <!-- Front layer (darker, smaller) -->
+  <path d="M 0 1620 L 140 1480 L 320 1560 L 480 1420 L 640 1500 L 820 1440 L 1080 1580 L 1080 1920 L 0 1920 Z"
+        fill="url(#mtnDark)"/>
+
+  <!-- Tiny triangle peak markers on highest peaks -->
+  <polygon points="540,1180 510,1240 570,1240" fill="#ffffff" opacity="0.85"/>
+  <polygon points="480,1420 460,1460 500,1460" fill="#ffffff" opacity="0.6"/>
+
+  <!-- Bottom tagline -->
+  <text x="540" y="1810" font-family="Inter, -apple-system, system-ui, sans-serif"
+        font-size="34" font-weight="700"
+        fill="#ffffff" fill-opacity="0.85"
+        text-anchor="middle" letter-spacing="6">THE CLIMB IS THE PEAK</text>
+
+  <!-- Top-Left Mini-Wordmark for context -->
+  <text x="80" y="120" font-family="Inter, -apple-system, system-ui, sans-serif"
+        font-size="32" font-weight="800"
+        fill="#ffffff" fill-opacity="0.75"
+        letter-spacing="3">PEAKING.WORLD</text>
+</svg>
