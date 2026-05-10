@@ -3,6 +3,7 @@
   "short_name": "PEAKING",
   "description": "Personal Insta-Tracking-Tool für Solo-Creators. From climb to peak.",
   "start_url": "/",
+  "scope": "/",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#0f172a",
@@ -13,6 +14,12 @@
       "sizes": "any",
       "type": "image/svg+xml",
       "purpose": "any"
+    },
+    {
+      "src": "assets/logo.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
     }
   ],
   "categories": ["productivity", "lifestyle", "social"]
