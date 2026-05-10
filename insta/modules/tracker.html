@@ -580,6 +580,85 @@ function updateCharts() {
   });
 }
 
+// 10.05.2026 — Reel Tracker Card v2 (PEAKING-3 ZIP Design-Refactor)
+// Glass-Card mit Pillar-Badge + Cover-Placeholder + Sparkline + Action-Pills.
+// Vanilla JS, kein React. Datenmodell unverändert (rückwärts-kompatibel).
+
+function relativeDate(iso) {
+  if (!iso) return '';
+  const d = new Date(iso);
+  const diff = Math.floor((Date.now() - d.getTime()) / 86400000);
+  if (diff < 1) return 'heute';
+  if (diff === 1) return 'gestern';
+  if (diff < 7) return `vor ${diff} Tagen`;
+  if (diff < 14) return 'vor 1 Woche';
+  if (diff < 30) return `vor ${Math.floor(diff/7)} Wochen`;
+  if (diff < 60) return 'vor 1 Monat';
+  return `vor ${Math.floor(diff/30)} Monaten`;
+}
+
+function reelSparkline(reel, allReels, color) {
+  // 7 letzte Reels derselben Pillar (inkl. aktueller) — Views als Spark-Daten
+  const same = allReels.filter(r => r.pillar === reel.pillar)
+    .sort((a, b) => new Date(a.date) - new Date(b.date));
+  const idx = same.findIndex(r => r.id === reel.id);
+  const slice = same.slice(Math.max(0, idx - 6), idx + 1);
+  const data = slice.map(r => r.views || 0);
+  while (data.length < 2) data.unshift(data[0] ?? 0);
+  const w = 60, h = 20;
+  const min = Math.min(...data), max = Math.max(...data);
+  const range = max - min || 1;
+  const stepX = w / (data.length - 1);
+  const pts = data.map((v, i) => `${(i * stepX).toFixed(1)},${(h - ((v - min) / range) * (h - 2) - 1).toFixed(1)}`);
+  const line = pts.join(' ');
+  const area = `0,${h} ${line} ${w},${h}`;
+  const last = data[data.length - 1];
+  const lastY = (h - ((last - min) / range) * (h - 2) - 1).toFixed(1);
+  const gid = `sg-${reel.id}`, aid = `sa-${reel.id}`;
+  return `<svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" style="display:block;overflow:visible" aria-label="7-Tage-Trend">
+    <defs>
+      <linearGradient id="${gid}" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0%" stop-color="#FF6B6B"/><stop offset="50%" stop-color="#FFA94D"/><stop offset="100%" stop-color="#FFD43B"/>
+      </linearGradient>
+      <linearGradient id="${aid}" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#FFA94D" stop-opacity="0.3"/><stop offset="100%" stop-color="#FFA94D" stop-opacity="0"/>
+      </linearGradient>
+    </defs>
+    <polygon points="${area}" fill="url(#${aid})"/>
+    <polyline points="${line}" fill="none" stroke="url(#${gid})" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"/>
+    <circle cx="${(data.length - 1) * stepX}" cy="${lastY}" r="1.8" fill="#FFD43B"/>
+  </svg>`;
+}
+
+function reuseReelAsIdea(id) {
+  const r = reels.find(x => x.id === id);
+  if (!r) return;
+  try {
+    const ideaKey = 'ideas';
+    const ideas = SmashApp.getData(ideaKey, []);
+    ideas.unshift({
+      id: Date.now(),
+      title: `[Recyclen] ${r.title}`,
+      pillar: r.pillar,
+      format: 'reel',
+      status: 'idea',
+      hook: r.title,
+      notes: `Re-Use von ${r.date} — ${r.views.toLocaleString('de-DE')} Views, ${r.notes || 'keine Notizen'}`,
+      createdAt: new Date().toISOString()
+    });
+    SmashApp.setData(ideaKey, ideas);
+    alert('💡 Als neue Idee gespeichert — schau im Idea-Bank-Modul.');
+  } catch (e) {
+    console.error('reuseReelAsIdea failed', e);
+    alert('Konnte nicht speichern. Schau in der Console.');
+  }
+}
+
+function gotoInsightsForReel(id) {
+  // Analytics-Modul öffnen — dort siehst du den Reel-Beitrag in den Charts.
+  window.location.href = 'analytics.html#reel-' + id;
+}
+
 function updateList() {
   const el = document.getElementById('reelList');
   if (reels.length === 0) {
@@ -588,34 +667,74 @@ function updateList() {
   }
 
   const sorted = [...reels].sort((a, b) => new Date(b.date) - new Date(a.date));
-  const emojis = { outdoor: '🏔️', gym: '💪', mindset: '🧠', plantbased: '🌿' };
+  const PI = SmashApp.PILLAR_INFO;
 
   el.innerHTML = sorted.map(r => {
-    const retention = r.length > 0 ? Math.round((r.watchTime / r.length) * 100) : 0;
-    const engagement = r.views > 0 ? (((r.likes + r.comments + r.saves + r.shares) / r.views) * 100).toFixed(1) : 0;
-    
+    const meta = PI[r.pillar] || { emoji: '📊', name: r.pillar, color: '#FFA94D' };
+    const totalEng = (r.likes||0) + (r.comments||0) + (r.saves||0) + (r.shares||0);
+    const er = r.views > 0 ? ((totalEng / r.views) * 100) : 0;
+    const erHot = er >= 5;
+    const rel = relativeDate(r.date);
+    const spark = reelSparkline(r, reels, meta.color);
+    const erColor = erHot
+      ? 'background:linear-gradient(135deg,#FF6B6B 0%,#FFA94D 50%,#FFD43B 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent'
+      : 'color:#fff';
+
     return `
-      <div class="bg-slate-800/50 rounded-2xl p-4">
-        <div class="flex items-start justify-between gap-3">
-          <div class="flex-1">
-            <div class="flex items-center gap-2 mb-1">
-              <span class="text-xl">${emojis[r.pillar]}</span>
-              <span class="font-bold">${r.title}</span>
-            </div>
-            <div class="text-sm text-gray-400 mb-2">${r.date} · ${r.hour}:00 Uhr ${r.audio ? '· 🎵 ' + r.audio : ''}</div>
-            <div class="grid grid-cols-3 md:grid-cols-6 gap-2 text-sm">
-              <div><span class="text-gray-400">Views:</span> <b>${r.views.toLocaleString('de-DE')}</b></div>
-              <div><span class="text-gray-400">Reach:</span> <b>${r.reach.toLocaleString('de-DE')}</b></div>
-              <div><span class="text-gray-400">Watch:</span> <b>${retention}%</b></div>
-              <div><span class="text-gray-400">Likes:</span> <b>${r.likes}</b></div>
-              <div><span class="text-gray-400">Saves:</span> <b>${r.saves}</b></div>
-              <div><span class="text-gray-400">Eng:</span> <b>${engagement}%</b></div>
-            </div>
-            ${r.notes ? `<div class="mt-2 text-sm text-gray-400 italic">📝 ${r.notes}</div>` : ''}
-          </div>
-          <button onclick="deleteReel(${r.id})" class="btn-danger text-white px-3 py-1 rounded-lg text-sm">🗑️</button>
+      <article class="reel-card" style="position:relative;display:flex;gap:12px;padding:12px;border-radius:14px;background:rgba(30,41,59,0.6);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,0.10);box-shadow:0 4px 12px rgba(0,0,0,0.25);transition:border-color 200ms,box-shadow 200ms" onmouseover="this.style.borderColor='rgba(255,169,77,0.25)';this.style.boxShadow='0 8px 24px rgba(255,169,77,0.18)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.10)';this.style.boxShadow='0 4px 12px rgba(0,0,0,0.25)'">
+        <!-- Cover -->
+        <div style="position:relative;flex-shrink:0;width:80px;height:142px;border-radius:10px;overflow:hidden;background:linear-gradient(160deg,${meta.color}55,${meta.color}15 60%,rgba(15,23,42,0.6));border:1px solid rgba(255,255,255,0.08);box-shadow:0 2px 8px rgba(0,0,0,0.4)">
+          <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:32px">${meta.emoji}</div>
+          <div style="position:absolute;top:6px;left:6px;padding:2px 6px;border-radius:4px;background:rgba(0,0,0,0.55);backdrop-filter:blur(6px);font-size:9px;font-weight:700;color:#fff;letter-spacing:0.05em">REEL</div>
+          <div style="position:absolute;left:0;right:0;bottom:0;height:40%;background:linear-gradient(180deg,transparent,rgba(0,0,0,0.55));pointer-events:none"></div>
         </div>
-      </div>
+        <!-- Content -->
+        <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:8px">
+          <!-- Header: Pillar + Date -->
+          <div style="display:flex;align-items:center;gap:8px;justify-content:space-between">
+            <span style="display:inline-flex;align-items:center;gap:5px;padding:2px 8px 2px 6px;border-radius:999px;font-size:10px;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;color:${meta.color};background:${meta.color}1f;border:1px solid ${meta.color}55;line-height:1">
+              <span style="width:5px;height:5px;border-radius:999px;background:${meta.color};box-shadow:0 0 6px ${meta.color}"></span>
+              ${meta.name}
+            </span>
+            <span style="font-size:11px;font-weight:500;color:#94a3b8;white-space:nowrap">${rel}</span>
+          </div>
+          <!-- Title -->
+          <h3 style="margin:0;font-size:14px;font-weight:700;color:#fff;line-height:1.3;letter-spacing:-0.01em;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;text-overflow:ellipsis">${r.title}</h3>
+          <!-- Stats grid -->
+          <div style="display:grid;grid-template-columns:repeat(4,1fr) auto;gap:8px;align-items:end">
+            <div style="display:flex;flex-direction:column;gap:1px;min-width:0">
+              <span style="font-size:9px;font-weight:600;color:#64748b;letter-spacing:0.08em;text-transform:uppercase;line-height:1">Views</span>
+              <span style="font-size:13px;font-weight:700;color:#fff;line-height:1.1">${(r.views||0).toLocaleString('de-DE')}</span>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:1px;min-width:0">
+              <span style="font-size:9px;font-weight:600;color:#64748b;letter-spacing:0.08em;text-transform:uppercase;line-height:1">Reach</span>
+              <span style="font-size:13px;font-weight:700;color:#fff;line-height:1.1">${(r.reach||0).toLocaleString('de-DE')}</span>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:1px;min-width:0">
+              <span style="font-size:9px;font-weight:600;color:#64748b;letter-spacing:0.08em;text-transform:uppercase;line-height:1">ER</span>
+              <span style="font-size:13px;font-weight:700;line-height:1.1;${erColor}">${er.toFixed(1)}<span style="font-size:9px;font-weight:600">%</span></span>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:1px;min-width:0">
+              <span style="font-size:9px;font-weight:600;color:#64748b;letter-spacing:0.08em;text-transform:uppercase;line-height:1">Saves</span>
+              <span style="font-size:13px;font-weight:700;color:#fff;line-height:1.1">💾 ${(r.saves||0).toLocaleString('de-DE')}</span>
+            </div>
+            <div style="align-self:end;padding-bottom:1px">${spark}</div>
+          </div>
+          ${r.notes ? `<div style="margin-top:2px;font-size:11px;color:#94a3b8;font-style:italic;line-height:1.4">📝 ${r.notes}</div>` : ''}
+          <!-- Action pills -->
+          <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:2px">
+            <button onclick="gotoInsightsForReel(${r.id})" style="display:inline-flex;align-items:center;gap:5px;padding:6px 10px;border-radius:999px;font-size:11px;font-weight:600;color:#cbd5e1;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);backdrop-filter:blur(8px);cursor:pointer;transition:all 160ms" onmouseover="this.style.color='#fff';this.style.background='rgba(255,255,255,0.08)';this.style.borderColor='rgba(255,169,77,0.35)'" onmouseout="this.style.color='#cbd5e1';this.style.background='rgba(255,255,255,0.04)';this.style.borderColor='rgba(255,255,255,0.08)'">
+              <span style="font-size:12px;line-height:1">📊</span><span>Insights</span>
+            </button>
+            <button onclick="reuseReelAsIdea(${r.id})" style="display:inline-flex;align-items:center;gap:5px;padding:6px 10px;border-radius:999px;font-size:11px;font-weight:600;color:#cbd5e1;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);backdrop-filter:blur(8px);cursor:pointer;transition:all 160ms" onmouseover="this.style.color='#fff';this.style.background='rgba(255,255,255,0.08)';this.style.borderColor='rgba(255,169,77,0.35)'" onmouseout="this.style.color='#cbd5e1';this.style.background='rgba(255,255,255,0.04)';this.style.borderColor='rgba(255,255,255,0.08)'">
+              <span style="font-size:12px;line-height:1">♻️</span><span>Re-Use</span>
+            </button>
+            <button onclick="deleteReel(${r.id})" style="display:inline-flex;align-items:center;gap:5px;padding:6px 10px;border-radius:999px;font-size:11px;font-weight:600;color:#94a3b8;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);backdrop-filter:blur(8px);cursor:pointer;transition:all 160ms" onmouseover="this.style.color='#FF6B6B';this.style.background='rgba(255,107,107,0.10)';this.style.borderColor='rgba(255,107,107,0.40)'" onmouseout="this.style.color='#94a3b8';this.style.background='rgba(255,255,255,0.04)';this.style.borderColor='rgba(255,255,255,0.08)'">
+              <span style="font-size:12px;line-height:1">🗑️</span><span>Löschen</span>
+            </button>
+          </div>
+        </div>
+      </article>
     `;
   }).join('');
 }
