@@ -1,217 +1,209 @@
-<!DOCTYPE html>
-<html lang="de">
+<!doctype html>
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>PEAKING — Always peaking. ⛰️</title>
-<meta name="description" content="PEAKING — der AI-native Solo-Creator-Stack für Instagram. 18 Module für Tracker, Captions, Hooks, BIP, Growth. Built solo. Always peaking.">
+<meta name="description" content="PEAKING — der AI-native Solo-Creator-Stack für Insta. Tracking, Hooks, Captions, Coach. Built solo. Always peaking.">
 <meta property="og:title" content="PEAKING — Always peaking.">
-<meta property="og:description" content="AI + Creator Tools für Solo-Influencer. Building in Public.">
+<meta property="og:description" content="AI-native Solo-Creator-Stack für Insta. Built solo. Public progress.">
 <meta property="og:image" content="https://peaking.world/assets/logo.svg">
 <meta property="og:url" content="https://peaking.world/welcome">
 <meta property="og:type" content="website">
-<link rel="icon" href="assets/logo.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="assets/logo.svg">
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#FFA94D">
+<link rel="icon" href="assets/logo.svg">
+<link rel="stylesheet" >
 <link rel="stylesheet" href="assets/effects.css">
-<script src="https://cdn.tailwindcss.com"></script>
 <style>
-  body {
-    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-    min-height: 100dvh;
-    color: white;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  html, body { margin: 0; padding: 0; background: #0f172a; color: #fff; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, sans-serif; }
+  body { background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); background-attachment: fixed; overflow-x: hidden; }
+  body::before {
+    content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 0;
+    background:
+      radial-gradient(circle at 18% 12%, rgba(255,169,77,0.10), transparent 38%),
+      radial-gradient(circle at 88% 28%, rgba(255,107,107,0.07), transparent 36%),
+      radial-gradient(circle at 75% 92%, rgba(255,212,59,0.05), transparent 40%);
   }
-  .glass {
-    background: rgba(30, 41, 59, 0.6);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255,255,255,0.1);
-  }
-  .neon { color: #FFA94D; }
-  .text-sunrise {
-    background: linear-gradient(135deg, #FF6B6B, #FFA94D, #FFD43B);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-    -webkit-text-fill-color: transparent;
-  }
-  .btn-primary {
-    background: linear-gradient(135deg, #FFA94D, #FF6B6B);
-    color: #0f172a;
-    font-weight: bold;
-    transition: all 0.2s;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 14px 28px;
-    border-radius: 14px;
-  }
-  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 12px 28px rgba(255, 169, 77, 0.4); }
-  .btn-secondary {
-    background: rgba(15, 23, 42, 0.6);
-    border: 1px solid rgba(255, 169, 77, 0.3);
-    color: white;
-    transition: all 0.2s;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 14px 28px;
-    border-radius: 14px;
-  }
-  .btn-secondary:hover { border-color: #FFA94D; box-shadow: 0 8px 20px rgba(255, 169, 77, 0.2); }
-  .feature-card {
-    transition: all 0.25s;
-  }
-  .feature-card:hover {
-    transform: translateY(-4px);
-    border-color: rgba(255, 169, 77, 0.4);
-    box-shadow: 0 12px 28px rgba(0,0,0,0.3), 0 0 24px rgba(255, 169, 77, 0.15);
+  .wrap { position: relative; z-index: 1; max-width: 1180px; margin: 0 auto; padding: 0 24px; }
+
+  /* Nav */
+  nav { display: flex; align-items: center; justify-content: space-between; padding: 22px 0; }
+  .brand { display: flex; align-items: center; gap: 10px; }
+  .brand img { width: 36px; height: 36px; filter: drop-shadow(0 0 12px rgba(255,169,77,0.5)); }
+  .wm { font-weight: 900; font-size: 22px; letter-spacing: -0.02em; background: linear-gradient(135deg,#FF6B6B,#FFA94D,#FFD43B); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+  .nav-links { display: flex; gap: 28px; font-size: 14px; color: #cbd5e1; }
+  .nav-links a { color: inherit; text-decoration: none; }
+  .nav-links a:hover { color: #FFA94D; }
+  .nav-cta { background: rgba(15,23,42,0.7); border: 1px solid rgba(255,169,77,0.3); color: #fff; padding: 8px 16px; border-radius: 999px; font-size: 13px; font-weight: 700; cursor: pointer; font-family: inherit; }
+
+  /* Hero */
+  .hero { padding: 60px 0 80px; text-align: center; }
+  .eyebrow-pill { display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px; border-radius: 999px; font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #FFA94D; background: rgba(255,169,77,0.12); border: 1px solid rgba(255,169,77,0.3); margin-bottom: 24px; }
+  .live-dot { width: 6px; height: 6px; border-radius: 50%; background: #FFA94D; box-shadow: 0 0 12px #FFA94D; animation: peaking-pulse 2s ease-in-out infinite; }
+  .hero h1 { font-size: clamp(44px, 8vw, 88px); font-weight: 900; letter-spacing: -0.03em; line-height: 1.02; margin: 0 0 18px; }
+  .hero h1 .grad { background: linear-gradient(135deg, #FF6B6B 0%, #FFA94D 50%, #FFD43B 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+  .hero p.lede { font-size: clamp(16px, 2vw, 20px); color: #cbd5e1; max-width: 640px; margin: 0 auto 32px; line-height: 1.55; }
+  .ctas { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+  .btn-primary { background: linear-gradient(135deg,#FFD43B,#FFA94D,#FF6B6B); color: #0f172a; font-weight: 800; padding: 14px 28px; border: none; border-radius: 14px; font-size: 15px; cursor: pointer; box-shadow: 0 8px 24px rgba(255,169,77,0.35); font-family: inherit; transition: transform 0.12s, box-shadow 0.25s; }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 14px 36px rgba(255,169,77,0.5); }
+  .btn-ghost { background: rgba(15,23,42,0.6); color: #fff; border: 1px solid rgba(255,169,77,0.3); padding: 14px 24px; border-radius: 14px; font-size: 14px; font-weight: 700; cursor: pointer; font-family: inherit; }
+  .meta { margin-top: 24px; font-size: 12px; color: #64748b; }
+  .meta b { color: #cbd5e1; }
+
+  /* Mockup screenshot */
+  .mockup-wrap { margin: 56px auto 0; max-width: 1080px; position: relative; }
+  .mockup-wrap::before { content: ''; position: absolute; inset: -40px; background: radial-gradient(ellipse at center, rgba(255,169,77,0.18), transparent 60%); pointer-events: none; z-index: 0; }
+  .mockup { position: relative; z-index: 1; background: rgba(15,23,42,0.9); border: 1px solid rgba(255,169,77,0.25); border-radius: 20px; padding: 18px; box-shadow: 0 30px 80px rgba(0,0,0,0.5), 0 0 60px rgba(255,169,77,0.15); backdrop-filter: blur(12px); }
+  .mockup-bar { display: flex; gap: 6px; margin-bottom: 14px; }
+  .mockup-bar span { width: 10px; height: 10px; border-radius: 50%; background: rgba(255,255,255,0.15); }
+  .mockup-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+  .mockup-card { aspect-ratio: 1.1; background: rgba(30,41,59,0.7); border: 1px solid rgba(255,255,255,0.08); border-radius: 14px; padding: 12px; display: flex; flex-direction: column; justify-content: space-between; }
+  .mockup-card.hot { border-color: rgba(255,169,77,0.4); background: linear-gradient(135deg, rgba(255,107,107,0.15), rgba(255,212,59,0.10)); }
+  .mockup-card .em { font-size: 22px; }
+  .mockup-card .t { font-size: 11px; font-weight: 800; }
+  .mockup-card .s { font-size: 9px; color: #94a3b8; }
+  .mockup-card .v { font-size: 18px; font-weight: 800; color: #FFA94D; line-height: 1; }
+
+  /* Stack section */
+  .section { padding: 80px 0; }
+  .section-head { text-align: center; margin-bottom: 48px; }
+  .section h2 { font-size: clamp(28px, 4vw, 44px); font-weight: 800; letter-spacing: -0.02em; margin: 8px 0; }
+  .section h2 .grad { background: linear-gradient(135deg,#FF6B6B,#FFA94D,#FFD43B); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+  .section .sub { color: #94a3b8; font-size: 15px; max-width: 540px; margin: 8px auto 0; line-height: 1.55; }
+  .stack-eyebrow { font-size: 11px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: #FFA94D; }
+
+  .stack-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; }
+  .stack-tile { background: rgba(30,41,59,0.6); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.08); border-radius: 22px; padding: 22px; transition: transform 0.25s, border-color 0.25s, box-shadow 0.25s; }
+  .stack-tile:hover { transform: translateY(-4px); border-color: rgba(255,169,77,0.4); box-shadow: 0 18px 36px rgba(0,0,0,0.35), 0 0 24px rgba(255,169,77,0.15); }
+  .stack-tile .em { font-size: 32px; margin-bottom: 12px; }
+  .stack-tile .n { font-weight: 800; font-size: 17px; letter-spacing: -0.01em; }
+  .stack-tile .d { color: #94a3b8; font-size: 13px; margin-top: 6px; line-height: 1.5; }
+
+  /* Build-in-public band */
+  .bip { background: linear-gradient(120deg, rgba(255,107,107,0.10), rgba(255,169,77,0.12), rgba(255,212,59,0.10)); border-top: 1px solid rgba(255,169,77,0.18); border-bottom: 1px solid rgba(255,169,77,0.18); padding: 56px 0; }
+  .bip-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 20px; text-align: center; }
+  .bip-stat .n { font-size: 38px; font-weight: 900; letter-spacing: -0.02em; background: linear-gradient(135deg,#FFD43B,#FFA94D,#FF6B6B); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+  .bip-stat .l { font-size: 12px; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.12em; font-weight: 700; margin-top: 4px; }
+
+  /* Manifesto */
+  .manifesto { text-align: center; padding: 80px 0; }
+  .manifesto blockquote { margin: 0; font-size: clamp(24px, 3vw, 36px); font-weight: 700; letter-spacing: -0.01em; line-height: 1.35; max-width: 760px; margin-inline: auto; }
+  .manifesto blockquote em { font-style: italic; background: linear-gradient(135deg,#FF6B6B,#FFA94D,#FFD43B); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+  .manifesto .sig { margin-top: 24px; font-size: 13px; color: #64748b; }
+
+  /* Footer */
+  footer { padding: 40px 0 30px; border-top: 1px solid rgba(255,255,255,0.06); margin-top: 40px; }
+  .foot { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; font-size: 12px; color: #64748b; }
+  .foot a { color: #94a3b8; text-decoration: none; margin-left: 16px; }
+  .foot a:hover { color: #FFA94D; }
+
+  @media (max-width: 720px) {
+    .nav-links { display: none; }
+    .mockup-grid { grid-template-columns: repeat(2, 1fr); }
   }
 </style>
 </head>
-<body class="bg-depth">
+<body>
 
-<!-- Hero -->
-<section class="px-5 pt-12 pb-16 max-w-5xl mx-auto text-center">
-  <img src="assets/logo.svg" alt="PEAKING" class="w-28 h-28 mx-auto mb-6 peaking-pulse logo-glow-strong">
-
-  <h1 class="text-5xl md:text-7xl font-black tracking-tight mb-3">
-    <span class="text-sunrise">PEAKING</span>
-  </h1>
-  <p class="neon font-bold tracking-wide text-lg mb-6">Always peaking.</p>
-
-  <p class="text-gray-300 text-lg md:text-xl max-w-2xl mx-auto leading-relaxed mb-8">
-    Der <b>AI-native Solo-Creator-Stack</b> für Instagram. <b>18 Module</b> für Tracker, Hooks, Captions, BIP-Logs, Goals, Series.
-    Solo built. Public progress. <span class="neon">From climb to peak.</span>
-  </p>
-
-  <div class="flex flex-wrap gap-3 justify-center mb-8">
-    <a href="/" class="btn-primary">⚡ Login zum Tool →</a>
-    <a href="/links" class="btn-secondary">🔗 All Links</a>
-  </div>
-
-  <div class="text-xs text-gray-500">
-    Aktuell <b class="neon">Solo-Use</b> für vegetarianhulk + peakingworld. Beta-Access für Friends folgt.
-  </div>
-</section>
-
-<!-- Why PEAKING -->
-<section class="px-5 py-12 max-w-4xl mx-auto">
-  <div class="text-xs uppercase tracking-wider text-gray-500 font-bold text-center mb-3">Why PEAKING</div>
-  <h2 class="text-3xl md:text-4xl font-bold text-center mb-10">Solo-Creator deserve <span class="text-sunrise">better tools.</span></h2>
-
-  <div class="grid md:grid-cols-3 gap-4">
-    <div class="glass feature-card rounded-2xl p-6">
-      <div class="text-4xl mb-3">🪝</div>
-      <h3 class="font-bold mb-2">Hook-First-Tracking</h3>
-      <p class="text-sm text-gray-400 leading-relaxed">2026 Algo-Reality: 80% des Reach-Erfolgs entscheidet sich in den ersten 2 Sek. PEAKING tracked 2-Sec-Hold + Sends-per-Reach + 3-Layer-Funnel — die King-Metrics von Mosseri (Jan 2025).</p>
+<div class="wrap">
+  <nav>
+    <div class="brand">
+      <img src="assets/logo.svg" alt="" class="peaking-pulse"/>
+      <span class="wm">peaking</span>
     </div>
+    <div class="nav-links">
+      <a href="#stack">The Stack</a>
+      <a href="#bip">Build in Public</a>
+      <a href="#manifesto">Manifesto</a>
+      <a href="https://instagram.com/peakingworld">@peakingworld</a>
+    </div>
+    <a href="/" class="nav-cta" style="text-decoration:none;display:inline-block">🔓 Login</a>
+  </nav>
 
-    <div class="glass feature-card rounded-2xl p-6">
-      <div class="text-4xl mb-3">🤖</div>
-      <h3 class="font-bold mb-2">AI + Real Tools</h3>
-      <p class="text-sm text-gray-400 leading-relaxed">50+ verifizierte Hook-Patterns mit Win-Rate aus deinen eigenen Daten. Caption-Templates mit Variablen-System. Built mit Claude. Open about the Stack.</p>
+  <header class="hero">
+    <span class="eyebrow-pill"><span class="live-dot"></span>Day 23 · public build</span>
+    <h1>Always <span class="grad">peaking</span>.<br>The climb <em>is</em> the peak.</h1>
+    <p class="lede">Der AI-native Solo-Creator-Stack für Insta. Tracking, Hooks, Captions, Coach — alles in einem. Gebaut von einem Solo-Founder mit Claude Code, public &amp; live.</p>
+    <div class="ctas">
+      <a href="/" class="btn-primary" style="text-decoration:none;display:inline-block">⚡ Zum Tool →</a>
+      <a href="changelog.html" class="btn-ghost" style="text-decoration:none;display:inline-block">📊 See the build log</a>
     </div>
+    <div class="meta"><b>2.080 Follower</b> · <b>20 Module live</b> · <b>0 € Funding</b> · From 2k to 1M. Always peaking.</div>
 
-    <div class="glass feature-card rounded-2xl p-6">
-      <div class="text-4xl mb-3">📊</div>
-      <h3 class="font-bold mb-2">Building in Public</h3>
-      <p class="text-sm text-gray-400 leading-relaxed">Built solo, public stats. BIP-Daily-Log + 30-Tage-Bootstrap-Plan + Achievements + Goals. Real progress, no hype.</p>
+    <div class="mockup-wrap">
+      <div class="mockup">
+        <div class="mockup-bar"><span></span><span></span><span></span></div>
+        <div class="mockup-grid">
+          <div class="mockup-card hot"><div class="em">🔥</div><div><div class="t">Reel Tracker</div><div class="s">5 reels · ⌀ 1.240 views</div></div></div>
+          <div class="mockup-card"><div class="em">🪝</div><div><div class="t">Hook Library</div><div class="s">50+ patterns</div></div></div>
+          <div class="mockup-card"><div class="em">📊</div><div><div class="t">Analytics</div><div class="s">Säulen · WT</div></div></div>
+          <div class="mockup-card"><div class="em">🧭</div><div><div class="t">Coach</div><div class="s">AI sparring</div></div></div>
+          <div class="mockup-card"><div class="em">🎯</div><div><div class="t">Next Post</div><div class="s">Heute · 19:00</div></div></div>
+          <div class="mockup-card"><div class="em">📈</div><div><div class="t">Growth</div><div class="s">2k → 1M</div></div></div>
+          <div class="mockup-card"><div class="em">✍️</div><div><div class="t">Captions</div><div class="s">CTA · DACH</div></div></div>
+          <div class="mockup-card"><div class="em">⚡</div><div><div class="t">Sprints</div><div class="s">7d challenge</div></div></div>
+        </div>
+      </div>
     </div>
-  </div>
-</section>
+  </header>
+</div>
 
-<!-- The 18 Modules -->
-<section class="px-5 py-12 max-w-5xl mx-auto">
-  <div class="text-xs uppercase tracking-wider text-gray-500 font-bold text-center mb-3">The Stack</div>
-  <h2 class="text-3xl md:text-4xl font-bold text-center mb-10">18 Module · 5 Categories</h2>
-
-  <div class="grid md:grid-cols-5 gap-3 text-center text-xs">
-    <div class="glass rounded-xl p-4">
-      <div class="text-xl mb-2">🎯</div>
-      <div class="font-bold mb-1 neon">Track & Grow</div>
-      <div class="text-gray-400 leading-relaxed">Tracker · Analytics · Goals · BIP-Log · Achievements</div>
+<section class="section" id="stack">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="stack-eyebrow">The Stack</div>
+      <h2>20 Module. <span class="grad">Eine Mission.</span></h2>
+      <p class="sub">Alles was du als Solo-Creator brauchst — von Reel-Tracking bis AI-Coach. Kein SaaS-Bloat, keine 19€/Monat-Falle. Dein Tool. Dein Climb.</p>
     </div>
-    <div class="glass rounded-xl p-4">
-      <div class="text-xl mb-2">🎨</div>
-      <div class="font-bold mb-1 neon">Create</div>
-      <div class="text-gray-400 leading-relaxed">Recorder · Builder · Hook Library · Captions · Ideas</div>
-    </div>
-    <div class="glass rounded-xl p-4">
-      <div class="text-xl mb-2">📅</div>
-      <div class="font-bold mb-1 neon">Plan</div>
-      <div class="text-gray-400 leading-relaxed">Calendar · Series · Cross-Post · Growth</div>
-    </div>
-    <div class="glass rounded-xl p-4">
-      <div class="text-xl mb-2">🤝</div>
-      <div class="font-bold mb-1 neon">Engage</div>
-      <div class="text-gray-400 leading-relaxed">Inspiration · Quick Replies</div>
-    </div>
-    <div class="glass rounded-xl p-4">
-      <div class="text-xl mb-2">⚙️</div>
-      <div class="font-bold mb-1 neon">Admin</div>
-      <div class="text-gray-400 leading-relaxed">Settings · Backup · Multi-Account</div>
+    <div class="stack-grid">
+      <div class="stack-tile"><div class="em">🔥</div><div class="n">Reel Tracker</div><div class="d">Performance + 2026 Algo-Metrics. Watch-Time, Hook-Win-Rate, Säulen-Split.</div></div>
+      <div class="stack-tile"><div class="em">🪝</div><div class="n">Hook Library</div><div class="d">50+ erprobte Hook-Patterns aus DACH-Reels. Win-Rate getrackt pro Pattern.</div></div>
+      <div class="stack-tile"><div class="em">🧭</div><div class="n">PEAKING Coach</div><div class="d">AI-Sparring. Tagliches Briefing, ehrliches Feedback auf deinen letzten Reel.</div></div>
+      <div class="stack-tile"><div class="em">📈</div><div class="n">Growth Center</div><div class="d">Der 2k → 1M Pfad. Meilensteine, Hebel, was als Nächstes.</div></div>
+      <div class="stack-tile"><div class="em">📅</div><div class="n">Kalender</div><div class="d">Cluster Mo/Mi/Fr/Sa. Posting-Plan basierend auf Algo-Update 2026.</div></div>
+      <div class="stack-tile"><div class="em">⚙️</div><div class="n">+ 15 weitere</div><div class="d">Caption Lab · Ideen-Inbox · Recorder Setup · Analytics · Sprints · Engagement-Plan · Streaks &amp; Badges …</div></div>
     </div>
   </div>
 </section>
 
-<!-- Manifesto Snippet -->
-<section class="px-5 py-12 max-w-3xl mx-auto">
-  <div class="glass rounded-3xl p-8 md:p-12 text-center" style="background: linear-gradient(135deg, rgba(255, 107, 107, 0.08), rgba(255, 212, 59, 0.08)); border-color: rgba(255, 169, 77, 0.3);">
-    <div class="text-xs uppercase tracking-wider text-gray-500 font-bold mb-4">Manifesto</div>
-    <p class="text-2xl md:text-3xl font-bold leading-relaxed mb-6">
-      „The climb <span class="text-sunrise">is</span> the peak."
-    </p>
-    <p class="text-sm text-gray-300 leading-relaxed max-w-xl mx-auto">
-      Wir bauen für Solo-Creators die ehrlich growen wollen. Kein Buffer-Abo. Keine Agency. Kein Hype.
-      Real tests. Real stats. Real tools. <b class="neon">From 2k to 1M — public.</b>
-    </p>
-    <a href="/manifest" class="inline-block mt-6 text-sm neon hover:underline">Volles Manifest lesen →</a>
+<section class="bip" id="bip">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="stack-eyebrow">Building in Public</div>
+      <h2>Jeder Push. <span class="grad">Jede Lehre.</span></h2>
+      <p class="sub">Ich baue PEAKING live auf <a href="https://instagram.com/peakingworld" style="color:#FFA94D;font-weight:700;text-decoration:none">@peakingworld</a>. Code, Stats, Mistakes — täglich. Keine Filter.</p>
+    </div>
+    <div class="bip-row">
+      <div class="bip-stat"><div class="n">23</div><div class="l">Tage public</div></div>
+      <div class="bip-stat"><div class="n">20</div><div class="l">Module live</div></div>
+      <div class="bip-stat"><div class="n">347</div><div class="l">@peakingworld</div></div>
+      <div class="bip-stat"><div class="n">2.080</div><div class="l">@vegetarianhulk</div></div>
+      <div class="bip-stat"><div class="n">0€</div><div class="l">Funding</div></div>
+    </div>
   </div>
 </section>
 
-<!-- Story / Built By -->
-<section class="px-5 py-12 max-w-3xl mx-auto">
-  <div class="text-xs uppercase tracking-wider text-gray-500 font-bold text-center mb-3">Built by</div>
-  <h2 class="text-2xl md:text-3xl font-bold text-center mb-8">Sebi · <a href="https://instagram.com/peakingworld" target="_blank" class="neon hover:underline">@peakingworld</a></h2>
-
-  <div class="space-y-4 text-gray-300 leading-relaxed text-sm md:text-base">
-    <p>
-      <b class="neon">Solo-Founder. Outdoor-Creator. Indie-Builder.</b> Baue PEAKING als AI-native Solo-Creator-Stack — public, ehrlich, ohne Hype. Aktiv auf <a href="https://instagram.com/peakingworld" target="_blank" class="neon hover:underline">@peakingworld</a> (Building-in-Public) + <a href="https://instagram.com/vegetarianhulk" target="_blank" class="neon hover:underline">@vegetarianhulk</a> (Outdoor · Plant-Based · Mindset).
-    </p>
-    <p>
-      PEAKING ist mein Personal-Stack zum Tracken — von Solo-Creator für Solo-Creators. Built mit <b>Claude Code</b>. Pure Vanilla HTML/JS. Web-Only. Kein Backend, kein npm, kein App-Store. Just data + hooks + ship.
-    </p>
-    <p>
-      <b class="text-sunrise">Always peaking.</b> Means: nicht „become". Sondern „bewege dich täglich auf deinen Peak zu".
-    </p>
+<section class="manifesto" id="manifesto">
+  <div class="wrap">
+    <blockquote>„Du climbst — der Peak rewards dich. Nicht morgen, nicht bei 1M. <em>Heute.</em><br>Das ist <em>peaking</em>."</blockquote>
+    <div class="sig">— Sebi · Solo-Founder · @vegetarianhulk / @peakingworld</div>
   </div>
 </section>
 
-<!-- CTA -->
-<section class="px-5 py-12 max-w-3xl mx-auto text-center">
-  <h2 class="text-3xl md:text-4xl font-bold mb-4">Bereit zum <span class="text-sunrise">climben?</span></h2>
-  <p class="text-gray-400 mb-8">Tool ist solo-built. Aktuell für Sebi. Beta-Access für Friends auf Anfrage.</p>
-  <div class="flex flex-wrap gap-3 justify-center mb-6">
-    <a href="/" class="btn-primary">⚡ Zum Tool →</a>
-    <a href="mailto:beta@peaking.world" class="btn-secondary">📩 Beta-Access</a>
+<footer>
+  <div class="wrap">
+    <div class="foot">
+      <div>⛰️ The climb is the peak. · © 2026 PEAKING · Made solo with Claude Code</div>
+      <div>
+        <a href="changelog.html">Changelog</a>
+        <a href="manifest-page.html">Manifesto</a>
+        <a href="privacy.html">Privacy</a>
+        <a href="terms.html">Terms</a>
+      </div>
+    </div>
   </div>
-</section>
-
-<!-- Footer -->
-<footer class="px-5 py-8 border-t border-white/10 text-center text-sm text-gray-500">
-  <div class="flex flex-wrap gap-4 justify-center mb-4">
-    <a href="/" class="hover:text-white">Login</a>
-    <a href="/manifest" class="hover:text-white">Manifest</a>
-    <a href="/changelog" class="hover:text-white neon">Changelog</a>
-    <a href="/links" class="hover:text-white">Links</a>
-    <a href="/privacy" class="hover:text-white">Privacy</a>
-    <a href="/terms" class="hover:text-white">Terms</a>
-    <a href="https://instagram.com/peakingworld" target="_blank" class="hover:text-white">@peakingworld</a>
-  </div>
-  <p>⛰️ PEAKING · Always peaking. · Built solo by <a href="https://instagram.com/vegetarianhulk" target="_blank" class="neon hover:underline">Sebi</a></p>
-  <p class="text-xs mt-2">© 2026 PEAKING · Eigene Brand · <a href="mailto:info@peaking.world" class="neon hover:underline">info@peaking.world</a></p>
 </footer>
 
 </body>
