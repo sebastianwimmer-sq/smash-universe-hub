@@ -531,3 +531,74 @@ const SmashApp = (function() {
     getThisWeekPostCount
   };
 })();
+
+
+// ============ v24 UPDATE-BANNER ============
+// Zeigt sunrise-Banner wenn Service-Worker neue Version detected.
+// User tappt Reload -> window.location.reload() -> fetch neueste Files.
+(function setupPeakingUpdateBanner() {
+  if (!('serviceWorker' in navigator)) return;
+  if (typeof window === 'undefined' || typeof document === 'undefined') return;
+
+  let bannerShown = false;
+  let lastShownVersion = null;
+  try { lastShownVersion = localStorage.getItem('peaking_lastSeenSWVersion'); } catch(e) {}
+
+  function showBanner(version) {
+    if (bannerShown) return;
+    if (version && version === lastShownVersion) return; // already dismissed this version
+    bannerShown = true;
+
+    if (!document.getElementById('peakingUpdateBannerStyles')) {
+      const s = document.createElement('style');
+      s.id = 'peakingUpdateBannerStyles';
+      s.textContent = '@keyframes peakingBnrSlide{from{transform:translateY(-100%);opacity:0}to{transform:translateY(0);opacity:1}}@keyframes peakingBnrPulse{0%,100%{box-shadow:0 4px 16px rgba(255,169,77,.5)}50%{box-shadow:0 4px 24px rgba(255,169,77,.75)}}';
+      document.head.appendChild(s);
+    }
+
+    const banner = document.createElement('div');
+    banner.id = 'peakingUpdateBanner';
+    banner.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:99999;padding:12px 16px;background:linear-gradient(135deg,#FF6B6B,#FFA94D,#FFD43B);color:#0f172a;display:flex;align-items:center;justify-content:space-between;gap:12px;font-family:Inter,-apple-system,BlinkMacSystemFont,sans-serif;font-size:13px;font-weight:700;animation:peakingBnrSlide .35s cubic-bezier(.16,1,.3,1),peakingBnrPulse 2.5s ease-in-out infinite;padding-top:max(12px,env(safe-area-inset-top))';
+    banner.innerHTML = '<div style="flex:1;display:flex;align-items:center;gap:8px"><span style="font-size:18px">⛰️</span><span><b>Neue Version verfügbar</b><span style="opacity:.7;margin-left:6px">— tap zum Reload</span></span></div><button id="peakingUpdateReload" style="background:rgba(15,23,42,.85);color:#FFA94D;border:0;padding:8px 16px;border-radius:10px;font-weight:800;cursor:pointer;font-family:inherit;font-size:13px">Reload →</button><button id="peakingUpdateDismiss" style="background:transparent;border:0;color:#0f172a;font-size:20px;cursor:pointer;padding:0 6px;line-height:1;font-weight:900">×</button>';
+    document.body.appendChild(banner);
+
+    document.getElementById('peakingUpdateReload').onclick = () => {
+      try { localStorage.setItem('peaking_lastSeenSWVersion', version || ''); } catch(e) {}
+      window.location.reload();
+    };
+    document.getElementById('peakingUpdateDismiss').onclick = () => {
+      try { localStorage.setItem('peaking_lastSeenSWVersion', version || ''); } catch(e) {}
+      banner.style.animation = 'peakingBnrSlide .3s cubic-bezier(.16,1,.3,1) reverse';
+      setTimeout(() => banner.remove(), 300);
+    };
+  }
+
+  // Listen for SW-postMessage
+  navigator.serviceWorker.addEventListener('message', e => {
+    if (e.data && e.data.type === 'SW_UPDATED') {
+      showBanner(e.data.version);
+    }
+  });
+
+  // Listen for controllerchange (neue SW übernimmt)
+  let refreshing = false;
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    if (refreshing) return;
+    refreshing = true;
+    showBanner('controller-change');
+  });
+
+  // Also detect updatefound on registration
+  navigator.serviceWorker.ready.then(reg => {
+    reg.addEventListener('updatefound', () => {
+      const newWorker = reg.installing;
+      if (newWorker) {
+        newWorker.addEventListener('statechange', () => {
+          if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+            showBanner('updatefound-' + Date.now());
+          }
+        });
+      }
+    });
+  }).catch(()=>{});
+})();

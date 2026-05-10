@@ -1,7 +1,7 @@
 // PEAKING — Service Worker für Offline-Capability
 // Einfaches Cache-First mit Network-Fallback. iOS-tauglich.
 
-const CACHE_NAME = 'peaking-v23';
+const CACHE_NAME = 'peaking-v24';
 const ASSETS = [
   './',
   './index.html',
@@ -55,7 +55,14 @@ self.addEventListener('activate', e => {
   e.waitUntil(
     caches.keys().then(keys =>
       Promise.all(keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k)))
-    ).then(() => self.clients.claim())
+    ).then(() => self.clients.claim()).then(() => {
+      // v24: Notify all clients about update -> Update-Banner triggert im Frontend
+      return self.clients.matchAll().then(clients => {
+        clients.forEach(c => {
+          try { c.postMessage({type:'SW_UPDATED', version: CACHE_NAME}); } catch(e){}
+        });
+      });
+    })
   );
 });
 
