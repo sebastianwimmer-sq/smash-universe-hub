@@ -1,9 +1,12 @@
 {
+  "id": "smashuniverse.info/insta",
   "name": "PEAKING — Always peaking.",
   "short_name": "PEAKING",
   "description": "Personal Insta-Tracking-Tool für Solo-Creators. From climb to peak.",
-  "start_url": "/",
-  "scope": "/",
+  "lang": "de",
+  "dir": "ltr",
+  "start_url": "/insta/",
+  "scope": "/insta/",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#0f172a",
@@ -22,5 +25,35 @@
       "purpose": "maskable"
     }
   ],
-  "categories": ["productivity", "lifestyle", "social"]
+  "categories": ["productivity", "lifestyle", "social"],
+  "shortcuts": [
+    {
+      "name": "Dashboard",
+      "short_name": "Dashboard",
+      "description": "Stats + Posting-Plan + Account-Switcher",
+      "url": "/insta/dashboard.html",
+      "icons": [{"src": "assets/logo.svg", "sizes": "any", "type": "image/svg+xml"}]
+    },
+    {
+      "name": "Reel Tracker",
+      "short_name": "Tracker",
+      "description": "Reel-Performance eintragen + Auto-Analyzer",
+      "url": "/insta/modules/tracker.html",
+      "icons": [{"src": "assets/logo.svg", "sizes": "any", "type": "image/svg+xml"}]
+    },
+    {
+      "name": "Coach",
+      "short_name": "Coach",
+      "description": "AI-Sparring + tägliches Briefing",
+      "url": "/insta/modules/coach.html",
+      "icons": [{"src": "assets/logo.svg", "sizes": "any", "type": "image/svg+xml"}]
+    },
+    {
+      "name": "Calendar",
+      "short_name": "Calendar",
+      "description": "Wochen-Plan mit Tap-Slot-Zuweisung",
+      "url": "/insta/modules/calendar.html",
+      "icons": [{"src": "assets/logo.svg", "sizes": "any", "type": "image/svg+xml"}]
+    }
+  ]
 }
