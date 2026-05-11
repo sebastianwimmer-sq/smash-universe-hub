@@ -94,9 +94,9 @@
 
   /* Build-in-public band */
   .bip { background: linear-gradient(120deg, rgba(255,107,107,0.10), rgba(255,169,77,0.12), rgba(255,212,59,0.10)); border-top: 1px solid rgba(255,169,77,0.18); border-bottom: 1px solid rgba(255,169,77,0.18); padding: 56px 0; }
-  .bip-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 20px; text-align: center; }
-  .bip-stat .n { font-size: 38px; font-weight: 900; letter-spacing: -0.02em; background: linear-gradient(135deg,#FFD43B,#FFA94D,#FF6B6B); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-  .bip-stat .l { font-size: 12px; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.12em; font-weight: 700; margin-top: 4px; }
+  .bip-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: clamp(14px, 1.8vw, 24px); text-align: center; }
+  .bip-stat .n { font-size: clamp(28px, 4vw, 52px); font-weight: 900; letter-spacing: -0.02em; background: linear-gradient(135deg,#FFD43B,#FFA94D,#FF6B6B); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+  .bip-stat .l { font-size: clamp(10px, 1vw, 13px); color: #94a3b8; text-transform: uppercase; letter-spacing: 0.12em; font-weight: 700; margin-top: 4px; }
 
   /* Manifesto */
   .manifesto { text-align: center; padding: 80px 0; }
@@ -187,7 +187,7 @@
       <p class="sub">Ich baue PEAKING live auf <a href="https://instagram.com/peakingworld" style="color:#FFA94D;font-weight:700;text-decoration:none">@peakingworld</a>. Code, Stats, Mistakes — täglich. Keine Filter.</p>
     </div>
     <div class="bip-row">
-      <div class="bip-stat"><div class="n">23</div><div class="l">Tage public</div></div>
+      <div class="bip-stat"><div class="n" id="bipDaysPublic">5</div><div class="l">Tage public</div></div>
       <div class="bip-stat"><div class="n">20</div><div class="l">Module live</div></div>
       <div class="bip-stat"><div class="n">347</div><div class="l">@peakingworld</div></div>
       <div class="bip-stat"><div class="n">2.080</div><div class="l">@vegetarianhulk</div></div>
@@ -202,6 +202,17 @@
     <div class="sig">— Sebi · Solo-Founder · @vegetarianhulk / @peakingworld</div>
   </div>
 </section>
+
+<script>
+// Dynamic „Tage public" Counter — berechnet vom Launch-Date 2026-05-06
+(function() {
+  const launch = new Date('2026-05-06T00:00:00');
+  const now = new Date();
+  const days = Math.max(1, Math.floor((now - launch) / 86400000));
+  const el = document.getElementById('bipDaysPublic');
+  if (el) el.textContent = days;
+})();
+</script>
 
 <footer>
   <div class="wrap">
