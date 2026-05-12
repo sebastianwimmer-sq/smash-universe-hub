@@ -1,7 +1,7 @@
 // PEAKING — Service Worker für Offline-Capability
 // Einfaches Cache-First mit Network-Fallback. iOS-tauglich.
 
-const CACHE_NAME = 'peaking-v24';
+const CACHE_NAME = 'peaking-v26';
 const ASSETS = [
   './',
   './index.html',

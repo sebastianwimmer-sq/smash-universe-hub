@@ -3,6 +3,18 @@
  * Shared functions: Auth, Storage, Helpers
  */
 
+// App-Version — bump bei jedem Feature-Push (MINOR) oder Polish (PATCH)
+// Wird automatisch in alle Elemente mit id="appVersion" oder [data-app-version] gesetzt
+window.APP_VERSION = 'v1.5.0';
+
+if (typeof document !== 'undefined') {
+  document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('#appVersion, [data-app-version]').forEach(el => {
+      el.textContent = window.APP_VERSION;
+    });
+  });
+}
+
 const SmashApp = (function() {
   
   // SHA-256 Password-Hash. Bei PW-Wechsel im Browser-Console neu generieren:
