@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self' https:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https:; style-src 'self' 'unsafe-inline' https:; img-src 'self' data: blob: https:; font-src 'self' data: https:; connect-src 'self' https: wss:; upgrade-insecure-requests">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+<title>💡 Idea Inbox · PEAKING</title>
+<link rel="icon" href="../assets/logo.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../assets/logo.svg">
+<link rel="manifest" href="../manifest.json">
+<meta name="theme-color" content="#FFA94D">
+<link rel="stylesheet" href="../assets/effects.css">
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  body {
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    min-height: 100dvh;
+    color: white;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, sans-serif;
+  }
+  .glass {
+    background: rgba(30, 41, 59, 0.6);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+  .neon { color: #FFA94D; }
+  .text-sunrise {
+    background: linear-gradient(135deg, #FF6B6B, #FFA94D, #FFD43B);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+  }
+  input, textarea, select {
+    background: rgba(15, 23, 42, 0.6);
+    border: 1px solid rgba(255,255,255,0.15);
+    color: white;
+    font-family: inherit;
+  }
+  input:focus, textarea:focus, select:focus {
+    outline: none;
+    border-color: #FFA94D;
+  }
+  .btn-primary {
+    background: linear-gradient(135deg, #FFD43B, #FFA94D, #FF6B6B);
+    color: #0f172a;
+    transition: transform 0.12s, box-shadow 0.25s;
+    font-weight: 800;
+  }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 14px 36px rgba(255,169,77,0.5); }
+  .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
+  .tab {
+    padding: 8px 16px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 600;
+    border: 1px solid rgba(255,255,255,0.15);
+    background: rgba(15,23,42,0.6);
+    color: #cbd5e1;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .tab:hover { border-color: rgba(255,169,77,0.5); }
+  .tab.active {
+    background: linear-gradient(135deg, #FFA94D, #FF6B6B);
+    color: #0f172a;
+    border-color: #FFA94D;
+  }
+  .badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 6px;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .badge-pending { background: rgba(255,169,77,0.15); color: #FFA94D; border: 1px solid rgba(255,169,77,0.3); }
+  .badge-triaged { background: rgba(96,165,250,0.15); color: #60a5fa; border: 1px solid rgba(96,165,250,0.3); }
+  .badge-archived { background: rgba(148,163,184,0.15); color: #94a3b8; border: 1px solid rgba(148,163,184,0.3); }
+  .badge-go { background: rgba(34,197,94,0.15); color: #4ade80; border: 1px solid rgba(34,197,94,0.3); }
+  .badge-park { background: rgba(234,179,8,0.15); color: #facc15; border: 1px solid rgba(234,179,8,0.3); }
+  .badge-kill { background: rgba(239,68,68,0.15); color: #f87171; border: 1px solid rgba(239,68,68,0.3); }
+  .loading-spinner {
+    display: inline-block;
+    width: 14px; height: 14px;
+    border: 2px solid rgba(15,23,42,0.3);
+    border-top-color: #0f172a;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin-right: 8px;
+    vertical-align: middle;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .item-card {
+    transition: all 0.2s;
+  }
+  .item-card:hover {
+    transform: translateY(-1px);
+    border-color: rgba(255, 169, 77, 0.3);
+  }
+  .brand-chip {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .chip-peaking { background: linear-gradient(135deg, #FFA94D, #FF6B6B); color: #0f172a; }
+  .chip-smash { background: #00ff6a; color: #0f172a; }
+  .chip-veg { background: #3D5A3A; color: #F5EFE6; }
+  .chip-cross { background: rgba(168,85,247,0.4); color: white; border: 1px solid rgba(168,85,247,0.6); }
+  .chip-unsicher { background: rgba(148,163,184,0.2); color: #cbd5e1; }
+</style>
+</head>
+<body>
+<div class="max-w-5xl mx-auto px-4 py-6">
+
+  <!-- Header -->
+  <div class="flex items-center justify-between mb-6">
+    <div class="flex items-center gap-3">
+      <a href="../dashboard.html" class="text-sm text-gray-400 hover:text-orange-400">← Dashboard</a>
+      <h1 class="text-2xl font-extrabold text-sunrise">💡 Idea Inbox</h1>
+    </div>
+    <div class="text-xs text-gray-500">
+      Stats: <span id="statsCount" class="neon font-bold">–</span> pending
+    </div>
+  </div>
+
+  <!-- Add-Form -->
+  <div class="glass rounded-2xl p-5 mb-6">
+    <h2 class="text-sm font-bold uppercase tracking-wider text-gray-400 mb-3">✍️ Neue Idee</h2>
+
+    <div class="space-y-3">
+      <input id="inputTitle" type="text" placeholder="Titel (optional, 1-Liner)" maxlength="200"
+        class="w-full px-3 py-2 rounded-xl">
+
+      <textarea id="inputBody" placeholder="Was geht dir durch den Kopf? Voll-Brain-Dump… (max 10k Zeichen)" rows="4" maxlength="10000"
+        class="w-full px-3 py-2 rounded-xl resize-y"></textarea>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div>
+          <label class="text-xs text-gray-400 block mb-1">Brand-Hint</label>
+          <select id="inputBrandHint" class="w-full px-3 py-2 rounded-xl">
+            <option value="unsicher">🤷 Unsicher / Brain-Dump</option>
+            <option value="peaking">🚀 PEAKING (Builder-Tool)</option>
+            <option value="smash">💪 SMASH (Habit-App)</option>
+            <option value="veg">🌱 vegetarianhulk (Content)</option>
+            <option value="cross">🔀 Cross-Brand</option>
+          </select>
+        </div>
+        <div>
+          <label class="text-xs text-gray-400 block mb-1">Photo-URLs (optional, comma-separated)</label>
+          <input id="inputPhotoUrls" type="text" placeholder="https://...png, https://..."
+            class="w-full px-3 py-2 rounded-xl text-sm">
+        </div>
+      </div>
+
+      <div class="flex items-center justify-between pt-2">
+        <div class="text-xs text-gray-500">
+          <span id="charCount">0</span> / 10000 Zeichen
+        </div>
+        <button id="addBtn" onclick="addItem()" class="btn-primary px-6 py-2 rounded-xl text-sm">
+          ➕ Speichern
+        </button>
+      </div>
+
+      <div id="formError" class="hidden p-3 rounded-xl bg-red-900/30 border border-red-500/30 text-red-300 text-sm"></div>
+      <div id="formSuccess" class="hidden p-3 rounded-xl bg-green-900/30 border border-green-500/30 text-green-300 text-sm"></div>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="flex items-center gap-2 mb-4 flex-wrap">
+    <button class="tab active" data-status="pending" onclick="switchTab('pending')">⏳ Pending <span id="tabCountPending" class="opacity-60">–</span></button>
+    <button class="tab" data-status="triaged" onclick="switchTab('triaged')">✅ Triaged <span id="tabCountTriaged" class="opacity-60">–</span></button>
+    <button class="tab" data-status="archived" onclick="switchTab('archived')">📦 Archived <span id="tabCountArchived" class="opacity-60">–</span></button>
+    <div class="ml-auto">
+      <button onclick="refresh()" class="text-xs text-gray-400 hover:text-orange-400 px-3 py-1">🔄 Reload</button>
+    </div>
+  </div>
+
+  <!-- List -->
+  <div id="listContainer" class="space-y-3">
+    <div class="text-center text-gray-500 py-8 text-sm">Lade Inbox…</div>
+  </div>
+
+</div>
+
+<script>
+const WORKER_URL = 'https://peaking-ai-api.peaking.workers.dev';
+const FRONTEND_KEY = 'pk_peaking_2026_sebi_solo_x7k2m9';
+
+let currentTab = 'pending';
+let cachedItems = { pending: [], triaged: [], archived: [] };
+
+function api(path, opts = {}) {
+  const headers = {
+    'Content-Type': 'application/json',
+    'X-Peaking-Key': FRONTEND_KEY,
+    ...(opts.headers || {}),
+  };
+  return fetch(`${WORKER_URL}${path}`, { ...opts, headers });
+}
+
+function showFormError(msg) {
+  const el = document.getElementById('formError');
+  el.textContent = '⚠️ ' + msg;
+  el.classList.remove('hidden');
+  setTimeout(() => el.classList.add('hidden'), 5000);
+}
+
+function showFormSuccess(msg) {
+  const el = document.getElementById('formSuccess');
+  el.textContent = '✓ ' + msg;
+  el.classList.remove('hidden');
+  setTimeout(() => el.classList.add('hidden'), 3000);
+}
+
+async function addItem() {
+  const title = document.getElementById('inputTitle').value.trim();
+  const body = document.getElementById('inputBody').value.trim();
+  const brandHint = document.getElementById('inputBrandHint').value;
+  const photoUrlsRaw = document.getElementById('inputPhotoUrls').value.trim();
+  const photoUrls = photoUrlsRaw
+    ? photoUrlsRaw.split(',').map(u => u.trim()).filter(u => u.length > 0 && u.startsWith('http'))
+    : [];
+
+  if (!body) {
+    showFormError('Body darf nicht leer sein');
+    return;
+  }
+
+  const btn = document.getElementById('addBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="loading-spinner"></span> Speichere…';
+
+  try {
+    const res = await api('/inbox/add', {
+      method: 'POST',
+      body: JSON.stringify({ title, body, brandHint, photoUrls }),
+    });
+    const data = await res.json();
+
+    if (!res.ok || data.error) {
+      showFormError(data.error || `HTTP ${res.status}`);
+      return;
+    }
+
+    // Reset form
+    document.getElementById('inputTitle').value = '';
+    document.getElementById('inputBody').value = '';
+    document.getElementById('inputPhotoUrls').value = '';
+    document.getElementById('inputBrandHint').value = 'unsicher';
+    updateCharCount();
+    showFormSuccess('Idee gespeichert.');
+
+    // Reload pending
+    await loadStatus('pending');
+    await loadStats();
+  } catch (e) {
+    showFormError(`Network error: ${e.message}`);
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '➕ Speichern';
+  }
+}
+
+async function loadStatus(status) {
+  try {
+    const res = await api(`/inbox/list?status=${status}`, { method: 'GET' });
+    const data = await res.json();
+    if (!res.ok || data.error) {
+      console.warn('loadStatus error:', data.error);
+      cachedItems[status] = [];
+      return;
+    }
+    cachedItems[status] = data.items || [];
+    document.getElementById(`tabCount${status.charAt(0).toUpperCase() + status.slice(1)}`).textContent =
+      `(${data.count})`;
+    if (currentTab === status) {
+      renderList(cachedItems[status]);
+    }
+  } catch (e) {
+    console.warn('loadStatus failed:', e);
+  }
+}
+
+async function loadStats() {
+  const pendingCount = cachedItems.pending.length;
+  document.getElementById('statsCount').textContent = pendingCount;
+}
+
+function switchTab(status) {
+  currentTab = status;
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelector(`[data-status="${status}"]`).classList.add('active');
+  renderList(cachedItems[status]);
+}
+
+function renderList(items) {
+  const c = document.getElementById('listContainer');
+  if (!items || items.length === 0) {
+    c.innerHTML = '<div class="text-center text-gray-500 py-8 text-sm">Keine Items.</div>';
+    return;
+  }
+
+  c.innerHTML = items.map(item => {
+    const dt = new Date(item.createdAt);
+    const dtStr = dt.toLocaleString('de-DE', { dateStyle: 'short', timeStyle: 'short' });
+    const verdictBadge = item.verdict
+      ? `<span class="badge badge-${item.verdict.toLowerCase()}">${item.verdict}</span>`
+      : '';
+    const statusBadge = `<span class="badge badge-${item.status}">${item.status}</span>`;
+    const brandChip = `<span class="brand-chip chip-${item.brandHint}">${item.brandHint}</span>`;
+    const titlePart = item.title
+      ? `<div class="font-bold text-base mb-1">${escapeHtml(item.title)}</div>`
+      : '';
+    const photoPart = (item.photoUrls && item.photoUrls.length > 0)
+      ? `<div class="text-xs text-gray-500 mt-2">📷 ${item.photoUrls.length} photo${item.photoUrls.length > 1 ? 's' : ''}</div>`
+      : '';
+    const memoPart = item.memoLink
+      ? `<div class="text-xs mt-2"><span class="text-gray-500">→ </span><code class="text-blue-400">${escapeHtml(item.memoLink)}</code></div>`
+      : '';
+
+    return `
+      <div class="item-card glass rounded-xl p-4">
+        <div class="flex items-start justify-between gap-3 mb-2">
+          <div class="flex items-center gap-2 flex-wrap">
+            ${brandChip}
+            ${statusBadge}
+            ${verdictBadge}
+          </div>
+          <div class="text-xs text-gray-500 whitespace-nowrap">${dtStr}</div>
+        </div>
+        ${titlePart}
+        <div class="text-sm text-gray-300 whitespace-pre-wrap">${escapeHtml(item.body)}</div>
+        ${photoPart}
+        ${memoPart}
+        <div class="flex items-center justify-end gap-2 mt-3 pt-3 border-t border-white/5">
+          ${item.status !== 'archived' ? `<button onclick="archiveItem('${item.id}')" class="text-xs text-gray-400 hover:text-orange-400">📦 Archive</button>` : ''}
+          ${item.status === 'archived' ? `<button onclick="restoreItem('${item.id}')" class="text-xs text-gray-400 hover:text-orange-400">↩️ Reopen</button>` : ''}
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function escapeHtml(s) {
+  if (!s) return '';
+  return s
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+async function archiveItem(id) {
+  try {
+    const res = await api(`/inbox/item/${id}`, {
+      method: 'PATCH',
+      body: JSON.stringify({ status: 'archived' }),
+    });
+    if (res.ok) {
+      await refresh();
+    }
+  } catch (e) {
+    console.warn('archive failed:', e);
+  }
+}
+
+async function restoreItem(id) {
+  try {
+    const res = await api(`/inbox/item/${id}`, {
+      method: 'PATCH',
+      body: JSON.stringify({ status: 'pending' }),
+    });
+    if (res.ok) {
+      await refresh();
+    }
+  } catch (e) {
+    console.warn('restore failed:', e);
+  }
+}
+
+async function refresh() {
+  await Promise.all([
+    loadStatus('pending'),
+    loadStatus('triaged'),
+    loadStatus('archived'),
+  ]);
+  await loadStats();
+}
+
+function updateCharCount() {
+  const len = document.getElementById('inputBody').value.length;
+  document.getElementById('charCount').textContent = len;
+}
+
+document.getElementById('inputBody').addEventListener('input', updateCharCount);
+
+// Cmd+Enter / Ctrl+Enter to submit
+document.getElementById('inputBody').addEventListener('keydown', (e) => {
+  if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
+    e.preventDefault();
+    addItem();
+  }
+});
+
+// Initial load
+refresh();
+</script>
+
+</body>
+</html>
