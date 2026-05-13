@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self' https:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https:; style-src 'self' 'unsafe-inline' https:; img-src 'self' data: blob: https:; font-src 'self' data: https:; connect-src 'self' https: wss:; upgrade-insecure-requests">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+<title>AI Image Studio · PEAKING</title>
+<link rel="icon" href="../assets/logo.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/effects.css">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="../js/ai-profiles.js?v=1"></script>
+<script src="../js/asset-library.js?v=1"></script>
+<style>
+  body {
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    min-height: 100dvh;
+    color: white;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, sans-serif;
+  }
+  .glass {
+    background: rgba(30, 41, 59, 0.6);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+  .neon { color: #FFA94D; }
+  .text-sunrise {
+    background: linear-gradient(135deg, #FF6B6B, #FFA94D, #FFD43B);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+  }
+  input, textarea, select {
+    background: rgba(15, 23, 42, 0.6);
+    border: 1px solid rgba(255,255,255,0.15);
+    color: white;
+    font-family: inherit;
+  }
+  input:focus, textarea:focus, select:focus {
+    outline: none;
+    border-color: #FFA94D;
+  }
+  .btn-primary {
+    background: linear-gradient(135deg, #FFD43B, #FFA94D, #FF6B6B);
+    color: #0f172a;
+    transition: transform 0.12s, box-shadow 0.25s;
+    font-weight: 800;
+  }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 14px 36px rgba(255,169,77,0.5); }
+  .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
+  .pill {
+    display: inline-block; padding: 4px 12px; border-radius: 999px;
+    font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;
+  }
+  .pill-orange { background: rgba(255,169,77,0.15); color: #FFA94D; border: 1px solid rgba(255,169,77,0.3); }
+  .pill-green { background: rgba(16,185,129,0.15); color: #10b981; border: 1px solid rgba(16,185,129,0.3); }
+  .brand-tile {
+    padding: 12px; border-radius: 14px; cursor: pointer;
+    border: 1.5px solid rgba(255,255,255,0.1); transition: 0.2s;
+    min-width: 0; /* prevent overflow on narrow screens */
+  }
+  .brand-tile > div { overflow: hidden; text-overflow: ellipsis; }
+  @media (max-width: 640px) {
+    .brand-tile { padding: 10px; }
+    .brand-tile .text-lg { font-size: 1rem; }
+    .brand-tile .text-sm { font-size: 0.8rem; }
+    .brand-tile .text-xs { font-size: 0.65rem; line-height: 1.2; }
+  }
+  /* Output-Image: max-height auf Mobile damit 9:16 nicht den ganzen viewport sprengt */
+  #outImg { max-height: 75vh; object-fit: contain; }
+  .brand-tile:hover { border-color: rgba(255,169,77,0.4); transform: translateY(-2px); }
+  .brand-tile.active { border-color: #FFA94D; background: rgba(255,169,77,0.1); }
+  .loading-spinner {
+    display: inline-block; width: 16px; height: 16px;
+    border: 2px solid rgba(255,255,255,0.2); border-top-color: #FFA94D;
+    border-radius: 50%; animation: spin 0.8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .lib-filter {
+    padding: 4px 12px; border-radius: 999px;
+    border: 1px solid rgba(255,255,255,0.15);
+    background: rgba(15,23,42,0.6); color: #cbd5e1;
+    cursor: pointer; transition: all 0.15s;
+  }
+  .lib-filter:hover { border-color: rgba(255,169,77,0.5); }
+  .lib-filter.active {
+    background: linear-gradient(135deg, #FFA94D, #FF6B6B);
+    color: #0f172a; border-color: #FFA94D; font-weight: 700;
+  }
+  .lib-asset {
+    position: relative; aspect-ratio: 1;
+    border-radius: 10px; overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.1);
+    cursor: pointer; transition: all 0.15s;
+  }
+  .lib-asset:hover { border-color: #FFA94D; transform: scale(1.02); }
+  .lib-asset img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .lib-asset .lib-delete {
+    position: absolute; top: 4px; right: 4px;
+    width: 22px; height: 22px; border-radius: 50%;
+    background: rgba(0,0,0,0.7); color: white;
+    font-size: 12px; line-height: 22px; text-align: center;
+    cursor: pointer; opacity: 0; transition: opacity 0.15s;
+  }
+  .lib-asset:hover .lib-delete { opacity: 1; }
+  .lib-asset .lib-brand {
+    position: absolute; bottom: 4px; left: 4px;
+    padding: 2px 6px; border-radius: 4px;
+    background: rgba(0,0,0,0.7); color: white;
+    font-size: 9px; font-weight: 700; text-transform: uppercase;
+  }
+</style>
+</head>
+<body class="p-3 sm:p-5">
+
+<div class="max-w-3xl mx-auto">
+
+  <!-- Header -->
+  <header class="mb-5 sm:mb-8 flex items-center justify-between gap-3">
+    <a href="../dashboard.html" class="text-gray-400 hover:text-white text-sm shrink-0">← Dashboard</a>
+    <div class="text-right min-w-0">
+      <h1 class="text-lg sm:text-2xl font-bold tracking-tight">🎨 AI Image Studio</h1>
+      <p class="neon text-[10px] sm:text-xs font-bold tracking-wide">Powered by Replicate · Always peaking.</p>
+    </div>
+  </header>
+
+  <!-- Generate Form -->
+  <div class="glass rounded-2xl p-4 sm:p-6 mb-6">
+
+    <!-- Brand Picker -->
+    <label class="block text-sm text-gray-400 mb-2 font-bold">Brand-Style</label>
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-2 mb-5">
+      <div class="brand-tile active" data-brand="peaking" onclick="selectBrand('peaking')">
+        <div class="text-lg">⛰️</div>
+        <div class="text-sm font-bold">PEAKING</div>
+        <div class="text-xs text-gray-400">Sunrise + Mountain</div>
+      </div>
+      <div class="brand-tile" data-brand="smash" onclick="selectBrand('smash')">
+        <div class="text-lg">💪</div>
+        <div class="text-sm font-bold">SMASH</div>
+        <div class="text-xs text-gray-400">Black + Hulk-Green</div>
+      </div>
+      <div class="brand-tile" data-brand="vegetarianhulk" onclick="selectBrand('vegetarianhulk')">
+        <div class="text-lg">🌱</div>
+        <div class="text-sm font-bold">vegetarianhulk</div>
+        <div class="text-xs text-gray-400">Vanilla + Forest</div>
+      </div>
+      <div class="brand-tile" data-brand="custom" onclick="selectBrand('custom')">
+        <div class="text-lg">🎨</div>
+        <div class="text-sm font-bold">Custom</div>
+        <div class="text-xs text-gray-400">Kein Brand-Overlay</div>
+      </div>
+    </div>
+
+    <!-- Topic Input -->
+    <div class="flex items-center justify-between mb-2">
+      <label class="block text-sm text-gray-400 font-bold">Topic / Idee</label>
+      <label class="flex items-center gap-2 text-xs text-gray-400 cursor-pointer">
+        <input type="checkbox" id="brainToggle" checked class="accent-orange-400">
+        <span>🧠 AI-Brain Auto-Prompt</span>
+      </label>
+    </div>
+    <textarea id="topic" rows="3" placeholder="z.B. „Day 6 Beta-Launch" oder „Disziplin-Reset Montag" — AI-Brain ergänzt Brand-DNA + Headline"
+      class="w-full p-3 rounded-xl mb-2"></textarea>
+    <details class="mb-5 text-xs text-gray-500">
+      <summary class="cursor-pointer hover:text-orange-400">📝 Final-Prompt-Preview anzeigen</summary>
+      <pre id="promptPreview" class="mt-2 p-3 bg-black/30 rounded-lg whitespace-pre-wrap text-gray-400 text-[11px]"></pre>
+    </details>
+
+    <!-- Format + Model Picker -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mb-5">
+      <div>
+        <label class="block text-sm text-gray-400 mb-2 font-bold">Format</label>
+        <select id="format" class="w-full p-3 rounded-xl">
+          <option value="1:1">1:1 — Square (Feed)</option>
+          <option value="4:5" selected>4:5 — Portrait (Feed)</option>
+          <option value="9:16">9:16 — Story / Reel</option>
+          <option value="16:9">16:9 — Hero / Cover</option>
+        </select>
+      </div>
+      <div>
+        <label class="block text-sm text-gray-400 mb-2 font-bold">Modell</label>
+        <select id="model" class="w-full p-3 rounded-xl">
+          <option value="recraft" selected>Recraft V3 — DE-Text ✓ ($0.04)</option>
+          <option value="ideogram">Ideogram V3 — EN-Text ($0.04)</option>
+          <option value="flux">Flux Dev — nur Background ($0.025)</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Generate Button -->
+    <button id="genBtn" class="btn-primary w-full p-4 rounded-xl text-lg" onclick="generate()">
+      ⚡ Generate
+    </button>
+
+    <!-- Cost-Tracker -->
+    <div class="mt-4 flex items-center justify-between text-xs text-gray-400">
+      <span>Heute generiert: <span id="todayCount">0</span> Bilder</span>
+      <span>Heute Cost: $<span id="todayCost">0.00</span></span>
+    </div>
+  </div>
+
+  <!-- Output Section -->
+  <div id="output" class="hidden glass rounded-2xl p-4 sm:p-6">
+    <div class="flex items-center justify-between mb-4">
+      <span class="pill pill-orange">✨ Generated</span>
+      <span id="outCost" class="text-xs text-gray-400"></span>
+    </div>
+    <img id="outImg" src="" alt="generated" class="w-full rounded-xl mb-4" style="max-width: 100%;">
+    <div class="flex gap-2 flex-wrap">
+      <a id="outDownload" download="peaking-ai.png" class="btn-primary px-5 py-2 rounded-xl text-sm" style="text-decoration:none">⬇️ Download</a>
+      <button onclick="copyURL()" class="px-5 py-2 rounded-xl text-sm border border-gray-700 hover:border-orange-400">📋 URL kopieren</button>
+      <button id="saveLibraryBtn" onclick="saveCurrentToLibrary()" class="px-5 py-2 rounded-xl text-sm border border-gray-700 hover:border-orange-400">💾 Save to Library</button>
+      <button onclick="generate()" class="px-5 py-2 rounded-xl text-sm border border-gray-700 hover:border-orange-400">🔄 Nochmal</button>
+    </div>
+    <div class="mt-3 text-xs text-gray-500">
+      <label class="flex items-center gap-2 cursor-pointer">
+        <input type="checkbox" id="autoSaveLibrary" class="accent-orange-400">
+        <span>Auto-save zukünftige Generates in Library</span>
+      </label>
+    </div>
+  </div>
+
+  <!-- Asset-Library Section -->
+  <details class="mt-6 glass rounded-2xl p-4 sm:p-6" id="librarySection">
+    <summary class="cursor-pointer flex items-center justify-between gap-3">
+      <div class="flex items-center gap-2">
+        <span class="text-lg">📚</span>
+        <span class="font-bold">Asset-Library</span>
+        <span id="libraryCount" class="text-xs text-gray-400">(–)</span>
+      </div>
+      <button onclick="event.stopPropagation(); refreshLibrary()" class="text-xs text-gray-400 hover:text-orange-400 px-2 py-1">🔄 Reload</button>
+    </summary>
+    <div class="mt-4">
+      <div class="flex gap-2 mb-3 flex-wrap text-xs">
+        <button class="lib-filter active" data-filter="all" onclick="setLibraryFilter('all')">Alle</button>
+        <button class="lib-filter" data-filter="peaking" onclick="setLibraryFilter('peaking')">🚀 PEAKING</button>
+        <button class="lib-filter" data-filter="smash" onclick="setLibraryFilter('smash')">💪 SMASH</button>
+        <button class="lib-filter" data-filter="vegetarianhulk" onclick="setLibraryFilter('vegetarianhulk')">🌱 veg</button>
+      </div>
+      <div id="libraryGrid" class="grid grid-cols-3 sm:grid-cols-4 gap-2">
+        <div class="text-xs text-gray-500 col-span-full py-4 text-center">Lade…</div>
+      </div>
+    </div>
+  </details>
+
+  <!-- Error -->
+  <div id="error" class="hidden mt-4 p-4 rounded-xl bg-red-900/30 border border-red-500/30 text-red-300 text-sm"></div>
+
+</div>
+
+<script>
+const WORKER_URL = 'https://peaking-ai-api.peaking.workers.dev';
+const FRONTEND_KEY = 'pk_peaking_2026_sebi_solo_x7k2m9'; // Phase A: shared-secret. Phase B: Firebase-Token ersetzt das
+
+let currentBrand = 'peaking';
+
+function selectBrand(brand) {
+  currentBrand = brand;
+  document.querySelectorAll('.brand-tile').forEach(t => t.classList.remove('active'));
+  document.querySelector(`[data-brand="${brand}"]`).classList.add('active');
+}
+
+function updatePromptPreview() {
+  const rawTopic = document.getElementById('topic').value.trim();
+  const format = document.getElementById('format').value;
+  const useBrain = document.getElementById('brainToggle').checked;
+  const preview = document.getElementById('promptPreview');
+  if (!rawTopic) { preview.textContent = '(leer)'; return; }
+  preview.textContent = useBrain && window.AIProfiles
+    ? AIProfiles.buildPrompt(currentBrand, rawTopic, format)
+    : rawTopic;
+}
+
+async function generate() {
+  const rawTopic = document.getElementById('topic').value.trim();
+  if (!rawTopic) { showError('Topic darf nicht leer sein'); return; }
+
+  const format = document.getElementById('format').value;
+  const model = document.getElementById('model').value;
+  const useBrain = document.getElementById('brainToggle').checked;
+  const topic = useBrain && window.AIProfiles
+    ? AIProfiles.buildPrompt(currentBrand, rawTopic, format)
+    : rawTopic;
+  const btn = document.getElementById('genBtn');
+  const out = document.getElementById('output');
+  const err = document.getElementById('error');
+
+  err.classList.add('hidden');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="loading-spinner"></span> Generiere... (5-10s)';
+
+  try {
+    const res = await fetch(WORKER_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(FRONTEND_KEY ? { 'X-Peaking-Key': FRONTEND_KEY } : {}),
+      },
+      body: JSON.stringify({ topic, brand: currentBrand, format, model }),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok || data.error) {
+      showError(data.error || `HTTP ${res.status}`);
+      return;
+    }
+
+    // Show output
+    document.getElementById('outImg').src = data.url;
+    document.getElementById('outImg').dataset.url = data.url;
+    document.getElementById('outImg').dataset.brand = currentBrand;
+    document.getElementById('outImg').dataset.prompt = topic;
+    document.getElementById('outImg').dataset.model = data.model;
+    document.getElementById('outDownload').href = data.url;
+    document.getElementById('outDownload').download = `${currentBrand}-${Date.now()}.png`;
+    document.getElementById('outCost').textContent = `Cost: $${data.cost.toFixed(3)} · ${data.model} · ${data.format}`;
+    document.getElementById('saveLibraryBtn').textContent = '💾 Save to Library';
+    document.getElementById('saveLibraryBtn').disabled = false;
+    out.classList.remove('hidden');
+    out.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+    // Update tracker
+    bumpTracker(data.cost);
+
+    // Auto-save to Library if enabled
+    if (document.getElementById('autoSaveLibrary').checked) {
+      saveCurrentToLibrary();
+    }
+
+  } catch (e) {
+    showError(`Network error: ${e.message}`);
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '⚡ Generate';
+  }
+}
+
+function showError(msg) {
+  const err = document.getElementById('error');
+  err.textContent = '⚠️ ' + msg;
+  err.classList.remove('hidden');
+}
+
+function copyURL() {
+  const url = document.getElementById('outImg').dataset.url;
+  navigator.clipboard.writeText(url).then(() => {
+    alert('URL kopiert!');
+  });
+}
+
+function bumpTracker(cost) {
+  const today = new Date().toISOString().slice(0, 10);
+  const k = `peaking:ai_stats:${today}`;
+  let stats = JSON.parse(localStorage.getItem(k) || '{"count":0,"cost":0}');
+  stats.count++;
+  stats.cost += cost;
+  localStorage.setItem(k, JSON.stringify(stats));
+  document.getElementById('todayCount').textContent = stats.count;
+  document.getElementById('todayCost').textContent = stats.cost.toFixed(2);
+}
+
+// Initial load tracker
+(function initTracker() {
+  const today = new Date().toISOString().slice(0, 10);
+  const k = `peaking:ai_stats:${today}`;
+  const stats = JSON.parse(localStorage.getItem(k) || '{"count":0,"cost":0}');
+  document.getElementById('todayCount').textContent = stats.count;
+  document.getElementById('todayCost').textContent = stats.cost.toFixed(2);
+})();
+
+// ============ ASSET-LIBRARY UI ============
+
+let libraryFilter = 'all';
+let libraryAssetsCache = [];
+
+async function saveCurrentToLibrary() {
+  const img = document.getElementById('outImg');
+  const url = img.dataset.url;
+  if (!url) {
+    showError('Kein Bild da zum Speichern');
+    return;
+  }
+  const btn = document.getElementById('saveLibraryBtn');
+  btn.disabled = true;
+  btn.textContent = '💾 Speichere…';
+  try {
+    if (!window.AssetLibrary) throw new Error('AssetLibrary nicht geladen');
+    const asset = await window.AssetLibrary.mirrorFromReplicate(url, {
+      brandId: img.dataset.brand || 'custom',
+      prompt: img.dataset.prompt || '',
+      model: img.dataset.model || '',
+      tags: [],
+    });
+    btn.textContent = '✓ Gespeichert';
+    setTimeout(() => {
+      btn.textContent = '💾 Save to Library';
+      btn.disabled = false;
+    }, 2000);
+    await refreshLibrary();
+  } catch (e) {
+    btn.textContent = '⚠️ Fehler';
+    console.warn('saveCurrentToLibrary:', e);
+    setTimeout(() => {
+      btn.textContent = '💾 Save to Library';
+      btn.disabled = false;
+    }, 2500);
+  }
+}
+
+async function refreshLibrary() {
+  try {
+    if (!window.AssetLibrary) return;
+    libraryAssetsCache = await window.AssetLibrary.list();
+    document.getElementById('libraryCount').textContent = `(${libraryAssetsCache.length})`;
+    renderLibrary();
+  } catch (e) {
+    console.warn('refreshLibrary:', e);
+    document.getElementById('libraryGrid').innerHTML =
+      '<div class="text-xs text-red-400 col-span-full py-4 text-center">Library Fehler: ' + escapeLibHtml(e.message) + '</div>';
+  }
+}
+
+function setLibraryFilter(filter) {
+  libraryFilter = filter;
+  document.querySelectorAll('.lib-filter').forEach(b => b.classList.remove('active'));
+  document.querySelector(`.lib-filter[data-filter="${filter}"]`).classList.add('active');
+  renderLibrary();
+}
+
+function renderLibrary() {
+  const grid = document.getElementById('libraryGrid');
+  const filtered = libraryFilter === 'all'
+    ? libraryAssetsCache
+    : libraryAssetsCache.filter(a => a.brandId === libraryFilter);
+  if (filtered.length === 0) {
+    grid.innerHTML = '<div class="text-xs text-gray-500 col-span-full py-4 text-center">Keine Assets · Generate + Save klicken</div>';
+    return;
+  }
+  grid.innerHTML = filtered.map(a => `
+    <div class="lib-asset" onclick="copyAssetUrl('${a.id}')" title="Click: URL kopieren · Hover-X: löschen">
+      <img src="${a.publicUrl}" alt="" loading="lazy">
+      <div class="lib-brand">${a.brandId}</div>
+      <div class="lib-delete" onclick="event.stopPropagation(); deleteAsset('${a.id}')">✕</div>
+    </div>
+  `).join('');
+}
+
+async function copyAssetUrl(id) {
+  if (!window.AssetLibrary) return;
+  const url = window.AssetLibrary.publicUrl(id);
+  try {
+    await navigator.clipboard.writeText(url);
+    alert(`✓ URL kopiert: ${url}`);
+  } catch (e) {
+    prompt('URL (manuell kopieren):', url);
+  }
+}
+
+async function deleteAsset(id) {
+  if (!confirm('Asset wirklich löschen?')) return;
+  try {
+    await window.AssetLibrary.delete(id);
+    await refreshLibrary();
+  } catch (e) {
+    alert('Lösch-Fehler: ' + e.message);
+  }
+}
+
+function escapeLibHtml(s) {
+  return String(s || '')
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+
+// Restore auto-save preference + load library on open
+(function initLibrary() {
+  const autoSave = localStorage.getItem('peaking:ai_autosave') === '1';
+  document.getElementById('autoSaveLibrary').checked = autoSave;
+  document.getElementById('autoSaveLibrary').addEventListener('change', (e) => {
+    localStorage.setItem('peaking:ai_autosave', e.target.checked ? '1' : '0');
+  });
+
+  // Lazy-load library on first <details> open
+  document.getElementById('librarySection').addEventListener('toggle', (e) => {
+    if (e.target.open && libraryAssetsCache.length === 0) {
+      refreshLibrary();
+    }
+  });
+})();
+
+// Live-Preview wenn Topic/Brand/Format ändert
+['topic','format','brainToggle'].forEach(id => {
+  document.getElementById(id).addEventListener('input', updatePromptPreview);
+  document.getElementById(id).addEventListener('change', updatePromptPreview);
+});
+// auch wenn Brand wechselt
+const _selectBrand = selectBrand;
+selectBrand = function(brand) {
+  _selectBrand(brand);
+  updatePromptPreview();
+};
+updatePromptPreview();
+</script>
+
+</body>
+</html>

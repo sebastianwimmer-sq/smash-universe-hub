@@ -5,7 +5,7 @@
 
 // App-Version — bump bei jedem Feature-Push (MINOR) oder Polish (PATCH)
 // Wird automatisch in alle Elemente mit id="appVersion" oder [data-app-version] gesetzt
-window.APP_VERSION = 'v1.5.1';
+window.APP_VERSION = 'v1.6.0';
 
 if (typeof document !== 'undefined') {
   document.addEventListener('DOMContentLoaded', () => {
