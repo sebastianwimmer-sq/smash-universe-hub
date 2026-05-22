@@ -1,5 +1,29 @@
+# === macOS ===
 .DS_Store
-*.log
-node_modules/
+._*
+
+# === Editors ===
 .vscode/
 .idea/
+*.swp
+*.swo
+*~
+
+# === Logs + Backup ===
+*.log
+*.bak
+
+# === Secrets (NIEMALS committen!) ===
+.env
+.env.*
+*.pem
+*.key
+*.cert
+secrets/
+
+# === Node ===
+node_modules/
+
+# === Design-Archive (ZIPs lokal, nicht im Repo) ===
+design-archives/*
+!design-archives/.gitkeep
