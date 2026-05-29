@@ -66,15 +66,68 @@
     <p class="text-gray-400">⛰️ PEAKING · <span class="neon font-bold">Always peaking.</span></p>
   </div>
 
-  <!-- PEAKING Auto-Analyzer -->
-  <div class="rounded-3xl p-6 mb-8" style="background: linear-gradient(135deg, rgba(255, 107, 107, 0.12), rgba(255, 212, 59, 0.12)); border: 1px solid rgba(255, 169, 77, 0.3);">
-    <div class="flex items-center gap-3 mb-4">
-      <div class="text-3xl">📸</div>
-      <div>
-        <h2 class="text-2xl font-bold">PEAKING Auto-Analyzer</h2>
-        <p class="text-gray-400 text-sm">Screenshot → KI-Analyse → Tracker-Daten in 60 Sek</p>
+  <!-- 🟢 AUTO-TRACKER LIVE (v1.9.5 — Meta API direkt, kein Screenshot mehr) -->
+  <div class="rounded-3xl p-6 mb-6" style="background: linear-gradient(135deg, rgba(34,197,94,0.10), rgba(255,169,77,0.06)); border: 1px solid rgba(34,197,94,0.30);">
+    <div class="flex items-start gap-3 mb-4 flex-wrap">
+      <div class="text-3xl">🟢</div>
+      <div class="flex-1 min-w-0">
+        <h2 class="text-2xl font-bold">Auto-Tracker <span class="text-xs font-normal text-green-400">· LIVE via Meta API</span></h2>
+        <p class="text-gray-400 text-sm">Reels werden automatisch alle 6h gesynct — Likes + Comments + Captions live. Kein Screenshot mehr nötig.</p>
       </div>
+      <button id="syncNowBtn" onclick="autoTrackerRefresh()" class="rounded-xl px-4 py-2 text-xs font-bold" style="background: linear-gradient(135deg,#FFD43B,#FFA94D,#FF6B6B); color:#0f172a">🔄 Refresh</button>
     </div>
+
+    <!-- Brand-Tabs -->
+    <div class="flex gap-2 mb-4 flex-wrap">
+      <button class="auto-brand-pill active" data-brand="all">Alle</button>
+      <button class="auto-brand-pill" data-brand="peaking">🚀 @peakingworld</button>
+      <button class="auto-brand-pill" data-brand="hulk">🌱 @vegetarianhulk</button>
+      <button class="auto-brand-pill" data-brand="smash">💪 @smashtheapp</button>
+    </div>
+
+    <!-- Sync-Status -->
+    <div class="text-xs text-gray-500 mb-3 flex items-center gap-2 flex-wrap">
+      <span>Letzter Sync: <span id="autoLastSync" class="neon font-bold">…</span></span>
+      <span class="text-gray-700">·</span>
+      <span><span id="autoReelCount">…</span> Reels im Cache</span>
+      <span class="text-gray-700">·</span>
+      <span>Sort:</span>
+      <select id="autoSortBy" class="bg-slate-800 rounded px-2 py-1 text-white text-xs border border-white/10" onchange="autoTrackerRender()">
+        <option value="date">Neueste zuerst</option>
+        <option value="likes">Likes desc</option>
+        <option value="comments">Comments desc</option>
+      </select>
+    </div>
+
+    <!-- Reel-Grid -->
+    <div id="autoTrackerGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+      <div class="col-span-full text-center text-gray-500 py-8 text-sm">⏳ Lade Reels...</div>
+    </div>
+  </div>
+
+  <style>
+    .auto-brand-pill { padding:6px 14px; border-radius:999px; font-size:12px; font-weight:600; border:1px solid rgba(255,255,255,0.15); background:rgba(15,23,42,0.6); color:#cbd5e1; cursor:pointer; transition:all 0.15s; white-space:nowrap; }
+    .auto-brand-pill:hover { border-color: rgba(255,169,77,0.5); }
+    .auto-brand-pill.active { background: linear-gradient(135deg,#FFA94D,#FF6B6B); color:#0f172a; border-color:#FFA94D; font-weight:800; }
+    .auto-reel-card { background:rgba(15,23,42,0.5); border:1px solid rgba(255,255,255,0.08); border-radius:14px; overflow:hidden; transition:all 0.2s; cursor:pointer; }
+    .auto-reel-card:hover { transform: translateY(-2px); border-color: rgba(255,169,77,0.3); box-shadow: 0 14px 24px -14px rgba(255,169,77,0.25); }
+    .auto-reel-thumb { width:100%; aspect-ratio:9/16; object-fit:cover; background:#1e293b; }
+    .auto-reel-pill { display:inline-flex; align-items:center; gap:4px; padding:2px 8px; border-radius:999px; font-size:10px; font-weight:700; }
+    .pill-brand-peaking { background:rgba(255,169,77,0.18); color:#FFA94D; }
+    .pill-brand-hulk { background:rgba(74,222,128,0.18); color:#4ade80; }
+    .pill-brand-smash { background:rgba(34,197,94,0.18); color:#22c55e; }
+  </style>
+
+  <!-- 📸 LEGACY: Screenshot-Workflow (deprecated, nur als Fallback für Pre-Sync-Reels) -->
+  <details class="rounded-3xl p-6 mb-8" style="background: linear-gradient(135deg, rgba(255, 107, 107, 0.06), rgba(255, 212, 59, 0.04)); border: 1px solid rgba(255, 169, 77, 0.15);">
+    <summary class="cursor-pointer flex items-center gap-3 select-none">
+      <div class="text-2xl opacity-70">📸</div>
+      <div class="flex-1">
+        <h2 class="text-lg font-bold opacity-80">Screenshot-Analyzer <span class="text-xs font-normal text-gray-500">· Legacy / Backup</span></h2>
+        <p class="text-gray-500 text-xs">Nur falls Auto-Tracker mal hängt oder für Pre-Phase-B-Reels. Click zum Aufklappen.</p>
+      </div>
+    </summary>
+    <div class="mt-4"></div>
 
     <div class="bg-slate-900/50 rounded-2xl p-5 mb-4">
       <h3 class="font-bold mb-3 flex items-center gap-2">🎯 So funktioniert's:</h3>
@@ -116,7 +169,7 @@
     <div class="mt-4 p-4 bg-orange-900/20 border border-orange-500/30 rounded-2xl text-sm">
       💡 <b>Pro-Tipp:</b> Mach die Screenshots 24-48h nach dem Posten — dann sind die Daten "stabil" und vergleichbar zu deinen vorherigen Reels.
     </div>
-  </div>
+  </details>
 
 
   <!-- Quick Stats -->
@@ -242,6 +295,62 @@
         <input type="text" id="audio" placeholder="z.B. Discipline - Hellblade" class="w-full p-3 rounded-xl">
       </div>
 
+      <!-- 📊 Insight-Felder (optional · aus Meta-Insights 2026) -->
+      <div class="md:col-span-2 mt-2 pt-3 border-t border-white/10">
+        <p class="text-sm font-semibold text-orange-400">📊 Insight-Felder (optional · aus Meta-Insights)</p>
+        <p class="text-xs text-gray-500">Leer lassen wenn nicht vorhanden — alte Reels bleiben kompatibel.</p>
+      </div>
+
+      <div>
+        <label class="block text-sm text-gray-400 mb-1">⏭️ Skip-Rate (%)</label>
+        <input type="number" step="0.1" id="skipRate" min="0" max="100" placeholder="77.5" class="w-full p-3 rounded-xl">
+      </div>
+
+      <div>
+        <label class="block text-sm text-gray-400 mb-1">👤 Profilaktivitäten (Profil-Besuche)</label>
+        <input type="number" id="profileVisits" placeholder="12" class="w-full p-3 rounded-xl">
+      </div>
+
+      <div>
+        <label class="block text-sm text-gray-400 mb-1">📲 Reach von Followern (%)</label>
+        <input type="number" step="0.1" id="followerReach" min="0" max="100" placeholder="35.6" class="w-full p-3 rounded-xl">
+      </div>
+
+      <div>
+        <label class="block text-sm text-gray-400 mb-1">🌐 Reach Non-Follower (%)</label>
+        <input type="number" step="0.1" id="nonFollowerReach" min="0" max="100" placeholder="64.4" class="w-full p-3 rounded-xl">
+      </div>
+
+      <div>
+        <label class="block text-sm text-gray-400 mb-1">📍 Source: Feed (%)</label>
+        <input type="number" step="0.1" id="sourceFeed" min="0" max="100" placeholder="22.0" class="w-full p-3 rounded-xl">
+      </div>
+
+      <div>
+        <label class="block text-sm text-gray-400 mb-1">📍 Source: Stories (%)</label>
+        <input type="number" step="0.1" id="sourceStories" min="0" max="100" placeholder="8.0" class="w-full p-3 rounded-xl">
+      </div>
+
+      <div>
+        <label class="block text-sm text-gray-400 mb-1">📍 Source: Reels-Tab (%)</label>
+        <input type="number" step="0.1" id="sourceReelsTab" min="0" max="100" placeholder="60.0" class="w-full p-3 rounded-xl">
+      </div>
+
+      <div>
+        <label class="block text-sm text-gray-400 mb-1">📍 Source: Profil (%)</label>
+        <input type="number" step="0.1" id="sourceProfile" min="0" max="100" placeholder="10.0" class="w-full p-3 rounded-xl">
+      </div>
+
+      <div>
+        <label class="block text-sm text-gray-400 mb-1">👥 Audience Männer (%)</label>
+        <input type="number" step="0.1" id="audienceMale" min="0" max="100" placeholder="68.0" class="w-full p-3 rounded-xl">
+      </div>
+
+      <div>
+        <label class="block text-sm text-gray-400 mb-1">👥 Audience Frauen (%)</label>
+        <input type="number" step="0.1" id="audienceFemale" min="0" max="100" placeholder="32.0" class="w-full p-3 rounded-xl">
+      </div>
+
       <div class="md:col-span-2">
         <label class="block text-sm text-gray-400 mb-1">Notizen (Was hat gut/schlecht funktioniert?)</label>
         <textarea id="notes" rows="2" placeholder="z.B. Hook war zu subtil, Watch Time niedrig" class="w-full p-3 rounded-xl"></textarea>
@@ -281,6 +390,25 @@
     </div>
   </div>
 
+  <!-- Insight-Charts (neu · Meta-Insights 2026) -->
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+    <div class="glass rounded-3xl p-6">
+      <h3 class="text-xl font-bold mb-4">⏭️ Skip-Rate-Trend</h3>
+      <canvas id="skipChart"></canvas>
+      <p id="skipEmpty" class="text-gray-500 italic text-sm hidden">Noch keine Skip-Rate-Daten.</p>
+    </div>
+    <div class="glass rounded-3xl p-6">
+      <h3 class="text-xl font-bold mb-4">👥 Audience Gender-Split (⌀)</h3>
+      <canvas id="genderChart"></canvas>
+      <p id="genderEmpty" class="text-gray-500 italic text-sm hidden">Noch keine Gender-Daten.</p>
+    </div>
+    <div class="glass rounded-3xl p-6">
+      <h3 class="text-xl font-bold mb-4">📍 Source-Breakdown (⌀)</h3>
+      <canvas id="sourceChart"></canvas>
+      <p id="sourceEmpty" class="text-gray-500 italic text-sm hidden">Noch keine Source-Daten.</p>
+    </div>
+  </div>
+
   <!-- Reel List -->
   <div class="glass rounded-3xl p-6">
     <h2 class="text-2xl font-bold mb-4">📋 Alle Reels</h2>
@@ -313,7 +441,7 @@
 SmashApp.requireAuth();
 
 let reels = [];
-let viewsChart, pillarChart;
+let viewsChart, pillarChart, skipChart, genderChart, sourceChart;
 
 // Load data on start
 function loadData() {
@@ -347,6 +475,17 @@ async function addReel() {
     saves: parseInt(document.getElementById('saves').value) || 0,
     shares: parseInt(document.getElementById('shares').value) || 0,
     followers: parseInt(document.getElementById('followers').value) || 0,
+    // 📊 Insight-Felder (optional · Meta-Insights 2026) — leer = null/0, alte Reels bleiben kompatibel
+    skipRate: parseFloat(document.getElementById('skipRate')?.value) || null,
+    followerReach: parseFloat(document.getElementById('followerReach')?.value) || null,
+    nonFollowerReach: parseFloat(document.getElementById('nonFollowerReach')?.value) || null,
+    sourceFeed: parseFloat(document.getElementById('sourceFeed')?.value) || null,
+    sourceStories: parseFloat(document.getElementById('sourceStories')?.value) || null,
+    sourceReelsTab: parseFloat(document.getElementById('sourceReelsTab')?.value) || null,
+    sourceProfile: parseFloat(document.getElementById('sourceProfile')?.value) || null,
+    audienceMale: parseFloat(document.getElementById('audienceMale')?.value) || null,
+    audienceFemale: parseFloat(document.getElementById('audienceFemale')?.value) || null,
+    profileVisits: parseInt(document.getElementById('profileVisits')?.value) || 0,
     audio: document.getElementById('audio').value || '',
     notes: document.getElementById('notes').value || ''
   };
@@ -360,8 +499,10 @@ async function addReel() {
   await saveData();
   
   // Clear form
-  ['title', 'views', 'reach', 'watchTime', 'length', 'likes', 'comments', 'saves', 'shares', 'followers', 'audio', 'notes', 'hour'].forEach(id => {
-    document.getElementById(id).value = '';
+  ['title', 'views', 'reach', 'watchTime', 'length', 'likes', 'comments', 'saves', 'shares', 'followers', 'audio', 'notes', 'hour',
+   'skipRate', 'followerReach', 'nonFollowerReach', 'sourceFeed', 'sourceStories', 'sourceReelsTab', 'sourceProfile', 'audienceMale', 'audienceFemale', 'profileVisits'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
   });
 
   updateUI();
@@ -591,6 +732,90 @@ function updateCharts() {
       }
     }
   });
+
+  // ── Insight-Charts (Meta-Insights 2026) — nur rendern wenn Daten vorhanden ──
+
+  // Skip-Rate-Trend (line)
+  const skipData = [...reels].filter(r => r.skipRate != null).sort((a, b) => new Date(a.date) - new Date(b.date));
+  const ctx3 = document.getElementById('skipChart').getContext('2d');
+  if (skipChart) skipChart.destroy();
+  document.getElementById('skipEmpty').classList.toggle('hidden', skipData.length > 0);
+  if (skipData.length > 0) {
+    skipChart = new Chart(ctx3, {
+      type: 'line',
+      data: {
+        labels: skipData.map(r => r.date),
+        datasets: [{
+          label: 'Skip-Rate %',
+          data: skipData.map(r => r.skipRate),
+          borderColor: '#FF6B6B',
+          backgroundColor: 'rgba(255,107,107,0.1)',
+          fill: true,
+          tension: 0.3
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: { legend: { labels: { color: 'white' } } },
+        scales: {
+          x: { ticks: { color: '#94a3b8' }, grid: { color: 'rgba(255,255,255,0.05)' } },
+          y: { min: 0, max: 100, ticks: { color: '#94a3b8' }, grid: { color: 'rgba(255,255,255,0.05)' } }
+        }
+      }
+    });
+  }
+
+  // Audience Gender-Split (doughnut, Ø über Reels mit Daten)
+  const genderReels = reels.filter(r => r.audienceMale != null || r.audienceFemale != null);
+  const ctx4 = document.getElementById('genderChart').getContext('2d');
+  if (genderChart) genderChart.destroy();
+  document.getElementById('genderEmpty').classList.toggle('hidden', genderReels.length > 0);
+  if (genderReels.length > 0) {
+    const avgMale = genderReels.reduce((s, r) => s + (r.audienceMale || 0), 0) / genderReels.length;
+    const avgFemale = genderReels.reduce((s, r) => s + (r.audienceFemale || 0), 0) / genderReels.length;
+    genderChart = new Chart(ctx4, {
+      type: 'doughnut',
+      data: {
+        labels: ['Männer', 'Frauen'],
+        datasets: [{
+          data: [Math.round(avgMale * 10) / 10, Math.round(avgFemale * 10) / 10],
+          backgroundColor: ['#FFA94D', '#8b5cf6']
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: { legend: { labels: { color: 'white' } } }
+      }
+    });
+  }
+
+  // Source-Breakdown (bar, Ø über Reels mit Daten)
+  const srcReels = reels.filter(r => r.sourceFeed != null || r.sourceStories != null || r.sourceReelsTab != null || r.sourceProfile != null);
+  const ctx5 = document.getElementById('sourceChart').getContext('2d');
+  if (sourceChart) sourceChart.destroy();
+  document.getElementById('sourceEmpty').classList.toggle('hidden', srcReels.length > 0);
+  if (srcReels.length > 0) {
+    const avgSrc = key => srcReels.reduce((s, r) => s + (r[key] || 0), 0) / srcReels.length;
+    sourceChart = new Chart(ctx5, {
+      type: 'bar',
+      data: {
+        labels: ['Feed', 'Stories', 'Reels-Tab', 'Profil'],
+        datasets: [{
+          label: 'Ø Source %',
+          data: [avgSrc('sourceFeed'), avgSrc('sourceStories'), avgSrc('sourceReelsTab'), avgSrc('sourceProfile')].map(v => Math.round(v * 10) / 10),
+          backgroundColor: ['#10b981', '#f59e0b', '#FFA94D', '#84cc16']
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: { legend: { labels: { color: 'white' } } },
+        scales: {
+          x: { ticks: { color: '#94a3b8' }, grid: { color: 'rgba(255,255,255,0.05)' } },
+          y: { min: 0, ticks: { color: '#94a3b8' }, grid: { color: 'rgba(255,255,255,0.05)' } }
+        }
+      }
+    });
+  }
 }
 
 // 10.05.2026 — Reel Tracker Card v2 (PEAKING-3 ZIP Design-Refactor)
@@ -808,6 +1033,187 @@ fillPillarSelect();
 loadData().then(() => {
   preloadFirstReel();
 });
+
+// ════════════════════════════════════════════════════════════════
+// 🟢 AUTO-TRACKER LIVE (v1.9.5) — Meta API direkt
+// ════════════════════════════════════════════════════════════════
+const AT_API = 'https://peaking-ai-api.peaking.workers.dev';
+const AT_KEY = 'pk_peaking_2026_sebi_solo_x7k2m9';
+let _autoReels = [];
+let _autoBrandFilter = 'all';
+
+const BRAND_TO_LABEL = { peaking: '🚀', hulk: '🌱', smash: '💪' };
+const IG_TO_BRAND = {
+  '17841417585584501': 'peaking',
+  '17841400047364825': 'hulk',
+  '17841434019480243': 'smash',
+};
+
+function _autoRelativeTime(iso) {
+  if (!iso) return 'noch nie';
+  const min = Math.floor((Date.now() - new Date(iso).getTime()) / 60000);
+  if (min < 1) return 'gerade eben';
+  if (min < 60) return `vor ${min} Min`;
+  const h = Math.floor(min / 60);
+  if (h < 24) return `vor ${h} Std`;
+  return `vor ${Math.floor(h / 24)} Tagen`;
+}
+
+function _autoEscapeHtml(s) {
+  return String(s || '').replace(/[&<>"']/g, m => ({
+    '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#39;'
+  }[m]));
+}
+
+async function autoTrackerLoad() {
+  try {
+    const r = await fetch(`${AT_API}/insta/reels-list`, {
+      headers: { 'X-Peaking-Key': AT_KEY },
+    });
+    const data = await r.json();
+    _autoReels = data.reels || [];
+    document.getElementById('autoReelCount').textContent = _autoReels.length;
+    document.getElementById('autoLastSync').textContent = _autoRelativeTime(data.lastSync?.syncedAt);
+    autoTrackerRender();
+  } catch (e) {
+    document.getElementById('autoTrackerGrid').innerHTML = `<div class="col-span-full text-center text-red-400 py-6 text-sm">❌ Fehler: ${_autoEscapeHtml(e.message)}</div>`;
+  }
+}
+
+function autoTrackerRender() {
+  let list = [..._autoReels];
+  if (_autoBrandFilter !== 'all') {
+    list = list.filter(r => IG_TO_BRAND[r.igUserId] === _autoBrandFilter);
+  }
+
+  const sort = document.getElementById('autoSortBy').value;
+  if (sort === 'date') list.sort((a,b) => (b.timestamp||'').localeCompare(a.timestamp||''));
+  else if (sort === 'likes') list.sort((a,b) => (b.like_count||0) - (a.like_count||0));
+  else if (sort === 'comments') list.sort((a,b) => (b.comments_count||0) - (a.comments_count||0));
+
+  const grid = document.getElementById('autoTrackerGrid');
+  if (list.length === 0) {
+    grid.innerHTML = '<div class="col-span-full text-center text-gray-500 py-8 text-sm">Keine Reels für aktuellen Filter. Warte aufs nächste Cron-Sync oder klick Refresh.</div>';
+    return;
+  }
+
+  grid.innerHTML = list.map(r => {
+    const brand = IG_TO_BRAND[r.igUserId] || 'peaking';
+    const brandEmoji = BRAND_TO_LABEL[brand] || '📡';
+    const date = (r.timestamp || '').slice(0, 10);
+    const captionShort = (r.caption || '').slice(0, 100) + ((r.caption||'').length > 100 ? '…' : '');
+    const isReel = r.media_product_type === 'REELS';
+    const thumb = r.thumbnail_url || r.media_url;
+    const realIgId = r.id; // Insta-Media-ID for history-lookup
+    return `
+      <div class="auto-reel-card" data-mediaid="${_autoEscapeHtml(realIgId)}" onclick="window.open('${_autoEscapeHtml(r.permalink || '#')}', '_blank')">
+        ${thumb ? `<img class="auto-reel-thumb" src="${_autoEscapeHtml(thumb)}" alt="Reel" loading="lazy" onerror="this.style.display='none'">` : ''}
+        <div class="p-3">
+          <div class="flex items-center justify-between gap-2 mb-2">
+            <span class="auto-reel-pill pill-brand-${brand}">${brandEmoji} ${brand}</span>
+            <span class="text-[10px] text-gray-500">${date}</span>
+          </div>
+          <div class="text-xs text-gray-300 mb-3 leading-snug line-clamp-3">${_autoEscapeHtml(captionShort) || '<span class="text-gray-600 italic">— keine Caption —</span>'}</div>
+          <div class="flex items-center gap-3 text-xs mb-2">
+            <span class="neon font-bold">❤️ ${(r.like_count||0).toLocaleString('de-DE')}</span>
+            <span class="text-gray-400">💬 ${r.comments_count||0}</span>
+            ${isReel ? '<span class="text-gray-500 text-[10px]">🎬 REEL</span>' : '<span class="text-gray-500 text-[10px]">📷 POST</span>'}
+          </div>
+          <div class="sparkline-host" data-mediaid="${_autoEscapeHtml(realIgId)}">
+            <div class="text-[10px] text-gray-600 italic">Trend lädt…</div>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  // Batch-load history-data for all visible reels
+  _autoLoadSparklines(list.map(r => r.id).filter(Boolean));
+}
+
+async function _autoLoadSparklines(mediaIds) {
+  if (!mediaIds.length) return;
+  try {
+    const r = await fetch(`${AT_API}/insta/reel-history-batch`, {
+      method: 'POST',
+      headers: { 'X-Peaking-Key': AT_KEY, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ mediaIds }),
+    });
+    const data = await r.json();
+    const histories = data.histories || {};
+    for (const mediaId of mediaIds) {
+      const host = document.querySelector(`.sparkline-host[data-mediaid="${mediaId}"]`);
+      if (!host) continue;
+      const snaps = histories[mediaId] || [];
+      host.innerHTML = _autoRenderSparkline(snaps);
+    }
+  } catch (e) {
+    // Silently fail — sparkline ist nice-to-have
+  }
+}
+
+function _autoRenderSparkline(snaps) {
+  if (snaps.length < 2) {
+    return `<div class="text-[10px] text-gray-600 italic">Trend: sammle Daten (${snaps.length}/2)</div>`;
+  }
+  const likes = snaps.map(s => s.l || 0);
+  const minL = Math.min(...likes);
+  const maxL = Math.max(...likes);
+  const range = maxL - minL || 1;
+  const w = 100, h = 24;
+  const step = w / (snaps.length - 1);
+  const points = likes.map((l, i) => `${i * step},${h - ((l - minL) / range) * h}`).join(' ');
+  const delta = likes[likes.length - 1] - likes[0];
+  const deltaColor = delta > 0 ? '#22c55e' : delta < 0 ? '#ef4444' : '#94a3b8';
+  const deltaText = delta > 0 ? `+${delta}` : String(delta);
+
+  return `
+    <div class="flex items-center gap-2">
+      <svg viewBox="0 0 ${w} ${h}" preserveAspectRatio="none" style="width:60%; height:24px;">
+        <polyline points="${points}" fill="none" stroke="url(#sparkGrad)" stroke-width="1.5" />
+        <defs>
+          <linearGradient id="sparkGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#FF6B6B" />
+            <stop offset="50%" stop-color="#FFA94D" />
+            <stop offset="100%" stop-color="#FFD43B" />
+          </linearGradient>
+        </defs>
+      </svg>
+      <span class="text-[10px] font-bold" style="color:${deltaColor}">${deltaText} ❤️</span>
+      <span class="text-[10px] text-gray-600">${snaps.length}d</span>
+    </div>
+  `;
+}
+
+async function autoTrackerRefresh() {
+  const btn = document.getElementById('syncNowBtn');
+  btn.disabled = true;
+  btn.textContent = '⏳ Sync läuft...';
+  try {
+    for (const b of ['peaking','hulk','smash']) {
+      await fetch(`${AT_API}/insta/sync-reels?brand=${b}&limit=25&onlyReels=false`, {
+        method: 'POST',
+        headers: { 'X-Peaking-Key': AT_KEY },
+      });
+    }
+  } catch (e) {}
+  btn.disabled = false;
+  btn.textContent = '🔄 Refresh';
+  await autoTrackerLoad();
+}
+
+// Brand-Tab-Click-Handler
+document.querySelectorAll('.auto-brand-pill').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.auto-brand-pill').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    _autoBrandFilter = btn.dataset.brand;
+    autoTrackerRender();
+  });
+});
+
+// Auto-load on page-ready
+autoTrackerLoad();
 </script>
 
 </body>
